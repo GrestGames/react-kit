@@ -89,6 +89,17 @@ table.grid .lastRow:hover {
     background: #f3f4f6;
 }
 
+/* ── Grid filters ─────────────────────────────────── */
+
+.gridFilters form {
+    max-height: none !important;
+    animation: none !important;
+}
+
+.gridFilters {
+    overflow: hidden;
+}
+
 /* ── Add new button ───────────────────────────────── */
 
 .gridAddNew {
