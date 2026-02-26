@@ -91,11 +91,6 @@ table.grid .lastRow:hover {
 
 /* ── Add new button ───────────────────────────────── */
 
-.gridFilters form {
-    max-height: none;
-    animation: none;
-}
-
 .gridAddNew {
     float: right;
 }
