@@ -51,3 +51,9 @@
 .pillBtn.pillBold {
     font-weight: 600;
 }
+
+.pillPopupGrid {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
