@@ -1,0 +1,286 @@
+.topMenu {
+    width: 100%;
+    min-height: 36px;
+    background: #34425A;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    position: relative;
+    z-index: 10;
+}
+
+.topMenuItems {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.topMenu .button {
+    color: #899dc1;
+    display: inline-block;
+    height: 20px;
+    margin: 1px 0px 1px 1px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.topMenu span.selected {
+    color: white;
+    background-color: #2b384e;
+}
+
+.topMenu span:hover {
+    background-color: #283750;
+}
+
+/* Hamburger toggle — hidden on desktop */
+.menuToggle {
+    display: none;
+}
+
+/* Page title — shown only on mobile */
+.topMenuPageTitle {
+    display: none;
+}
+
+/* Company row in dropdown — hidden on desktop */
+.topMenuCompanyRow {
+    display: none;
+}
+
+/* Divider — flex spacer on desktop, visual separator in mobile dropdown */
+.topMenuDivider {
+    flex: 1;
+}
+
+/* ── Submenu (desktop) ────────────────────────────── */
+
+.topMenuItem {
+    display: inline-block;
+    position: relative;
+}
+
+.topMenuItem > .submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #2b384e;
+    min-width: 160px;
+    z-index: 100;
+    border-top: 1px solid #283750;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.topMenuItem:hover > .submenu {
+    display: block;
+}
+
+.submenuItem {
+    display: block;
+    padding: 8px 16px;
+    color: #899dc1;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.submenuItem:hover {
+    background-color: #283750;
+    color: white;
+}
+
+.submenuItem.selected {
+    color: white;
+}
+
+/* Hide submenus after a click, until mouse leaves the menu item */
+.submenusHidden .topMenuItem:hover > .submenu {
+    display: none;
+}
+
+/* Touch-opened submenus stay visible */
+.topMenuItem.touchOpen > .submenu,
+.submenusHidden .topMenuItem.touchOpen > .submenu {
+    display: block;
+}
+
+/* ── Right-aligned icon menus ─────────────────────── */
+
+.topMenuRight {
+    flex-shrink: 0;
+}
+
+.topMenuRight > .button {
+    font-size: 22px;
+    line-height: 20px;
+    min-width: 20px;
+    text-align: center;
+    padding: 8px 12px;
+}
+
+.topMenuRight > .submenu {
+    padding-top: 4px;
+}
+
+.topMenuItem > .submenuRight {
+    left: auto;
+    right: 0;
+}
+
+/* ── Mobile ────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .topMenu {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        min-height: 44px;
+    }
+
+    .topMenuBackdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 9;
+    }
+
+    .menuToggle {
+        display: inline-block;
+        color: #c5d0e0;
+        padding: 12px 14px;
+        cursor: pointer;
+        font-size: 20px;
+        line-height: 20px;
+    }
+
+    .topMenuPageTitle {
+        display: inline-block;
+        color: #c5d0e0;
+        font-size: 15px;
+        padding: 12px 4px;
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        pointer-events: none;
+    }
+
+    /* Menu items: hidden by default, shown when .topMenuOpen */
+    .topMenuItems {
+        display: none;
+        width: 100%;
+        background: #34425A;
+        border-top: 1px solid #283750;
+    }
+
+    .topMenuItems.topMenuOpen {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        max-height: calc(100vh - 44px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .topMenuCompanyRow {
+        display: block;
+        padding: 8px 12px;
+        border-bottom: 1px solid #283750;
+    }
+
+    .topMenuItems .button {
+        display: block;
+        height: auto;
+        padding: 14px 16px;
+        font-size: 14px;
+        border-bottom: 1px solid #283750;
+    }
+
+    .topMenuDivider {
+        flex: 0;
+        height: 0;
+        border-top: 1px solid #566a88;
+        margin: 4px 0;
+    }
+
+    .topMenuRight {
+        flex-shrink: unset;
+    }
+
+    /* ── Mobile submenu ─────────────────────────────── */
+
+    .topMenuItem {
+        display: block;
+        position: static;
+    }
+
+    .topMenuItem > .submenu {
+        display: block;
+        position: static;
+        background: transparent;
+        min-width: auto;
+        box-shadow: none;
+        border-top: none;
+    }
+
+    .submenuItem {
+        display: block;
+        padding: 12px 16px 12px 40px;
+        color: #7a8fad;
+        font-size: 13px;
+        border-bottom: 1px solid #283750;
+    }
+
+    /* ── Mobile: right icons in top bar ────────────── */
+
+    .topMenuIcons {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+    }
+
+    .topMenuIcons .topMenuItem {
+        display: inline-block;
+        position: relative;
+    }
+
+    .topMenuIcons .topMenuRight {
+        float: none;
+    }
+
+    .topMenuIcons .topMenuItem > .button {
+        display: inline-block;
+        height: 20px;
+        padding: 12px;
+        font-size: 22px;
+        line-height: 20px;
+        min-width: 20px;
+        text-align: center;
+        border-bottom: none;
+    }
+
+    .topMenuIcons .topMenuItem > .submenu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: auto;
+        background: #2b384e;
+        min-width: 160px;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        border-top: 1px solid #283750;
+    }
+
+    .topMenuIcons .topMenuItem.touchOpen > .submenu {
+        display: block;
+    }
+
+    .topMenuIcons .submenuItem {
+        padding: 12px 16px;
+        font-size: 14px;
+        color: #899dc1;
+        border-bottom: 1px solid #283750;
+    }
+}

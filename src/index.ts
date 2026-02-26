@@ -69,6 +69,9 @@ export * from "./mini/Separator";
 export * from "./mini/ToolTip";
 export * from "./mini/useDropDownPositioning";
 
+// Menu
+export {TopMenu, type TopMenuItem, type TopMenuSubItem, type TopMenuProps} from "./menu/TopMenu";
+
 // Helpers
 export * from "./helpers/useAsyncState";
 export * from "./helpers/useAsyncEffect";
