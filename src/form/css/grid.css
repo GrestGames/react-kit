@@ -91,8 +91,9 @@ table.grid .lastRow:hover {
 
 /* ── Add new button ───────────────────────────────── */
 
-.gridFilters {
-    overflow: hidden;
+.gridFilters form {
+    max-height: none;
+    animation: none;
 }
 
 .gridAddNew {
