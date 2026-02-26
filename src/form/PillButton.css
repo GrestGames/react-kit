@@ -1,0 +1,53 @@
+.pillBtn {
+    display: inline-block;
+    padding: 3px 10px;
+    margin: 2px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #555;
+    font: inherit;
+    font-weight: 400;
+    cursor: pointer;
+    white-space: nowrap;
+    line-height: 1.4;
+    user-select: none;
+}
+
+.pillBtn:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.pillBtn.pillDotted {
+    border-style: dashed;
+    background: transparent;
+    color: #888;
+}
+
+.pillBtn.pillDotted:hover {
+    background: #f5f5f5;
+    color: #555;
+    border-color: #0d6efd;
+}
+
+.pillBtn.pillActive {
+    background: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+
+.pillBtn.pillActive:hover {
+    opacity: 0.9;
+}
+
+.pillBtn.pillSelected {
+    background: #f0f4ff;
+    border-color: #0d6efd;
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+.pillBtn.pillBold {
+    font-weight: 600;
+}

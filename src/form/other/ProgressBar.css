@@ -1,0 +1,18 @@
+.progressBar {
+    border: 1px solid #b0b0b0;
+    background-color: #efefef;
+    height: 35px
+}
+
+.progressBar .progressBarBar {
+    background-color: #87ff87;
+    height: 35px
+}
+
+.progressBar .progressBarText {
+    position: relative;
+    top: 8px;
+    height: 0;
+    overflow: visible;
+    text-align: center;
+}

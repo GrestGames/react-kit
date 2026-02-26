@@ -1,0 +1,152 @@
+/* Display state — matches input/textarea sizing from input.css */
+.inlineEditDisplay {
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    margin: 2px 4px;
+    padding: 6px 7px;
+    width: 200px;
+    height: 32px;
+    color: #444;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.inlineEditDisplay.inlineEditClickable {
+    cursor: pointer;
+}
+
+.inlineEditDisplay.inlineEditClickable:hover {
+    background: #f0f4ff;
+}
+
+/* Changed state — matches input.changed from input.css */
+.inlineEditDisplay.changed {
+    border: 1px solid #efdec1;
+    background-color: #fff8ea;
+}
+
+/* Empty state */
+.inlineEditDisplay.inlineEditEmpty {
+    border-style: dashed;
+    border-color: #ccc;
+    color: #bbb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inlineEditDisplay.inlineEditEmpty:hover {
+    border-color: #999;
+    background: rgba(0, 0, 0, 0.02);
+    color: #888;
+}
+
+/* Multiline — matches textarea sizing */
+.inlineEditDisplay.inlineEditMultiline {
+    width: 300px;
+    height: auto;
+    min-height: 100px;
+    white-space: pre-wrap;
+    overflow: visible;
+}
+
+.inlineEditDisplay.inlineEditMultiline.inlineEditEmpty {
+    display: flex;
+}
+
+/* Wide variant */
+.inlineEditDisplay.wide {
+    width: 400px;
+}
+
+.inlineEditDisplay.inlineEditMultiline.wide {
+    width: 400px;
+    min-height: 200px;
+}
+
+/* With suffix — wrapper owns all visual effects for full-width coverage */
+.inlineEditSuffixWrap {
+    display: inline-flex;
+    align-items: stretch;
+    vertical-align: middle;
+    border-radius: 5px;
+    margin: 2px 4px;
+    outline: 1px solid transparent;
+    outline-offset: -1px;
+}
+
+/* Display div inside wrapper: transparent, wrapper provides visuals */
+.inlineEditSuffixWrap > .inlineEditDisplay {
+    margin: 0;
+    border-color: transparent;
+    background: transparent;
+    border-radius: 5px 0 0 5px;
+}
+
+.inlineEditSuffixWrap > .inputSuffix {
+    margin: 0;
+}
+
+.inlineEditSuffixWrap.inlineEditClickable {
+    cursor: pointer;
+}
+
+.inlineEditSuffixWrap.inlineEditClickable:hover {
+    background: #f0f4ff;
+}
+
+/* Changed state on wrapper — full-width yellow */
+.inlineEditSuffixWrap.inlineEditChanged {
+    outline: 1px solid #efdec1;
+    background-color: #fff8ea;
+}
+
+/* Empty state on wrapper — full-width dashed box */
+.inlineEditSuffixWrap.inlineEditEmpty {
+    outline: 1px dashed #ccc;
+}
+
+.inlineEditSuffixWrap.inlineEditEmpty > .inlineEditDisplay {
+    color: #bbb;
+}
+
+.inlineEditSuffixWrap.inlineEditClickable.inlineEditEmpty:hover {
+    outline-color: #999;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.inlineEditSuffixWrap.inlineEditClickable.inlineEditEmpty:hover > .inlineEditDisplay {
+    color: #888;
+}
+
+.inlineEditSuffixText {
+    color: #888;
+}
+
+/* Select/autocomplete inline mode — borderless until focused */
+.inlineEditSelect {
+    border-color: transparent;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.inlineEditSelect.inlineEditEmpty {
+    border-style: dashed;
+    border-color: #ccc;
+}
+
+.inlineEditSelect:hover {
+    border-color: #dce1e4;
+    background: #f0f4ff;
+}
+
+.inlineEditSelect:focus {
+    border-color: #afb4bd;
+    background: #fff;
+}

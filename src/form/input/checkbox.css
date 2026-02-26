@@ -1,0 +1,81 @@
+.cb {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 2px 4px;
+}
+
+.cb.disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.cb input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.cbBox {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    background: #fff;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.cb input:checked + .cbBox {
+    background: #e0e0e0;
+    border-color: #999;
+}
+
+.cbCheck {
+    display: block;
+    width: 16px;
+    height: 16px;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.cb input:checked + .cbBox .cbCheck {
+    opacity: 1;
+}
+
+/* Hover */
+.cb:not(.disabled):hover .cbBox {
+    border-color: #888;
+}
+
+.cb:not(.disabled):hover input:checked + .cbBox {
+    border-color: #777;
+    background: #d0d0d0;
+}
+
+/* Changed (unsaved) state */
+.cb.changed .cbBox {
+    border-color: #e0c040;
+    background: #f5e6a0;
+}
+
+.cb.changed input:checked + .cbBox {
+    background: #f5e6a0;
+    border-color: #c5a83d;
+}
+
+.cb.changed input:checked + .cbBox .cbCheck {
+    stroke: #a08520;
+}
+
+.cb:not(.disabled).changed:hover .cbBox {
+    border-color: #c5a83d;
+}
+
+.cb:not(.disabled).changed:hover input:checked + .cbBox {
+    border-color: #a07a20;
+    background: #ebda80;
+}

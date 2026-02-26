@@ -1,0 +1,218 @@
+
+input.changed, select.changed, textarea.changed {
+    border: 1px solid #efdec1;
+    background-color: #fff8ea;
+}
+
+select option.changed {
+    background-color: #fff8ea;
+}
+
+input[readonly], select[readonly], textarea[readonly], input[disabled], select[disabled], textarea[disabled] {
+    background: rgb(243, 242, 242);
+}
+
+input[readonly]:hover, select[disabled]:hover, textarea[readonly]:hover {
+    background: rgb(243, 242, 242);
+}
+
+input[readonly]:focus, select[disabled]:focus, textarea[readonly]:focus {
+    background: rgb(243, 242, 242);
+}
+
+input, select, textarea {
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+    outline: none !important;
+    border: 1px solid #dce1e4;
+    border-radius: 5px;
+    margin: 2px 4px 2px 4px;
+}
+
+input:hover, select:hover, textarea:hover {
+    border: 1px solid #afb4bd;
+    transition: border 0.3s ease-in-out;
+}
+
+input:focus, select:focus, textarea:focus {
+    border: 1px solid #afb4bd;
+    transition: border 0.3s ease-in-out;
+}
+
+input, select, textarea {
+    width: 200px;
+    padding: 6px 7px 6px 7px;
+    color: inherit;
+    height: 32px;
+}
+
+select option {
+    background: white;
+}
+
+select {
+    padding: 6px;
+}
+
+textarea {
+    width: 300px;
+    height: 100px;
+}
+
+input[type="date"] {
+    width: 120px;
+}
+
+input[type="checkbox"], input[type="radio"] {
+    width: auto;
+    height: auto;
+}
+
+input.error, select.error, textarea.error {
+    border: 1px solid #d63031;
+    background-color: #ffeaea;
+}
+
+.errorForArea {
+    background-color: #ffeaea;
+}
+
+.changedForArea {
+    background-color: #fff8ea;
+}
+
+.datePicker {
+    width: 120px;
+}
+
+button.react-datepicker__navigation--previous:hover {
+    background: none;
+}
+
+button.react-datepicker__navigation--next:hover {
+    background: none;
+}
+
+.react-datepicker__month-text {
+    padding: 5px 0 5px 0
+}
+
+.formItem {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/*
+td > .formItem {
+    display: block;
+    width: 100%;
+}
+
+td > .formItem input[type="text"], td > .formItem input[type="search"], td > .formItem select, td > .formItem textarea {
+    width: 100%
+}
+*/
+
+input.wide, select.wide, textArea.wide {
+    width: 400px;
+}
+
+textarea.wide {
+    height: 200px;
+}
+
+.inputWithSuffix {
+    margin-right: 0;
+    border-radius: 5px 0 0 5px;
+}
+
+.inputSuffix {
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+    padding: 6px 6px 6px 6px;
+    margin: 2px 4px 2px 0;
+    height: 32px;
+    text-align: center;
+    background-color: rgb(241, 241, 241);
+    border: 1px solid rgb(220, 225, 228);
+    border-left: 0;
+    border-radius: 0 5px 5px 0;
+}
+
+.inputSuffix.error {
+    border: 1px solid #d63031;
+    border-left: 0;
+    background-color: #ffeaea;
+}
+
+.validationErrorMsg {
+    padding: 0 0 0 10px;
+    color: #d63031;
+    font-size: 0.8em;
+    text-align: left;
+}
+
+/* ── Mobile ────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .formItem {
+        display: block;
+        white-space: normal;
+        margin-bottom: 2px;
+    }
+
+    .formItemRange {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .formItemRange .formItem {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* When suffix is present, use flex so input + suffix share the row */
+    .formItemWithSuffix {
+        display: flex !important;
+        align-items: center;
+    }
+
+    .formItemWithSuffix .inputWithSuffix {
+        flex: 1;
+        min-width: 0;
+        width: auto !important;
+    }
+
+    .formItemWithSuffix .inputSuffix {
+        flex-shrink: 0;
+    }
+
+    input, select, textarea {
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    input[type="checkbox"], input[type="radio"] {
+        width: auto !important;
+    }
+
+    input.wide, select.wide, textarea.wide {
+        width: 100% !important;
+    }
+
+    textarea {
+        width: 100% !important;
+    }
+
+    .datePicker {
+        width: 100% !important;
+    }
+
+    .validationErrorMsg {
+        display: block;
+        padding: 2px 0;
+    }
+}

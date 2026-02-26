@@ -1,0 +1,12 @@
+.deleteObject {
+    height: 45px;
+    user-select: none;
+}
+
+/* ── Mobile ────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .deleteObject {
+        height: auto;
+    }
+}

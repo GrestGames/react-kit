@@ -1,0 +1,167 @@
+.panel {
+    position: absolute;
+    left: calc(50%);
+    transform: translate(-50%, 0);
+    min-width: 400px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08);
+    opacity: 1;
+    transition: opacity 200ms ease-out, top 100ms ease-out;
+    top: 30px;
+    overflow: hidden;
+}
+
+.panelInit {
+    top: -20px !important;
+    opacity: 0;
+}
+
+.panelInner {
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
+    max-height: calc(100vh - 140px)
+}
+
+.panel .panelTop {
+    display: flex;
+    background-color: #f5f6fa;
+    border-bottom: 1px solid #e8ecf1;
+}
+
+.panel .panelTitleArea {
+    padding: 15px 20px 15px 20px;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.panel .panelTitle {
+    color: #2c3345;
+}
+
+.panel .panelSubTitle {
+    color: #636e72;
+    font-weight: normal;
+}
+
+.panel .closeButton {
+    display: block;
+    width: 30px;
+    min-width: 30px;
+    height: 20px;
+    margin: 18px;
+    color: white;
+    text-align: center;
+    padding: 7px 0 3px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #f2ca4c;
+}
+
+.panel .closeButton:hover {
+    background-color: #ffd660;
+}
+
+.panel .closeButton:active {
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+.panel .area {
+    /**
+    Resets grid area for nicer display in panels.
+     */
+    margin: 0;
+    padding: 0;
+    filter: none;
+}
+
+
+/* ── Confirm dialog ───────────────────────────────── */
+
+.confirmDialog {
+    position: fixed;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+    padding: 16px;
+}
+
+.confirmDialogBtn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.confirmDialogClose {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.confirmDialogClose:hover {
+    background-color: #c0392b;
+}
+
+.confirmDialogCancel {
+    background-color: #f5f6fa;
+    color: #2c3345;
+    border: 1px solid #e0e0e0;
+}
+
+.confirmDialogCancel:hover {
+    background-color: #ebedf2;
+}
+
+/* ── Mobile ────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .panel {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0 !important;
+        transform: none;
+        min-width: unset;
+        width: 100% !important;
+        height: 100vh;
+        box-sizing: border-box;
+        filter: none;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .panelInit {
+        top: 0 !important;
+    }
+
+    .panelInner {
+        flex: 1;
+        max-height: none;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 8px;
+    }
+
+    .panel .panelTitleArea {
+        padding: 10px 12px;
+    }
+
+    .panel .panelTitle {
+        font-size: 20px;
+    }
+
+    .panel .closeButton {
+        margin: 10px;
+    }
+}

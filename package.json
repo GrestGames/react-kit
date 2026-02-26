@@ -1,0 +1,22 @@
+{
+  "name": "@grest-ts/react",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*.css": "./src/*.css",
+    "./css/base.css": "./src/css/base.css"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "@grest-ts/schema": ">=0.0.17",
+    "@grest-ts/schema-file": ">=0.0.17",
+    "react-datepicker": ">=7"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

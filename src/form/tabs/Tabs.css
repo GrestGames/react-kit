@@ -1,0 +1,75 @@
+.tabsArea {
+
+}
+
+.tabsArea .tabsMenu {
+    border-bottom: 1px solid #dfe6e9;
+    margin-bottom: 5px;
+}
+
+.tabsArea .tabsMenu .tab {
+    user-select: none;
+    position: relative;
+    top: 3px;
+    display: inline-block;
+    border: 1px solid #dfe6e9;
+    border-bottom: none;
+    padding: 5px 10px 5px 10px;
+    margin-right: 3px;
+    margin-left: 3px;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    background-color: #f5f6fa;
+    transition: background-color 0.2s ease, padding 0.3s ease;
+}
+
+.tabsArea .tabsMenu .tab:hover {
+    background-color: #e8ecf1;
+    transition: background-color 0.2s ease;
+}
+
+.tabsArea .tabsMenu .tabSelected {
+    top: 1px;
+    background-color: white;
+    padding: 8px 10px 8px 10px;
+}
+
+.tabsArea .tabsMenu .tabSelected:hover {
+    background-color: white !important;
+}
+
+.tabsArea .tabsContentInit {
+    opacity: 0;
+}
+
+.tabsArea .tabsContentLoaded {
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.tabsArea .tabsContent {
+
+}
+
+/* ── Mobile ────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .tabsArea .tabsMenu {
+        display: flex;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+        gap: 2px;
+        scrollbar-width: none;
+    }
+
+    .tabsArea .tabsMenu::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tabsArea .tabsMenu .tab {
+        flex-shrink: 0;
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+}

@@ -1,0 +1,55 @@
+.toggle {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 2px 4px;
+    --toggle-color: #4caf50;
+}
+
+.toggle.disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.toggle input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.toggleTrack {
+    position: relative;
+    width: 34px;
+    height: 18px;
+    background: #ccc;
+    border-radius: 9px;
+    transition: background 0.2s;
+}
+
+.toggle input:checked + .toggleTrack {
+    background: var(--toggle-color);
+}
+
+.toggleThumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    transition: left 0.2s, background 0.2s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.toggle input:checked + .toggleTrack .toggleThumb {
+    left: 18px;
+}
+
+/* Changed (unsaved) state — yellow thumb */
+.toggle.changed .toggleThumb {
+    background: #f0c040;
+}

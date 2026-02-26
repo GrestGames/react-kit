@@ -1,0 +1,68 @@
+
+.tipBase {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+.tipBase .tipText {
+    flex-grow: 1
+}
+
+.tipBase .tipIcon {
+    width: 20px;
+    height: 17px;
+    padding: 2px 3px 4px 3px;
+    margin: 3px 10px 0 5px;
+    text-align: center;
+    font-size: 14px;
+    border-radius: 25px;
+}
+
+.hintTip {
+    border: 1px solid #40a7e7;
+    background-color: #eaf5ff;
+    color: #2b384e;
+}
+
+.hintTip .tipIcon {
+    border: 1px solid #40a7e7;
+    background-color: #eaf5ff;
+    color: #40a7e7;
+}
+
+.infoTip {
+    border: 1px solid #51e73a;
+    background-color: #f1ffee;
+    color: #289a14;
+}
+
+.infoTip .tipIcon {
+    border: 1px solid #51e73a;
+    background-color: #f1ffee;
+    color: #289a14;
+}
+
+.warningTip {
+    border: 1px solid #e7aa3a;
+    background-color: #fffaee;
+    color: #9a6414;
+}
+
+.warningTip .tipIcon {
+    border: 1px solid #e7aa3a;
+    background-color: #fffaee;
+    color: #9a6414;
+}
+
+.errorTip {
+    border: 1px solid #e73a3a;
+    background-color: #ffeeee;
+    color: #9a1414;
+}
+
+.errorTip .tipIcon {
+    border: 1px solid #e73a3a;
+    background-color: #ffeeee;
+    color: #9a1414;
+}

@@ -1,0 +1,171 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f5f6f8;
+  color: #222;
+}
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 200px;
+  min-width: 200px;
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 16px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebarTitle {
+  font-size: 15px;
+  font-weight: 700;
+  padding: 8px 16px 20px;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.sidebarItem {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+
+.sidebarItem:hover { background: #334155; }
+.sidebarItemActive { background: #3b82f6 !important; color: #fff; font-weight: 600; }
+
+/* ── Content ── */
+.content {
+  margin-left: 200px;
+  flex: 1;
+  padding: 32px 40px;
+  max-width: 1100px;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #1e293b;
+}
+
+/* ── ShowCase ── */
+.showcase {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.showcaseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.showcaseTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.showcaseToggle {
+  font-size: 12px;
+  color: #3b82f6;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 4px 8px;
+}
+.showcaseToggle:hover { text-decoration: underline; }
+
+.showcaseBody {
+  padding: 20px 16px;
+}
+
+.showcaseCode {
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+  overflow-x: auto;
+}
+
+.showcaseCode pre {
+  margin: 0;
+  padding: 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #334155;
+  white-space: pre;
+  font-family: "Fira Code", "JetBrains Mono", "Consolas", monospace;
+}
+
+/* ── Utility styles for demos ── */
+.demoRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.demoRow > label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.demoSection {
+  margin-bottom: 16px;
+}
+
+.demoLabel {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.utilsSection {
+  margin-bottom: 28px;
+}
+
+.utilsSection h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #334155;
+}
+
+.utilsSection p {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.utilsSection code {
+  background: #f1f5f9;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.utilsSection ul {
+  padding-left: 20px;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.8;
+}

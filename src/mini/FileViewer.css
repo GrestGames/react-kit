@@ -1,0 +1,156 @@
+.fileViewerOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 201;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0);
+    animation: fileViewerBgIn 0.2s ease forwards;
+}
+
+@keyframes fileViewerBgIn {
+    to { background: rgba(0, 0, 0, 0.7); }
+}
+
+/* Content starts scaled down + transparent, waits for .fileViewerReady */
+.fileViewerContent {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 40px;
+    box-sizing: border-box;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.fileViewerReady .fileViewerContent {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* UI chrome fades in together with the content */
+.fileViewerClose,
+.fileViewerArrow,
+.fileViewerFileName {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.fileViewerReady .fileViewerClose,
+.fileViewerReady .fileViewerArrow,
+.fileViewerReady .fileViewerFileName {
+    opacity: 1;
+}
+
+.fileViewerContent img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: auto;
+}
+
+.fileViewerContent iframe {
+    width: 90vw;
+    height: 90vh;
+    border: none;
+    background: white;
+    border-radius: 4px;
+    pointer-events: auto;
+}
+
+.fileViewerClose {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 202;
+    color: white;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 4px 10px;
+    line-height: 1;
+}
+
+.fileViewerClose:hover {
+    opacity: 1 !important;
+}
+
+.fileViewerFileName {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 202;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    max-width: 80%;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.fileViewerArrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 202;
+    color: white;
+    font-size: 36px;
+    cursor: pointer;
+    padding: 12px;
+    line-height: 1;
+    user-select: none;
+}
+
+.fileViewerReady .fileViewerArrow {
+    opacity: 0.6;
+}
+
+.fileViewerArrow:hover {
+    opacity: 1 !important;
+}
+
+.fileViewerArrowLeft {
+    left: 8px;
+}
+
+.fileViewerArrowRight {
+    right: 8px;
+}
+
+.fileViewerOther {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    pointer-events: auto;
+}
+
+.fileViewerOther .fileViewerOtherName {
+    font-size: 16px;
+    max-width: 400px;
+    text-align: center;
+    word-break: break-word;
+}
+
+.fileViewerOther a {
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.fileViewerOther a:hover {
+    background: rgba(255, 255, 255, 0.25);
+}

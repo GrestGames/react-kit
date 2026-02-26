@@ -1,0 +1,56 @@
+
+form {
+    max-height: 0;
+    opacity: 1;
+    transition: opacity 1000ms ease-in;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        max-height: 0;
+    }
+    to {
+        max-height: 2000px;
+    }
+}
+
+.formLoading {
+    height: 200px;
+    text-align: center;
+    padding-top: 60px;
+}
+
+.formSaving {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    z-index: 1000;
+    animation: fadeIn2 0.3s ease-out forwards;
+}
+
+.formSaving .loaderArea {
+    background-color: white;
+    border-radius: 15px;
+    width: 150px;
+    margin: 0 auto 0 auto;
+    padding-left: 40px;
+    padding-right: 40px;
+    border: 1px solid rgba(196, 196, 196, 0.12);
+}
+
+.formSaving .loaderArea .loader {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes fadeIn2 {
+    from {
+        opacity: 0
+    }
+    to {
+        opacity: 1
+    }
+}

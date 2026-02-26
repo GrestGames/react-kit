@@ -1,0 +1,39 @@
+
+.fileUploadDropZone {
+    position: relative;
+    top: 2px;
+    border: 2px dashed #ccc;
+    padding: 5px;
+    min-width: 200px;
+    width: 100%;
+    min-height: 25px;
+    box-sizing: border-box;
+    cursor: pointer;
+    overflow-y: auto
+}
+
+.fileUploadDropZone > table {
+    cursor: auto;
+}
+
+.fileUploadDropZone .dropMessage {
+    padding: 1px;
+    text-align: center;
+}
+
+.fileUploadDropZone .dropMessageMultiple {
+    padding: 25px;
+}
+
+.fileUploadDropZone.disabled {
+    background: rgb(243, 242, 242);
+    cursor: not-allowed;
+}
+
+.fileUploadDropZone tr.error {
+    background-color: #ffeaea;
+}
+
+.fileUploadDropZone table.list > tbody > tr.error:nth-child(even) {
+    background-color: #ffdede;
+}
