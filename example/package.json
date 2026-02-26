@@ -1,5 +1,5 @@
 {
-  "name": "@grest-ts/react-example",
+  "name": "grest-react-kit-example",
   "private": true,
   "type": "module",
   "scripts": {
