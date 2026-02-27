@@ -33,6 +33,20 @@
     background-color: #283750;
 }
 
+/* Logo — displayed before menu items */
+.topMenuLogo {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px 4px 8px;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    cursor: default;
+    user-select: none;
+}
+
 /* Hamburger toggle — hidden on desktop */
 .menuToggle {
     display: none;
@@ -142,6 +156,11 @@
         inset: 0;
         background: rgba(0, 0, 0, 0.4);
         z-index: 9;
+    }
+
+    .topMenuLogo {
+        padding: 8px 4px 8px 12px;
+        font-size: 14px;
     }
 
     .menuToggle {

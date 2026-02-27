@@ -20,6 +20,8 @@ export interface TopMenuItem {
 export interface TopMenuProps {
     items: TopMenuItem[];
     rightItems?: TopMenuItem[];
+    /** Rendered before menu items as a brand/logo element */
+    logo?: ReactNode;
     /** Rendered between main items and right items on desktop (e.g. company selector) */
     extra?: ReactNode;
     /** Rendered at top of mobile dropdown (e.g. company selector) */
@@ -28,7 +30,7 @@ export interface TopMenuProps {
     currentPageTitle?: ReactNode;
 }
 
-export function TopMenu({items, rightItems = [], extra, mobileExtra, currentPageTitle}: TopMenuProps) {
+export function TopMenu({items, rightItems = [], logo, extra, mobileExtra, currentPageTitle}: TopMenuProps) {
     const isMobile = useIsMobile();
     const [menuOpen, setMenuOpen] = useState(false);
     const [submenusHidden, setSubmenusHidden] = useState(false);
@@ -133,6 +135,9 @@ export function TopMenu({items, rightItems = [], extra, mobileExtra, currentPage
         {isMobile && menuOpen && <div className="topMenuBackdrop" onClick={() => setMenuOpen(false)}/>}
 
         <div className="topMenu">
+
+            {/* Logo — always visible */}
+            {logo && <span className="topMenuLogo">{logo}</span>}
 
             {/* Hamburger toggle (visible only on mobile via CSS) */}
             <span className="menuToggle" onClick={() => setMenuOpen(!menuOpen)}>&#9776;</span>
