@@ -136,8 +136,8 @@ export function TopMenu({items, rightItems = [], logo, extra, mobileExtra, curre
 
         <div className="topMenu">
 
-            {/* Logo — always visible */}
-            {logo && <span className="topMenuLogo">{logo}</span>}
+            {/* Mobile: logo + hamburger + page title in top bar */}
+            {isMobile && logo && <span className="topMenuLogo">{logo}</span>}
 
             {/* Hamburger toggle (visible only on mobile via CSS) */}
             <span className="menuToggle" onClick={() => setMenuOpen(!menuOpen)}>&#9776;</span>
@@ -152,6 +152,9 @@ export function TopMenu({items, rightItems = [], logo, extra, mobileExtra, curre
 
             {/* Menu items (desktop: inline, mobile: vertical dropdown) */}
             <div className={"topMenuItems" + (isMobile && menuOpen ? " topMenuOpen" : "") + (submenusHidden ? " submenusHidden" : "")}>
+
+                {/* Desktop: logo inside the flex row */}
+                {!isMobile && logo && <span className="topMenuLogo">{logo}</span>}
 
                 {/* Mobile extra content (e.g. company selector) */}
                 {isMobile && mobileExtra && <div className="topMenuCompanyRow">{mobileExtra}</div>}

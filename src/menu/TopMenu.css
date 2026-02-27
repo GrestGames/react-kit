@@ -29,7 +29,7 @@
     background-color: #2b384e;
 }
 
-.topMenu span:hover {
+.topMenu span.button:hover {
     background-color: #283750;
 }
 
