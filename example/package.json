@@ -12,11 +12,13 @@
     "@grest-ts/schema-file": "^0.0.17",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-datepicker": "^9.1.0"
+    "react-datepicker": "^9.1.0",
+    "three": "^0.184.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.184.0",
     "@vitejs/plugin-react": "^4.3.0",
     "typescript": "^5.9.3",
     "vite": "^6.0.0"

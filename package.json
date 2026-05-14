@@ -16,7 +16,11 @@
     "@grest-ts/schema-file": ">=0.0.17",
     "react-datepicker": ">=7"
   },
+  "dependencies": {
+    "three": "^0.184.0"
+  },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "@types/three": "^0.184.0"
   }
 }
