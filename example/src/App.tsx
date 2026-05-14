@@ -5,7 +5,6 @@ import LayoutPage from './pages/LayoutPage';
 import FormPage from './pages/FormPage';
 import OtherPage from './pages/OtherPage';
 import UtilsPage from './pages/UtilsPage';
-import LoadersPage from './pages/LoadersPage';
 
 const sections = [
   { key: 'inputs', label: 'Inputs', component: InputsPage },
@@ -13,7 +12,6 @@ const sections = [
   { key: 'layout', label: 'Layout', component: LayoutPage },
   { key: 'form', label: 'Form & Grid', component: FormPage },
   { key: 'other', label: 'Other UI', component: OtherPage },
-  { key: 'loaders', label: 'Loaders', component: LoadersPage },
   { key: 'utils', label: 'Utilities', component: UtilsPage },
 ] as const;
 

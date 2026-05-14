@@ -12,6 +12,9 @@ import tabsBasicSource from '../examples/layout/TabsBasic.tsx?raw';
 import LoadingPopupBasic from '../examples/layout/LoadingPopupBasic';
 import loadingPopupBasicSource from '../examples/layout/LoadingPopupBasic.tsx?raw';
 
+import MainAreaJarvis from '../examples/layout/MainAreaJarvis';
+import mainAreaJarvisSource from '../examples/layout/MainAreaJarvis.tsx?raw';
+
 export default function LayoutPage() {
   return (
     <>
@@ -31,6 +34,10 @@ export default function LayoutPage() {
 
       <ShowCase title="LoadingPopup, BatchProgressPopup" source={loadingPopupBasicSource}>
         <LoadingPopupBasic />
+      </ShowCase>
+
+      <ShowCase title="MainArea (showJarvis)" source={mainAreaJarvisSource}>
+        <MainAreaJarvis />
       </ShowCase>
     </>
   );

@@ -1,0 +1,15 @@
+/* position:relative via a class (not inline style) so it survives the inline-style
+   mutation MyPage's disableMainArea/enableMainArea does on .main */
+.mainWithJarvis {
+    position: relative;
+}
+
+.jarvisDesktopOrb {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 96px;
+    height: 96px;
+    pointer-events: none;
+    z-index: 50;
+}

@@ -76,11 +76,6 @@ export {TopMenu, type TopMenuItem, type TopMenuSubItem, type TopMenuProps} from 
 // Jarvis orb (vendored, see src/jarvis/LICENSE)
 export * from "./jarvis";
 
-// Step loader
-export * from "./loader/useStepLoader";
-export * from "./loader/LoaderVariant";
-export {ClassicLoader} from "./loader/variants/ClassicLoader";
-
 // Helpers
 export * from "./helpers/useAsyncState";
 export * from "./helpers/useAsyncEffect";
