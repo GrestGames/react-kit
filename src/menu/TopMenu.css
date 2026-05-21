@@ -18,8 +18,9 @@
 .topMenu .button {
     color: var(--rk-topmenu-text);
     display: inline-block;
+    box-sizing: content-box;
     height: 20px;
-    margin: 1px 0px 1px 1px;
+    margin: 0 0 0 1px;
     padding: 8px;
     cursor: pointer;
 }
