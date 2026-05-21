@@ -1,4 +1,4 @@
-import { ActionMenu, PillButton, Separator } from '@grest-ts/react';
+import { ActionMenu, PillButton, Separator, toast } from '@grest-ts/react';
 import { useState } from 'react';
 
 export default function ActionMenuBasic() {
@@ -10,9 +10,13 @@ export default function ActionMenuBasic() {
         <div className="demoLabel">ActionMenu (click the dots):</div>
         <div style={{ display: 'inline-block', position: 'relative' }}>
           <ActionMenu items={[
-            { label: 'Edit', onClick: () => alert('Edit clicked') },
-            { label: 'Duplicate', onClick: () => alert('Duplicate clicked') },
-            { label: 'Delete', onClick: () => alert('Delete clicked'), danger: true },
+            { label: 'Actions', info: true },
+            { label: 'Edit', onClick: () => toast.info('Edit clicked') },
+            { label: 'Duplicate', onClick: () => toast.success('Duplicated') },
+            { label: 'Sync (async)', keepOpen: true, onClick: async () => { await new Promise(r => setTimeout(r, 1200)); toast.success('Synced'); } },
+            { separator: true },
+            { label: 'Archive', warning: true, onClick: () => toast.warning('Archived') },
+            { label: 'Delete', danger: true, onClick: () => toast.error('Deleted') },
           ]} />
         </div>
       </div>
@@ -23,7 +27,7 @@ export default function ActionMenuBasic() {
             {key.charAt(0).toUpperCase() + key.slice(1)}
           </PillButton>
         ))}
-        <PillButton dotted onClick={() => alert('Dotted!')}>Dotted</PillButton>
+        <PillButton dotted onClick={() => toast('Dotted pill clicked')}>Dotted</PillButton>
         <PillButton bold>Bold</PillButton>
         <PillButton selected>Selected</PillButton>
         <PillButton active activeColor="#22c55e">Custom color</PillButton>

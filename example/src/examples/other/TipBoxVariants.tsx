@@ -1,4 +1,4 @@
-import { TipBox, SuccessBox, ErrorBox, WarningBox } from '@grest-ts/react';
+import { TipBox, SuccessBox, ErrorBox, WarningBox, toast } from '@grest-ts/react';
 
 export default function TipBoxVariants() {
   return (
@@ -7,7 +7,7 @@ export default function TipBoxVariants() {
       <SuccessBox>This is a <b>SuccessBox</b> — great for confirmations.</SuccessBox>
       <WarningBox>This is a <b>WarningBox</b> — draw attention to something.</WarningBox>
       <ErrorBox>This is an <b>ErrorBox</b> — show errors or critical info.</ErrorBox>
-      <TipBox onClick={() => alert('Dismissed!')}>TipBox with <b>onClick</b> — click to dismiss.</TipBox>
+      <TipBox onClick={() => toast('Dismissed')}>TipBox with <b>onClick</b> — click to dismiss.</TipBox>
     </div>
   );
 }
