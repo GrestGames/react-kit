@@ -8,7 +8,7 @@ export default function ActionMenuBasic() {
     <>
       <div>
         <div>ActionMenu (click the dots):</div>
-        <div>
+        <div className="demoRow">
           <ActionMenu items={[
             { label: 'Actions', info: true },
             { label: 'Edit', onClick: () => toast.info('Edit clicked') },
@@ -17,6 +17,11 @@ export default function ActionMenuBasic() {
             { separator: true },
             { label: 'Archive', warning: true, onClick: () => toast.warning('Archived') },
             { label: 'Delete', danger: true, onClick: () => toast.error('Deleted') },
+          ]} />
+          <ActionMenu trigger="⚙" triggerColor="#7c5cbf" title="Settings" align="center" position="above" items={[
+            { label: 'Custom trigger, opens above, centered', info: true },
+            { label: 'Preferences', onClick: () => toast('Preferences') },
+            { label: 'Sign out', danger: true, onClick: () => toast.error('Signed out') },
           ]} />
         </div>
       </div>

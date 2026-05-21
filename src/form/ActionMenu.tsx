@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect, KeyboardEvent, CSSProperties} from "react";
+import {useState, useRef, useEffect, KeyboardEvent, CSSProperties, ReactNode} from "react";
 import {createPortal} from "react-dom";
 import "./ActionMenu.css";
 
@@ -20,12 +20,25 @@ export interface ActionMenuItem {
 
 const DANGER_CONFIRM_WINDOW_MS = 2000;
 
+interface ActionMenuProps {
+    items: ActionMenuItem[];
+    align?: "left" | "right" | "center";
+    position?: "below" | "above";
+    /** Trigger content; defaults to the ⋯ glyph. Visual only — the menu owns the
+     *  click/keyboard interaction, so don't pass an interactive element. */
+    trigger?: ReactNode;
+    /** Color of the default trigger. */
+    triggerColor?: string;
+    /** title attr on the trigger. */
+    title?: string;
+}
+
 /**
  * Trigger and items are <div role="…"> rather than <button>/<a> so they inherit
  * none of react-kit's global element styling — the menu is styled solely by its
  * own classes and can't be broken by changes to the base button/anchor rules.
  */
-export function ActionMenu({items, align = "right"}: { items: ActionMenuItem[]; align?: "left" | "right" }) {
+export function ActionMenu({items, align = "right", position = "below", trigger = "⋯", triggerColor, title = "Actions"}: ActionMenuProps) {
     const [open, setOpen] = useState(false);
     const [rect, setRect] = useState<DOMRect | null>(null);
     const [dark, setDark] = useState(false);
@@ -83,14 +96,19 @@ export function ActionMenu({items, align = "right"}: { items: ActionMenuItem[]; 
     };
 
     const posStyle: CSSProperties = rect ? {
-        top: rect.bottom + 4,
-        ...(align === "right" ? {right: window.innerWidth - rect.right} : {left: rect.left}),
+        ...(position === "above"
+            ? {bottom: window.innerHeight - rect.top + 4}
+            : {top: rect.bottom + 4}),
+        ...(align === "right" ? {right: window.innerWidth - rect.right}
+            : align === "center" ? {left: rect.left + rect.width / 2, transform: "translateX(-50%)"}
+            : {left: rect.left}),
     } : {};
 
     return <>
         <div ref={triggerRef} className="tv2ActionMenuBtn" role="button" tabIndex={0}
-             aria-haspopup="menu" aria-expanded={open} title="Actions"
-             onClick={() => open ? close() : openMenu()} onKeyDown={onTriggerKey}>⋯</div>
+             aria-haspopup="menu" aria-expanded={open} title={title}
+             style={triggerColor ? {color: triggerColor} : undefined}
+             onClick={() => open ? close() : openMenu()} onKeyDown={onTriggerKey}>{trigger}</div>
         {open && rect && createPortal(
             <div className={dark ? "rk-dark" : undefined}>
                 <div className="tv2ActionMenuBackdrop" onClick={close}/>
