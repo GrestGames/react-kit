@@ -9,17 +9,17 @@ export default function TabsBasic() {
         {
           urlKey: 'overview',
           title: 'Overview',
-          body: () => <div style={{ padding: 16 }}>This is the <b>Overview</b> tab content.</div>,
+          body: () => <div>This is the <b>Overview</b> tab content.</div>,
         },
         {
           urlKey: 'details',
           title: 'Details',
-          body: () => <div style={{ padding: 16 }}>Here are the <b>Details</b>. Tabs use URL params for persistence.</div>,
+          body: () => <div>Here are the <b>Details</b>. Tabs use URL params for persistence.</div>,
         },
         {
           urlKey: 'settings',
           title: 'Settings',
-          body: () => <div style={{ padding: 16 }}><b>Settings</b> tab. You can control visibility with <code>isVisible</code>.</div>,
+          body: () => <div><b>Settings</b> tab. You can control visibility with <code>isVisible</code>.</div>,
         },
       ]}
     />

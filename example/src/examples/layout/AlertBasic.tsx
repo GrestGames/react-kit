@@ -7,7 +7,7 @@ export default function AlertBasic() {
 
   return (
     <>
-      <div className="demoRow">
+      <div>
         <Button onClick={() => setShown('alert')}>Show Alert</Button>
         <Button onClick={() => setShown('info')}>Show InfoAlert</Button>
         <Button onClick={() => setShown('warning')}>Show WarningAlert</Button>

@@ -6,9 +6,9 @@ export default function ActionMenuBasic() {
 
   return (
     <>
-      <div className="demoSection">
-        <div className="demoLabel">ActionMenu (click the dots):</div>
-        <div style={{ display: 'inline-block', position: 'relative' }}>
+      <div>
+        <div>ActionMenu (click the dots):</div>
+        <div>
           <ActionMenu items={[
             { label: 'Actions', info: true },
             { label: 'Edit', onClick: () => toast.info('Edit clicked') },
@@ -21,7 +21,7 @@ export default function ActionMenuBasic() {
         </div>
       </div>
       <Separator label="PillButton" />
-      <div className="demoRow">
+      <div>
         {['all', 'active', 'archived'].map(key => (
           <PillButton key={key} active={active === key} onClick={() => setActive(key)}>
             {key.charAt(0).toUpperCase() + key.slice(1)}
@@ -33,7 +33,7 @@ export default function ActionMenuBasic() {
         <PillButton active activeColor="#22c55e">Custom color</PillButton>
       </div>
       <Separator label="separator" />
-      <div className="demoLabel">The lines above are the Separator component.</div>
+      <div>The lines above are the Separator component.</div>
     </>
   );
 }

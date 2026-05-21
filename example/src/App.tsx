@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { TopMenu } from '@grest-ts/react';
 import InputsPage from './pages/InputsPage';
 import TextPage from './pages/TextPage';
 import LayoutPage from './pages/LayoutPage';
@@ -26,22 +27,19 @@ export default function App() {
 
   return (
     <div className="app">
-      <nav className="sidebar">
-        <div className="sidebarTitle">@grest-ts/react</div>
-        {sections.map(s => (
-          <div
-            key={s.key}
-            className={'sidebarItem' + (active === s.key ? ' sidebarItemActive' : '')}
-            onClick={() => setActive(s.key)}
-          >
-            {s.label}
-          </div>
-        ))}
-        <div className="sidebarItem themeToggle" onClick={() => setDark(d => !d)}>
-          {dark ? '☀ Light theme' : '🌙 Dark theme'}
-        </div>
-      </nav>
-      <main className="main content">
+      <TopMenu
+        logo="@grest-ts/react"
+        items={sections.map(s => ({
+          title: s.label,
+          isActive: active === s.key,
+          onClick: () => setActive(s.key),
+        }))}
+        rightItems={[{
+          title: dark ? '☀' : '🌙',
+          onClick: () => setDark(d => !d),
+        }]}
+      />
+      <main className="content">
         <Page />
       </main>
     </div>
