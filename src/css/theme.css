@@ -17,6 +17,7 @@
 
     --rk-bg-body: #F1F4F9;
     --rk-bg-surface: #ffffff;
+    --rk-bg-subtle: #fafbfc;
     --rk-bg-raised: #f5f6fa;
     --rk-bg-hover: #f0f2f5;
     --rk-bg-active: #e8ecf1;
@@ -103,6 +104,7 @@
 .rk-dark {
     --rk-bg-body: #1a1b26;
     --rk-bg-surface: #1e1e2e;
+    --rk-bg-subtle: #1c1d2b;
     --rk-bg-raised: #181825;
     --rk-bg-hover: #1f2335;
     --rk-bg-active: #292e42;

@@ -25,7 +25,7 @@ table.grid th {
     text-transform: uppercase;
     letter-spacing: 0.3px;
     color: var(--rk-text-secondary);
-    background: var(--rk-bg-raised);
+    background: var(--rk-bg-subtle);
     white-space: nowrap;
 }
 

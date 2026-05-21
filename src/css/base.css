@@ -77,7 +77,7 @@ table.list > thead > tr > th {
 }
 
 table.list > tbody > tr:nth-child(even) {
-    background-color: var(--rk-bg-raised);
+    background-color: var(--rk-bg-subtle);
 }
 
 table.list > tbody > tr:hover {
