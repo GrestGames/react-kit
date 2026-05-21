@@ -39,6 +39,6 @@ export function IconButton({icon, onClick, title, size, color, disabled, variant
     return <button type="button" onClick={handleClick} title={title} disabled={disabled}
                    className={cls} style={Object.keys(style).length ? style : undefined}
                    aria-busy={loading || undefined}>
-        {loading ? <span className="rkIconButtonSpinner" aria-hidden>⟳</span> : icon}
+        {loading ? <span className="rkIconButtonSpinner" aria-hidden>⟳</span> : <span className="rkIconButtonIcon">{icon}</span>}
     </button>;
 }
