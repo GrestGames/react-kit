@@ -1,7 +1,7 @@
 @import "./theme.css";
 
 html {
-    color: var(--rk-text, #2c3345);
+    color: var(--rk-text);
     font-size: 13px;
     line-height: 1.5;
     overflow-y: scroll;
@@ -10,7 +10,7 @@ html {
 body {
     margin: 0;
     padding: 0;
-    background: var(--rk-bg-body, #F1F4F9);
+    background: var(--rk-bg-body);
 }
 
 body, textarea, input, button, select {
@@ -68,7 +68,7 @@ table.list > thead > tr > th {
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.3px;
-    color: var(--rk-text-secondary, #6b7280);
+    color: var(--rk-text-secondary);
     overflow: hidden;
     white-space: nowrap;
     text-align: left;
@@ -77,19 +77,19 @@ table.list > thead > tr > th {
 }
 
 table.list > tbody > tr:nth-child(even) {
-    background-color: var(--rk-bg-raised, #fafbfc);
+    background-color: var(--rk-bg-raised);
 }
 
 table.list > tbody > tr:hover {
-    background-color: var(--rk-bg-hover, #f0f2f5) !important;
+    background-color: var(--rk-bg-hover) !important;
 }
 
 table.list > tbody > tr:hover th {
-    background-color: var(--rk-bg-surface, white);
+    background-color: var(--rk-bg-surface);
 }
 
 table.list > tbody > tr > td {
-    border-bottom: 1px solid var(--rk-border-light, #eef0f3);
+    border-bottom: 1px solid var(--rk-border-light);
 }
 
 table.form > tbody > tr > td:nth-child(odd) {
@@ -117,14 +117,14 @@ table.shrinked td {
     margin: 10px 0 5px 0;
     padding: 10px;
     border: 0;
-    background-color: var(--rk-bg-surface, white);
+    background-color: var(--rk-bg-surface);
     border-radius: 6px;
-    box-shadow: var(--rk-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04));
+    box-shadow: var(--rk-shadow-sm);
     position: relative;
 }
 
 .box {
-    border: 1px solid var(--rk-border, #e8ecf1);
+    border: 1px solid var(--rk-border);
     border-radius: 6px;
     padding: 10px;
 }
@@ -134,24 +134,24 @@ hr {
     height: 0;
     width: calc(100% - 20px);
     border: 0;
-    border-top: 1px solid var(--rk-border, #e8ecf1);
+    border-top: 1px solid var(--rk-border);
     margin: 10px
 }
 
 .gray {
-    color: var(--rk-text-muted, gray);
+    color: var(--rk-text-muted);
 }
 
 .red {
-    color: var(--rk-danger, #d63031);
+    color: var(--rk-danger);
 }
 
 .orange {
-    color: var(--rk-warning, #cc9a00);
+    color: var(--rk-warning);
 }
 
 .green {
-    color: var(--rk-success, #27ae60);
+    color: var(--rk-success);
 }
 
 .brown {
@@ -175,7 +175,7 @@ hr {
 }
 
 .blue {
-    color: var(--rk-info, #2d7dd2)
+    color: var(--rk-info)
 }
 
 .tag {
@@ -192,8 +192,8 @@ hr {
 }
 
 .tag-gray {
-    background: var(--rk-bg-active, #f0f0f0);
-    color: var(--rk-text-muted, #888);
+    background: var(--rk-bg-active);
+    color: var(--rk-text-muted);
 }
 
 .tag-orange {
@@ -286,7 +286,7 @@ hr {
 
     table.form > tbody > tr {
         display: block;
-        border-bottom: 1px solid var(--rk-border, #f0f0f0);
+        border-bottom: 1px solid var(--rk-border);
         padding: 2px 0;
     }
 
@@ -301,7 +301,7 @@ hr {
         padding-top: 6px;
         font-weight: bold;
         font-size: 11px;
-        color: var(--rk-text-muted, gray);
+        color: var(--rk-text-muted);
     }
 
     /* DeleteObjectSection table inside forms */

@@ -1,3 +1,5 @@
+@import "../../css/theme.css";
+
 .fileGrid {
 
 }
@@ -5,7 +7,7 @@
 .fileGrid .fileBox {
     margin: 5px;
     padding: 5px;
-    border: 1px solid var(--rk-border, rgba(213, 213, 213, 0.52));
+    border: 1px solid var(--rk-border);
     border-radius: 10px;
     text-align: center;
     overflow: hidden;

@@ -1,3 +1,5 @@
+@import "../../css/theme.css";
+
 /* ── Mobile sort bar ───────────────────────────────── */
 
 .gridMobileSort {
@@ -20,8 +22,8 @@
     line-height: 1;
     text-align: center;
     color: inherit;
-    background: var(--rk-bg-surface, white);
-    border: 1px solid var(--rk-border, #dce1e4);
+    background: var(--rk-bg-surface);
+    border: 1px solid var(--rk-border);
     border-radius: 5px;
     cursor: pointer;
 }
@@ -35,12 +37,12 @@
 
 .gridCard {
     padding: 8px 10px;
-    border-bottom: 1px solid var(--rk-border-light, #eef0f3);
-    background: var(--rk-bg-surface, white);
+    border-bottom: 1px solid var(--rk-border-light);
+    background: var(--rk-bg-surface);
 }
 
 .gridCard:nth-child(even) {
-    background-color: var(--rk-bg-raised, #fafbfc);
+    background-color: var(--rk-bg-raised);
 }
 
 /* ── Card title ────────────────────────────────────── */
@@ -78,7 +80,7 @@
 .gridCardsLoadMore {
     padding: 12px;
     text-align: center;
-    color: var(--rk-accent, #12AFCB);
+    color: var(--rk-accent);
     cursor: pointer;
 }
 

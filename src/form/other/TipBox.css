@@ -1,3 +1,4 @@
+@import "../../css/theme.css";
 
 .tipBase {
     display: flex;
@@ -6,7 +7,7 @@
     border: 1px solid color-mix(in srgb, var(--tip-color) 40%, transparent);
     background-color: color-mix(in srgb, var(--tip-color) 11%, transparent);
     color: var(--tip-color);
-    border-radius: var(--rk-radius, 5px);
+    border-radius: var(--rk-radius);
 }
 
 .tipBase .tipText {
@@ -30,17 +31,17 @@
 }
 
 .hintTip {
-    --tip-color: var(--rk-info, #40a7e7);
+    --tip-color: var(--rk-info);
 }
 
 .infoTip {
-    --tip-color: var(--rk-success, #51e73a);
+    --tip-color: var(--rk-success);
 }
 
 .warningTip {
-    --tip-color: var(--rk-warning, #e7aa3a);
+    --tip-color: var(--rk-warning);
 }
 
 .errorTip {
-    --tip-color: var(--rk-danger, #e73a3a);
+    --tip-color: var(--rk-danger);
 }

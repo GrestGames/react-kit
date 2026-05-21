@@ -1,11 +1,13 @@
+@import "../css/theme.css";
+
 .panel {
     position: absolute;
     left: calc(50%);
     transform: translate(-50%, 0);
     min-width: 400px;
-    background-color: var(--rk-bg-surface, white);
+    background-color: var(--rk-bg-surface);
     border-radius: 8px;
-    box-shadow: var(--rk-shadow, 0 4px 24px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08));
+    box-shadow: var(--rk-shadow);
     opacity: 1;
     transition: opacity 200ms ease-out, top 100ms ease-out;
     top: 30px;
@@ -27,8 +29,8 @@
 
 .panel .panelTop {
     display: flex;
-    background-color: var(--rk-bg-raised, #f5f6fa);
-    border-bottom: 1px solid var(--rk-border, #e8ecf1);
+    background-color: var(--rk-bg-raised);
+    border-bottom: 1px solid var(--rk-border);
 }
 
 .panel .panelTitleArea {
@@ -40,11 +42,11 @@
 }
 
 .panel .panelTitle {
-    color: var(--rk-text, #2c3345);
+    color: var(--rk-text);
 }
 
 .panel .panelSubTitle {
-    color: var(--rk-text-secondary, #636e72);
+    color: var(--rk-text-secondary);
     font-weight: normal;
 }
 
@@ -57,21 +59,21 @@
     height: 28px;
     margin: 14px;
     padding: 0;
-    color: var(--rk-text-secondary, #6b7280);
+    color: var(--rk-text-secondary);
     font-size: 16px;
     line-height: 1;
     cursor: pointer;
-    border-radius: var(--rk-radius, 5px);
+    border-radius: var(--rk-radius);
     background-color: transparent;
 }
 
 .panel .closeButton:hover {
-    background-color: var(--rk-bg-hover, #f0f2f5);
-    color: var(--rk-text, #2c3345);
+    background-color: var(--rk-bg-hover);
+    color: var(--rk-text);
 }
 
 .panel .closeButton:active {
-    background-color: var(--rk-bg-active, #e8ecf1);
+    background-color: var(--rk-bg-active);
 }
 
 
@@ -93,9 +95,9 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background: var(--rk-bg-surface, white);
+    background: var(--rk-bg-surface);
     border-radius: 8px;
-    box-shadow: var(--rk-shadow-lg, 0 4px 24px rgba(0, 0, 0, 0.18));
+    box-shadow: var(--rk-shadow-lg);
     padding: 16px;
 }
 
@@ -118,13 +120,13 @@
 }
 
 .confirmDialogCancel {
-    background-color: var(--rk-bg-raised, #f5f6fa);
-    color: var(--rk-text, #2c3345);
-    border: 1px solid var(--rk-border, #e0e0e0);
+    background-color: var(--rk-bg-raised);
+    color: var(--rk-text);
+    border: 1px solid var(--rk-border);
 }
 
 .confirmDialogCancel:hover {
-    background-color: var(--rk-bg-hover, #ebedf2);
+    background-color: var(--rk-bg-hover);
 }
 
 /* ── Mobile ────────────────────────────────────────── */

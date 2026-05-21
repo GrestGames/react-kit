@@ -1,11 +1,13 @@
+@import "../css/theme.css";
+
 .pillBtn {
     display: inline-block;
     padding: 3px 10px;
     margin: 2px;
     border-radius: 12px;
-    border: 1px solid var(--rk-border, #ddd);
-    background: var(--rk-bg-surface, #fff);
-    color: var(--rk-text-secondary, #555);
+    border: 1px solid var(--rk-border);
+    background: var(--rk-bg-surface);
+    color: var(--rk-text-secondary);
     font: inherit;
     font-weight: 400;
     cursor: pointer;
@@ -15,26 +17,26 @@
 }
 
 .pillBtn:hover {
-    background: var(--rk-bg-hover, #f0f0f0);
-    color: var(--rk-text, #333);
+    background: var(--rk-bg-hover);
+    color: var(--rk-text);
 }
 
 .pillBtn.pillDotted {
     border-style: dashed;
     background: transparent;
-    color: var(--rk-text-muted, #888);
+    color: var(--rk-text-muted);
 }
 
 .pillBtn.pillDotted:hover {
-    background: var(--rk-bg-hover, #f5f5f5);
-    color: var(--rk-text-secondary, #555);
-    border-color: var(--rk-accent, #0d6efd);
+    background: var(--rk-bg-hover);
+    color: var(--rk-text-secondary);
+    border-color: var(--rk-accent);
 }
 
 .pillBtn.pillActive {
-    background: var(--rk-accent, #0d6efd);
-    color: var(--rk-text-on-accent, #fff);
-    border-color: var(--rk-accent, #0d6efd);
+    background: var(--rk-accent);
+    color: var(--rk-text-on-accent);
+    border-color: var(--rk-accent);
 }
 
 .pillBtn.pillActive:hover {
@@ -42,9 +44,9 @@
 }
 
 .pillBtn.pillSelected {
-    background: var(--rk-bg-active, #f0f4ff);
-    border-color: var(--rk-accent, #0d6efd);
-    color: var(--rk-accent, #0d6efd);
+    background: var(--rk-bg-active);
+    border-color: var(--rk-accent);
+    color: var(--rk-accent);
     font-weight: 600;
 }
 

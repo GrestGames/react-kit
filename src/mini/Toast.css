@@ -1,3 +1,5 @@
+@import "../css/theme.css";
+
 .rkToaster {
     position: fixed;
     z-index: 9999;
@@ -35,36 +37,36 @@
 }
 
 .rkToast {
-    --toast-color: var(--rk-accent, #12AFCB);
+    --toast-color: var(--rk-accent);
     pointer-events: auto;
     cursor: pointer;
     min-width: 220px;
-    background: var(--rk-bg-surface, #fff);
-    color: var(--rk-text, #2c3345);
-    border: 1px solid var(--rk-border, #e8ecf1);
+    background: var(--rk-bg-surface);
+    color: var(--rk-text);
+    border: 1px solid var(--rk-border);
     border-left: 4px solid var(--toast-color);
-    border-radius: var(--rk-radius, 5px);
-    box-shadow: var(--rk-shadow-lg, 0 12px 48px rgba(0, 0, 0, 0.12));
+    border-radius: var(--rk-radius);
+    box-shadow: var(--rk-shadow-lg);
     padding: 10px 14px;
-    font-size: var(--rk-font-size-md, 13px);
+    font-size: var(--rk-font-size-md);
     line-height: 1.4;
     animation: rkToastIn 0.18s ease-out;
 }
 
 .rkToast-info {
-    --toast-color: var(--rk-info, #2d7dd2);
+    --toast-color: var(--rk-info);
 }
 
 .rkToast-success {
-    --toast-color: var(--rk-success, #27ae60);
+    --toast-color: var(--rk-success);
 }
 
 .rkToast-warning {
-    --toast-color: var(--rk-warning, #cc9a00);
+    --toast-color: var(--rk-warning);
 }
 
 .rkToast-error {
-    --toast-color: var(--rk-danger, #d63031);
+    --toast-color: var(--rk-danger);
 }
 
 @keyframes rkToastIn {
