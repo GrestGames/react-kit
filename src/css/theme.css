@@ -69,11 +69,18 @@
     --rk-topmenu-text-bright: #c5d0e0;
     --rk-topmenu-text-active: #ffffff;
 
+    --rk-btn-default: var(--rk-accent);
+    --rk-btn-default-hover: var(--rk-accent-hover);
     --rk-btn-third: #beb16f;
     --rk-btn-third-hover: #c2b674;
     --rk-btn-submit: #22BAA0;
     --rk-btn-submit-hover: #26d0b3;
-    --rk-text-on-warning: #241a00;
+    --rk-btn-secondary: #7a6fbe;
+    --rk-btn-secondary-hover: #887cd2;
+    --rk-btn-warning: #f2ca4c;
+    --rk-btn-warning-hover: #ffd660;
+    --rk-btn-danger: #f25656;
+    --rk-btn-danger-hover: #fd6565;
 
     --rk-checkbox-changed-border: #c5a83d;
     --rk-checkbox-changed-border-hover: #a07a20;

@@ -4,7 +4,7 @@ button {
     cursor: pointer;
     padding: 8px;
     color: var(--rk-text-on-accent);
-    background-color: var(--rk-accent);
+    background-color: var(--rk-btn-default);
     outline: none !important;
     border: 1px solid var(--rk-border);
     margin: 2px 4px 2px 4px;
@@ -17,7 +17,7 @@ button {
 }
 
 button:hover {
-    background-color: var(--rk-accent-hover);
+    background-color: var(--rk-btn-default-hover);
 }
 
 button.third {
@@ -29,13 +29,12 @@ button.third:hover {
 }
 
 button.secondary {
-    background-color: var(--rk-bg-active);
-    color: var(--rk-text);
-    border-color: var(--rk-border-strong);
+    background-color: var(--rk-btn-secondary);
+    color: var(--rk-text-on-accent);
 }
 
 button.secondary:hover {
-    background-color: var(--rk-bg-hover);
+    background-color: var(--rk-btn-secondary-hover);
 }
 
 button.formSubmit {
@@ -43,20 +42,21 @@ button.formSubmit {
 }
 
 button.warning {
-    background-color: var(--rk-warning);
-    color: var(--rk-text-on-warning);
+    background-color: var(--rk-btn-warning);
+    color: var(--rk-text-on-accent);
 }
 
 button.warning:hover {
-    background-color: color-mix(in srgb, var(--rk-warning) 85%, #ffffff);
+    background-color: var(--rk-btn-warning-hover);
 }
 
 button.danger {
-    background-color: var(--rk-danger);
+    background-color: var(--rk-btn-danger);
+    color: var(--rk-text-on-accent);
 }
 
 button.danger:hover {
-    background-color: color-mix(in srgb, var(--rk-danger) 85%, #ffffff);
+    background-color: var(--rk-btn-danger-hover);
 }
 
 button.addRowButton {
@@ -95,13 +95,13 @@ table.grid button:hover {
 }
 
 table.grid button.danger {
-    background-color: var(--rk-danger);
+    background-color: var(--rk-btn-danger);
     color: var(--rk-text-on-accent);
 }
 
 table.grid button.warning {
-    background-color: var(--rk-warning);
-    color: var(--rk-text-on-warning);
+    background-color: var(--rk-btn-warning);
+    color: var(--rk-text-on-accent);
 }
 
 
