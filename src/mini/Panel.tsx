@@ -10,10 +10,11 @@ export interface Props {
     onClose?: () => void;
     onClickTitle?: () => void
     zIndex?: number,
-    style?: CSSProperties
+    style?: CSSProperties,
+    className?: string
 }
 
-export function Panel({children, title, subTitle, width, zIndex, style, onClose, onClickTitle}: Props) {
+export function Panel({children, title, subTitle, width, zIndex, style, className, onClose, onClickTitle}: Props) {
     const [isDrawnOnce, setIsDrawnOnce] = React.useState(false);
     useEffect(() => {
         setTimeout(() => {
@@ -23,7 +24,7 @@ export function Panel({children, title, subTitle, width, zIndex, style, onClose,
 
     useDisableMainPage();
 
-    return <div className={"panel" + (isDrawnOnce ? " " : " panelInit")} style={{width: width, zIndex: zIndex || 100, ...style}}>
+    return <div className={"panel" + (isDrawnOnce ? " " : " panelInit") + (className ? " " + className : "")} style={{width: width, zIndex: zIndex || 100, ...style}}>
 
         <div className="panelTop">
             {title && <div className="panelTitleArea" onClick={onClickTitle} style={{cursor: onClickTitle ? "pointer" : undefined}}>
