@@ -1,0 +1,8 @@
+{
+  "steps": [
+    {"kind": "bash:setup", "bash": "npm install"},
+    {"kind": "bash:setup", "bash": "npm install", "dir": "example"},
+    {"kind": "frontend", "name": "demo", "bash": "npm run dev", "dir": "example", "port": 5173, "healthcheck": {"url": "http://localhost:5173/", "timeout": "90s"}, "expose": true}
+  ],
+  "prBranch": "master"
+}

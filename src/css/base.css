@@ -1,8 +1,8 @@
 @import "./theme.css";
 
 html {
-    color: var(--rk-text, #2c3345);
-    font-size: 13px;
+    color: var(--rk-text);
+    font-size: var(--rk-font-size-normal);
     line-height: 1.5;
     overflow-y: scroll;
 }
@@ -10,11 +10,11 @@ html {
 body {
     margin: 0;
     padding: 0;
-    background: var(--rk-bg-body, #F1F4F9);
+    background: var(--rk-bg-body);
 }
 
 body, textarea, input, button, select {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    font-family: var(--rk-font);
 }
 
 .page {
@@ -35,8 +35,8 @@ a {
 }
 
 a:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    border-radius: 3px;
+    background-color: var(--rk-hover-overlay);
+    border-radius: var(--rk-radius-sm);
     padding: 2px 0 2px 0;
 }
 
@@ -65,10 +65,10 @@ table tr td, table tr th {
 
 table.list > thead > tr > th {
     font-weight: 600;
-    font-size: 11px;
+    font-size: var(--rk-font-size-mini);
     text-transform: uppercase;
     letter-spacing: 0.3px;
-    color: var(--rk-text-secondary, #6b7280);
+    color: var(--rk-text-secondary);
     overflow: hidden;
     white-space: nowrap;
     text-align: left;
@@ -77,19 +77,19 @@ table.list > thead > tr > th {
 }
 
 table.list > tbody > tr:nth-child(even) {
-    background-color: var(--rk-bg-raised, #fafbfc);
+    background-color: var(--rk-bg-raised);
 }
 
 table.list > tbody > tr:hover {
-    background-color: var(--rk-bg-hover, #f0f2f5) !important;
+    background-color: var(--rk-bg-hover) !important;
 }
 
 table.list > tbody > tr:hover th {
-    background-color: var(--rk-bg-surface, white);
+    background-color: var(--rk-bg-surface);
 }
 
 table.list > tbody > tr > td {
-    border-bottom: 1px solid var(--rk-border-light, #eef0f3);
+    border-bottom: 1px solid var(--rk-border-light);
 }
 
 table.form > tbody > tr > td:nth-child(odd) {
@@ -117,15 +117,15 @@ table.shrinked td {
     margin: 10px 0 5px 0;
     padding: 10px;
     border: 0;
-    background-color: var(--rk-bg-surface, white);
-    border-radius: 6px;
-    box-shadow: var(--rk-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04));
+    background-color: var(--rk-bg-surface);
+    border-radius: var(--rk-radius-lg);
+    box-shadow: var(--rk-shadow-sm);
     position: relative;
 }
 
 .box {
-    border: 1px solid var(--rk-border, #e8ecf1);
-    border-radius: 6px;
+    border: 1px solid var(--rk-border);
+    border-radius: var(--rk-radius-lg);
     padding: 10px;
 }
 
@@ -134,99 +134,99 @@ hr {
     height: 0;
     width: calc(100% - 20px);
     border: 0;
-    border-top: 1px solid var(--rk-border, #e8ecf1);
+    border-top: 1px solid var(--rk-border);
     margin: 10px
 }
 
 .gray {
-    color: var(--rk-text-muted, gray);
+    color: var(--rk-text-muted);
 }
 
 .red {
-    color: var(--rk-danger, #d63031);
+    color: var(--rk-danger);
 }
 
 .orange {
-    color: var(--rk-warning, #cc9a00);
+    color: var(--rk-warning);
 }
 
 .green {
-    color: var(--rk-success, #27ae60);
+    color: var(--rk-success);
 }
 
 .brown {
-    color: #8b5e3c;
+    color: var(--rk-brown);
 }
 
 .purple {
-    color: #7c5cbf;
+    color: var(--rk-purple);
 }
 
 .pink {
-    color: #d664a0;
+    color: var(--rk-pink);
 }
 
 .teal {
-    color: #2b9a8f;
+    color: var(--rk-teal);
 }
 
 .lightblue {
-    color: lightblue
+    color: var(--rk-lightblue)
 }
 
 .blue {
-    color: var(--rk-info, #2d7dd2)
+    color: var(--rk-info)
 }
 
 .tag {
     display: inline-block;
-    font-size: 10px;
+    font-size: var(--rk-font-size-micro);
     padding: 1px 6px;
-    border-radius: 3px;
+    border-radius: var(--rk-radius-sm);
     font-weight: 500;
 }
 
 .tag-green {
-    background: #e6f4ea;
-    color: #1e7e34;
+    background: var(--rk-tag-green-bg);
+    color: var(--rk-tag-green-fg);
 }
 
 .tag-gray {
-    background: var(--rk-bg-active, #f0f0f0);
-    color: var(--rk-text-muted, #888);
+    background: var(--rk-bg-active);
+    color: var(--rk-text-muted);
 }
 
 .tag-orange {
-    background: #fff3e0;
-    color: #b37100;
+    background: var(--rk-tag-orange-bg);
+    color: var(--rk-tag-orange-fg);
 }
 
 .micro {
-    font-size: 10px
+    font-size: var(--rk-font-size-micro)
 }
 
 .mini {
-    font-size: 11px
+    font-size: var(--rk-font-size-mini)
 }
 
 .small {
-    font-size: 12px;
+    font-size: var(--rk-font-size-small);
 }
 
 .normal {
-    font-size: 13px;
+    font-size: var(--rk-font-size-normal);
 }
 
 .large {
-    font-size: 14px;
+    font-size: var(--rk-font-size-large);
 }
 
 .huge {
-    font-size: 15px;
+    font-size: var(--rk-font-size-huge);
 }
 
 .gigantic {
-    font-size: 22px;
+    font-size: var(--rk-font-size-gigantic);
 }
 
 .singleLine {
@@ -286,7 +286,7 @@ hr {
 
     table.form > tbody > tr {
         display: block;
-        border-bottom: 1px solid var(--rk-border, #f0f0f0);
+        border-bottom: 1px solid var(--rk-border);
         padding: 2px 0;
     }
 
@@ -300,8 +300,8 @@ hr {
     table.form > tbody > tr > td:nth-child(odd):not([colspan]) {
         padding-top: 6px;
         font-weight: bold;
-        font-size: 11px;
-        color: var(--rk-text-muted, gray);
+        font-size: var(--rk-font-size-mini);
+        color: var(--rk-text-muted);
     }
 
     /* DeleteObjectSection table inside forms */

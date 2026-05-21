@@ -1,18 +1,19 @@
 /*
- * react-kit theme tokens.
- *
- * :root holds the light palette; .rk-dark overrides for dark mode. Component
- * CSS references var(--rk-*, <fallback>) where the fallback equals the light
- * value — so a consumer that never loads this file (or these tokens) still
- * renders the original light look unchanged.
- *
- * Imported by css/base.css, so any app pulling base.css gets the contract and
- * can switch a subtree to dark by adding the .rk-dark class.
+ * react-kit theme tokens — the single source of truth for colors, sizes and shadows.
+ * :root is the light palette; add the .rk-dark class to a subtree to switch it to dark.
  */
 
 :root {
     --rk-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
     --rk-font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+
+    --rk-font-size-micro: 10px;
+    --rk-font-size-mini: 11px;
+    --rk-font-size-small: 12px;
+    --rk-font-size-normal: 13px;
+    --rk-font-size-large: 14px;
+    --rk-font-size-huge: 15px;
+    --rk-font-size-gigantic: 22px;
 
     --rk-bg-body: #F1F4F9;
     --rk-bg-surface: #ffffff;
@@ -37,6 +38,42 @@
     --rk-warning: #cc9a00;
     --rk-danger: #d63031;
     --rk-info: #2d7dd2;
+
+    --rk-brown: #8b5e3c;
+    --rk-purple: #7c5cbf;
+    --rk-pink: #d664a0;
+    --rk-teal: #2b9a8f;
+    --rk-lightblue: #add8e6;
+
+    --rk-tag-green-bg: #e6f4ea;
+    --rk-tag-green-fg: #1e7e34;
+    --rk-tag-orange-bg: #fff3e0;
+    --rk-tag-orange-fg: #b37100;
+
+    --rk-hover-overlay: rgba(0, 0, 0, 0.05);
+
+    --rk-topmenu-bg: #34425A;
+    --rk-topmenu-bg-raised: #2b384e;
+    --rk-topmenu-bg-hover: #283750;
+    --rk-topmenu-divider: #566a88;
+    --rk-topmenu-text: #899dc1;
+    --rk-topmenu-text-muted: #7a8fad;
+    --rk-topmenu-text-bright: #c5d0e0;
+    --rk-topmenu-text-active: #ffffff;
+
+    --rk-btn-third: #beb16f;
+    --rk-btn-third-hover: #c2b674;
+    --rk-btn-submit: #22BAA0;
+    --rk-btn-submit-hover: #26d0b3;
+    --rk-text-on-warning: #241a00;
+
+    --rk-checkbox-changed-border: #c5a83d;
+    --rk-checkbox-changed-border-hover: #a07a20;
+    --rk-checkbox-changed-stroke: #a08520;
+    --rk-checkbox-changed-bg: #ebda80;
+
+    --rk-toggle-knob: #ffffff;
+    --rk-toggle-on: #f0c040;
 
     /* Form field states */
     --rk-changed-bg: color-mix(in srgb, var(--rk-warning) 14%, var(--rk-bg-surface));
@@ -79,6 +116,28 @@
     --rk-warning: #e0af68;
     --rk-danger: #f7768e;
     --rk-info: #7aa2f7;
+
+    --rk-brown: #c89b7a;
+    --rk-purple: #b3a0e0;
+    --rk-pink: #e89bc4;
+    --rk-teal: #5fc9bd;
+    --rk-lightblue: #9bd0e0;
+
+    --rk-tag-green-bg: #1c3324;
+    --rk-tag-green-fg: #7ec995;
+    --rk-tag-orange-bg: #3a2e1a;
+    --rk-tag-orange-fg: #e0b066;
+
+    --rk-hover-overlay: rgba(255, 255, 255, 0.07);
+
+    --rk-topmenu-bg: #16171f;
+    --rk-topmenu-bg-raised: #1f222e;
+    --rk-topmenu-bg-hover: #2a2d3d;
+    --rk-topmenu-divider: #3b3d52;
+    --rk-topmenu-text: #8a90a6;
+    --rk-topmenu-text-muted: #6f7488;
+    --rk-topmenu-text-bright: #c0caf5;
+    --rk-topmenu-text-active: #ffffff;
 
     --rk-changed-bg: color-mix(in srgb, var(--rk-warning) 10%, var(--rk-bg-surface));
     --rk-changed-border: color-mix(in srgb, var(--rk-warning) 35%, var(--rk-bg-surface));

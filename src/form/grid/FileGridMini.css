@@ -1,3 +1,5 @@
+@import "../../css/theme.css";
+
 .fileGridMini {
     overflow: hidden;
 }
@@ -11,7 +13,7 @@
     height: var(--fgm-size);
     margin: 3px;
     padding: 3px;
-    border: 1px solid var(--rk-border, rgba(213, 213, 213, 0.52));
+    border: 1px solid var(--rk-border);
     border-radius: 6px;
     text-align: center;
     overflow: hidden;
@@ -20,7 +22,7 @@
 }
 
 .fileGridMini .fgmBox:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: var(--rk-hover-overlay);
 }
 
 .fileGridMini .fgmBox img {
@@ -54,7 +56,7 @@
 }
 
 .fileGridMini .fgmDeleteBtn:hover {
-    background: rgba(220, 53, 69, 0.85);
+    background: color-mix(in srgb, var(--rk-danger) 85%, transparent);
 }
 
 .fileGridMini a.fgmLink:hover {
@@ -66,30 +68,30 @@
 .fileGridMini .fgmBoxAdd {
     cursor: pointer;
     border-style: dashed;
-    border-color: var(--rk-border-strong, #ccc);
+    border-color: var(--rk-border-strong);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--rk-text-muted, #bbb);
+    color: var(--rk-text-muted);
     font-size: 24px;
 }
 
 .fileGridMini .fgmBoxAdd:hover {
-    border-color: var(--rk-border-strong, #999);
-    background-color: rgba(0, 0, 0, 0.04);
-    color: var(--rk-text-muted, #888);
+    border-color: var(--rk-border-strong);
+    background-color: var(--rk-hover-overlay);
+    color: var(--rk-text-muted);
 }
 
 .fileGridMini .fgmBoxAdd.fgmDropHint {
-    border-color: #0d6efd;
-    background: rgba(13, 110, 253, 0.04);
-    color: #0d6efd;
+    border-color: var(--rk-accent);
+    background: color-mix(in srgb, var(--rk-accent) 4%, transparent);
+    color: var(--rk-accent);
 }
 
 .fileGridMini .fgmBoxAdd.fgmDropOver {
-    border-color: #0d6efd;
-    background: rgba(13, 110, 253, 0.1);
+    border-color: var(--rk-accent);
+    background: color-mix(in srgb, var(--rk-accent) 10%, transparent);
     border-width: 2px;
-    color: #0d6efd;
+    color: var(--rk-accent);
     font-size: 28px;
 }

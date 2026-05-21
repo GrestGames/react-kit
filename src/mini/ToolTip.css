@@ -1,21 +1,22 @@
+@import "../css/theme.css";
 
 .toolTip {
-    --tt-border: var(--rk-border-strong, #181313);
+    --tt-border: var(--rk-border-strong);
     position: fixed;
     left: 0;
     top: 0;
     pointer-events: none;
     z-index: 500;
     border: 1px solid var(--tt-border);
-    background-color: var(--rk-bg-surface, white);
-    color: var(--rk-text, #2c3345);
-    border-radius: var(--rk-radius-sm, 4px);
-    box-shadow: var(--rk-shadow, 0 4px 12px rgba(0, 0, 0, 0.18));
+    background-color: var(--rk-bg-surface);
+    color: var(--rk-text);
+    border-radius: var(--rk-radius-sm);
+    box-shadow: var(--rk-shadow);
 }
 
 .toolTip.error {
-    --tt-border: var(--rk-danger, #e73a3a);
-    color: var(--rk-danger, #e73a3a);
+    --tt-border: var(--rk-danger);
+    color: var(--rk-danger);
 }
 
 .toolTip.toolTipTop .arrow {

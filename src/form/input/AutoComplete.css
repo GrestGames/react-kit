@@ -1,3 +1,4 @@
+@import "../../css/theme.css";
 
 .autocompleteSearch {
     position: absolute;
@@ -11,8 +12,8 @@
     box-sizing: border-box;
     left: 3px;
     top: -1px;
-    background-color: var(--rk-bg-surface, white);
-    border: 1px solid var(--rk-border, #dce1e4);
+    background-color: var(--rk-bg-surface);
+    border: 1px solid var(--rk-border);
     border-radius: 10px 0 0 10px;
     max-height: 300px;
     min-width: 300px;
@@ -27,6 +28,6 @@
 }
 
 .autocompleteSearch > div > div.selected {
-    background-color: var(--rk-accent, #1e90ff);
-    color: var(--rk-text-on-accent, white);
+    background-color: var(--rk-accent);
+    color: var(--rk-text-on-accent);
 }

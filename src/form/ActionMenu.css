@@ -1,3 +1,5 @@
+@import "../css/theme.css";
+
 .tv2ActionMenuBtn {
     display: inline-flex;
     align-items: center;
@@ -5,10 +7,10 @@
     box-sizing: border-box;
     width: 28px;
     height: 24px;
-    color: var(--rk-text-secondary, #6b7280);
+    color: var(--rk-text-secondary);
     background: transparent;
     border: 1px solid transparent;
-    border-radius: var(--rk-radius, 5px);
+    border-radius: var(--rk-radius);
     font-size: 18px;
     line-height: 1;
     cursor: pointer;
@@ -16,13 +18,13 @@
 }
 
 .tv2ActionMenuBtn:hover {
-    background: var(--rk-bg-hover, #f0f2f5);
-    color: var(--rk-text, #2c3345);
-    border-color: var(--rk-border, #e8ecf1);
+    background: var(--rk-bg-hover);
+    color: var(--rk-text);
+    border-color: var(--rk-border);
 }
 
 .tv2ActionMenuBtn:focus-visible {
-    outline: 2px solid var(--rk-border-focus, #12AFCB);
+    outline: 2px solid var(--rk-border-focus);
     outline-offset: 1px;
 }
 
@@ -39,10 +41,10 @@
     display: flex;
     flex-direction: column;
     padding: 4px;
-    background: var(--rk-bg-surface, #fff);
-    border: 1px solid var(--rk-border, #e8ecf1);
-    border-radius: var(--rk-radius, 5px);
-    box-shadow: var(--rk-shadow, 0 4px 12px rgba(0, 0, 0, 0.12));
+    background: var(--rk-bg-surface);
+    border: 1px solid var(--rk-border);
+    border-radius: var(--rk-radius);
+    box-shadow: var(--rk-shadow);
 }
 
 .tv2ActionMenuItem {
@@ -51,8 +53,8 @@
     justify-content: space-between;
     gap: 8px;
     padding: 6px 10px;
-    border-radius: var(--rk-radius-sm, 3px);
-    color: var(--rk-text, #2c3345);
+    border-radius: var(--rk-radius-sm);
+    color: var(--rk-text);
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
@@ -61,38 +63,38 @@
 .tv2ActionMenuItem:hover,
 .tv2ActionMenuItem:focus-visible {
     outline: none;
-    background: var(--rk-bg-hover, #f0f2f5);
+    background: var(--rk-bg-hover);
 }
 
 .tv2ActionMenuDanger {
-    color: var(--rk-danger, #d63031);
+    color: var(--rk-danger);
 }
 
 .tv2ActionMenuDanger:hover,
 .tv2ActionMenuDanger:focus-visible {
-    background: color-mix(in srgb, var(--rk-danger, #d63031) 13%, transparent);
+    background: color-mix(in srgb, var(--rk-danger) 13%, transparent);
 }
 
 .tv2ActionMenuWarning {
-    color: var(--rk-warning, #cc9a00);
+    color: var(--rk-warning);
 }
 
 .tv2ActionMenuWarning:hover,
 .tv2ActionMenuWarning:focus-visible {
-    background: color-mix(in srgb, var(--rk-warning, #cc9a00) 13%, transparent);
+    background: color-mix(in srgb, var(--rk-warning) 13%, transparent);
 }
 
 /* Armed = first click on a danger item; second click within ~2s confirms. */
 .tv2ActionMenuArmed,
 .tv2ActionMenuArmed:hover {
-    background: var(--rk-danger, #d63031);
-    color: var(--rk-text-on-accent, #ffffff);
+    background: var(--rk-danger);
+    color: var(--rk-text-on-accent);
 }
 
 /* Pending = async onClick in flight: muted + progress cursor, same size. */
 .tv2ActionMenuPending,
 .tv2ActionMenuPending:hover {
-    color: var(--rk-text-muted, #888888);
+    color: var(--rk-text-muted);
     background: transparent;
     cursor: progress;
 }
@@ -112,14 +114,14 @@
 .tv2ActionMenuSeparator {
     height: 1px;
     margin: 4px 6px;
-    background: var(--rk-border, #e8ecf1);
+    background: var(--rk-border);
 }
 
 .tv2ActionMenuInfo {
     padding: 6px 10px 2px;
-    font-size: var(--rk-font-size-sm, 11px);
+    font-size: var(--rk-font-size-mini);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.3px;
-    color: var(--rk-text-muted, #888888);
+    color: var(--rk-text-muted);
 }

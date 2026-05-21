@@ -1,6 +1,8 @@
+@import "../css/theme.css";
+
 .miniTip {
     font-size: 0.8em;
-    color: var(--rk-text-secondary, gray);
+    color: var(--rk-text-secondary);
     font-weight: normal;
     font-style: italic;
 }

@@ -1,5 +1,8 @@
 import ShowCase from '../showcase/ShowCase';
 
+import TopMenuBasic from '../examples/layout/TopMenuBasic';
+import topMenuBasicSource from '../examples/layout/TopMenuBasic.tsx?raw';
+
 import PanelBasic from '../examples/layout/PanelBasic';
 import panelBasicSource from '../examples/layout/PanelBasic.tsx?raw';
 
@@ -16,6 +19,10 @@ export default function LayoutPage() {
   return (
     <>
       <h1 className="pageTitle">Layout</h1>
+
+      <ShowCase title="TopMenu (logo, dropdowns, right items)" source={topMenuBasicSource}>
+        <TopMenuBasic />
+      </ShowCase>
 
       <ShowCase title="PopupPanel" source={panelBasicSource}>
         <PanelBasic />

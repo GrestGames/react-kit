@@ -1,3 +1,4 @@
+@import "../../css/theme.css";
 
 form {
     max-height: 0;
@@ -23,14 +24,14 @@ form {
 
 .formSaving {
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: var(--rk-hover-overlay);
     border-radius: 10px;
     z-index: 1000;
     animation: fadeIn2 0.3s ease-out forwards;
 }
 
 .formSaving .loaderArea {
-    background-color: var(--rk-bg-surface, white);
+    background-color: var(--rk-bg-surface);
     border-radius: 15px;
     width: 150px;
     margin: 0 auto 0 auto;

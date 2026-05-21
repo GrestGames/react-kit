@@ -1,9 +1,11 @@
+@import "../../css/theme.css";
+
 .progressBar {
     position: relative;
     overflow: hidden;
-    border: 1px solid var(--rk-border, #b0b0b0);
-    background-color: var(--rk-bg-body, #efefef);
-    border-radius: var(--rk-radius, 5px);
+    border: 1px solid var(--rk-border);
+    background-color: var(--rk-bg-body);
+    border-radius: var(--rk-radius);
     height: 35px;
 }
 
@@ -12,7 +14,7 @@
     top: 0;
     left: 0;
     height: 100%;
-    background-color: var(--rk-accent, #87ff87);
+    background-color: var(--rk-accent);
     transition: width 0.3s ease;
 }
 
@@ -30,11 +32,11 @@
 }
 
 .progressBar .progressBarTextTrack {
-    color: var(--rk-text, #2c3345);
+    color: var(--rk-text);
     z-index: 2;
 }
 
 .progressBar .progressBarTextFill {
-    color: var(--rk-text-on-accent, #ffffff);
+    color: var(--rk-text-on-accent);
     z-index: 3;
 }

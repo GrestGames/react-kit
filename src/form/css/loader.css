@@ -1,10 +1,12 @@
+@import "../../css/theme.css";
+
 .loader {
     display: inline-block;
     width: 120px;
     height: 15px;
     -webkit-mask: linear-gradient(90deg, #000 70%, #0000 0) left/20% 100%;
     mask: linear-gradient(90deg, #000 70%, #0000 0) left/20% 100%;
-    background: linear-gradient(var(--rk-accent, #008ef4) 0 0) left -25% top 0 /20% 100% no-repeat var(--rk-bg-active, #d8d8ff);
+    background: linear-gradient(var(--rk-accent) 0 0) left -25% top 0 /20% 100% no-repeat var(--rk-bg-active);
     animation: ct7 1s infinite steps(6);
 }
 

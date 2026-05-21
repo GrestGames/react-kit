@@ -1,11 +1,12 @@
+@import "../../css/theme.css";
 
 button {
     cursor: pointer;
     padding: 8px;
-    color: var(--rk-text-on-accent, white);
-    background-color: var(--rk-accent, #12AFCB);
+    color: var(--rk-text-on-accent);
+    background-color: var(--rk-accent);
     outline: none !important;
-    border: 1px solid var(--rk-border, #dce1e4);
+    border: 1px solid var(--rk-border);
     margin: 2px 4px 2px 4px;
     box-sizing: border-box;
     white-space: nowrap;
@@ -16,25 +17,25 @@ button {
 }
 
 button:hover {
-    background-color: var(--rk-accent-hover, #10a4bd);
+    background-color: var(--rk-accent-hover);
 }
 
 button.third {
-    background-color: #beb16f;;
+    background-color: var(--rk-btn-third);
 }
 
 button.third:hover {
-    background-color: #c2b674;;
+    background-color: var(--rk-btn-third-hover);
 }
 
 button.secondary {
-    background-color: var(--rk-bg-active, #eef0f3);
-    color: var(--rk-text, #2c3345);
-    border-color: var(--rk-border-strong, #afb4bd);
+    background-color: var(--rk-bg-active);
+    color: var(--rk-text);
+    border-color: var(--rk-border-strong);
 }
 
 button.secondary:hover {
-    background-color: var(--rk-bg-hover, #f0f2f5);
+    background-color: var(--rk-bg-hover);
 }
 
 button.formSubmit {
@@ -42,20 +43,20 @@ button.formSubmit {
 }
 
 button.warning {
-    background-color: var(--rk-warning, #f2ca4c);
-    color: #241a00;
+    background-color: var(--rk-warning);
+    color: var(--rk-text-on-warning);
 }
 
 button.warning:hover {
-    background-color: color-mix(in srgb, var(--rk-warning, #f2ca4c) 85%, #ffffff);
+    background-color: color-mix(in srgb, var(--rk-warning) 85%, #ffffff);
 }
 
 button.danger {
-    background-color: var(--rk-danger, #f25656);
+    background-color: var(--rk-danger);
 }
 
 button.danger:hover {
-    background-color: color-mix(in srgb, var(--rk-danger, #f25656) 85%, #ffffff);
+    background-color: color-mix(in srgb, var(--rk-danger) 85%, #ffffff);
 }
 
 button.addRowButton {
@@ -71,16 +72,16 @@ button.deleteRowButton {
 }
 
 button[type="submit"] {
-    background-color: #22BAA0;
+    background-color: var(--rk-btn-submit);
 }
 
 button[type="submit"]:hover {
-    background-color: #26d0b3;
+    background-color: var(--rk-btn-submit-hover);
 }
 
 table.grid button {
     color: inherit;
-    border: 1px solid var(--rk-border, #dce1e4);
+    border: 1px solid var(--rk-border);
     background-color: transparent;
     margin: 0 2px 0 2px;
     padding: 4px 6px 3px 6px;
@@ -88,19 +89,19 @@ table.grid button {
 }
 
 table.grid button:hover {
-    background-color: var(--rk-bg-hover, #f0f2f5);
-    color: var(--rk-accent, #0984e3);
-    border-color: var(--rk-border-strong, #c8ced3);
+    background-color: var(--rk-bg-hover);
+    color: var(--rk-accent);
+    border-color: var(--rk-border-strong);
 }
 
 table.grid button.danger {
-    background-color: var(--rk-danger, #f25656);
-    color: var(--rk-text-on-accent, #ffffff);
+    background-color: var(--rk-danger);
+    color: var(--rk-text-on-accent);
 }
 
 table.grid button.warning {
-    background-color: var(--rk-warning, #f2ca4c);
-    color: #241a00;
+    background-color: var(--rk-warning);
+    color: var(--rk-text-on-warning);
 }
 
 
@@ -121,7 +122,7 @@ button.loading > div.defaultAnimation {
     height: 8px;
     -webkit-mask: linear-gradient(90deg, #000 70%, #0000 0) left/20% 100%;
     mask: linear-gradient(90deg, #000 70%, #0000 0) left/20% 100%;
-    background: linear-gradient(var(--rk-accent, #008ef4) 0 0) left -25% top 0 /20% 100% no-repeat var(--rk-bg-active, #d8d8ff);
+    background: linear-gradient(var(--rk-accent) 0 0) left -25% top 0 /20% 100% no-repeat var(--rk-bg-active);
     animation: ct7 1s infinite steps(6);
 }
 
@@ -138,7 +139,7 @@ button.loading > div.smallAnimation {
     position: relative;
     border-radius: 50%;
     padding: 1px;
-    background: conic-gradient(#0000 10%, var(--rk-accent, #766DF4)) content-box;
+    background: conic-gradient(#0000 10%, var(--rk-accent)) content-box;
     -webkit-mask: repeating-conic-gradient(#0000 0deg, #000 1deg 20deg, #0000 21deg 36deg), radial-gradient(farthest-side, #0000 calc(100% - 3px), #000 calc(100% - 8px));
     -webkit-mask-composite: destination-in;
     mask-composite: intersect;
@@ -153,8 +154,8 @@ button.loading > div.smallAnimation {
 
 
 button[readOnly], button[readOnly]:hover, button[readOnly]:active, button[disabled], button[disabled]:hover, button[disabled]:active {
-    background: var(--rk-disabled-bg, rgb(243, 242, 242));
-    color: var(--rk-text-muted, inherit);
+    background: var(--rk-disabled-bg);
+    color: var(--rk-text-muted);
     cursor: not-allowed;
 }
 

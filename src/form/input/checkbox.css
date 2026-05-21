@@ -1,3 +1,5 @@
+@import "../../css/theme.css";
+
 .cb {
     display: inline-flex;
     align-items: center;
@@ -23,15 +25,15 @@
     display: inline-block;
     width: 16px;
     height: 16px;
-    border: 1px solid var(--rk-border-strong, #bbb);
+    border: 1px solid var(--rk-border-strong);
     border-radius: 3px;
-    background: var(--rk-bg-surface, #fff);
+    background: var(--rk-bg-surface);
     transition: background 0.15s, border-color 0.15s;
 }
 
 .cb input:checked + .cbBox {
-    background: var(--rk-bg-active, #e0e0e0);
-    border-color: var(--rk-border-strong, #999);
+    background: var(--rk-bg-active);
+    border-color: var(--rk-border-strong);
 }
 
 .cbCheck {
@@ -48,34 +50,34 @@
 
 /* Hover */
 .cb:not(.disabled):hover .cbBox {
-    border-color: var(--rk-border-strong, #888);
+    border-color: var(--rk-border-strong);
 }
 
 .cb:not(.disabled):hover input:checked + .cbBox {
-    border-color: var(--rk-border-strong, #777);
-    background: var(--rk-bg-active, #d0d0d0);
+    border-color: var(--rk-border-strong);
+    background: var(--rk-bg-active);
 }
 
 /* Changed (unsaved) state */
 .cb.changed .cbBox {
-    border-color: var(--rk-changed-border, #e0c040);
-    background: var(--rk-changed-bg, #f5e6a0);
+    border-color: var(--rk-changed-border);
+    background: var(--rk-changed-bg);
 }
 
 .cb.changed input:checked + .cbBox {
-    background: var(--rk-changed-bg, #f5e6a0);
-    border-color: #c5a83d;
+    background: var(--rk-changed-bg);
+    border-color: var(--rk-checkbox-changed-border);
 }
 
 .cb.changed input:checked + .cbBox .cbCheck {
-    stroke: #a08520;
+    stroke: var(--rk-checkbox-changed-stroke);
 }
 
 .cb:not(.disabled).changed:hover .cbBox {
-    border-color: #c5a83d;
+    border-color: var(--rk-checkbox-changed-border);
 }
 
 .cb:not(.disabled).changed:hover input:checked + .cbBox {
-    border-color: #a07a20;
-    background: #ebda80;
+    border-color: var(--rk-checkbox-changed-border-hover);
+    background: var(--rk-checkbox-changed-bg);
 }

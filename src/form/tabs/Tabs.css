@@ -1,9 +1,11 @@
+@import "../../css/theme.css";
+
 .tabsArea {
 
 }
 
 .tabsArea .tabsMenu {
-    border-bottom: 1px solid var(--rk-border, #dfe6e9);
+    border-bottom: 1px solid var(--rk-border);
     margin-bottom: 5px;
 }
 
@@ -12,30 +14,30 @@
     position: relative;
     top: 3px;
     display: inline-block;
-    border: 1px solid var(--rk-border, #dfe6e9);
+    border: 1px solid var(--rk-border);
     border-bottom: none;
     padding: 5px 10px 5px 10px;
     margin-right: 3px;
     margin-left: 3px;
     border-radius: 5px 5px 0 0;
     cursor: pointer;
-    background-color: var(--rk-bg-raised, #f5f6fa);
+    background-color: var(--rk-bg-raised);
     transition: background-color 0.2s ease, padding 0.3s ease;
 }
 
 .tabsArea .tabsMenu .tab:hover {
-    background-color: var(--rk-bg-active, #e8ecf1);
+    background-color: var(--rk-bg-active);
     transition: background-color 0.2s ease;
 }
 
 .tabsArea .tabsMenu .tabSelected {
     top: 1px;
-    background-color: var(--rk-bg-surface, white);
+    background-color: var(--rk-bg-surface);
     padding: 8px 10px 8px 10px;
 }
 
 .tabsArea .tabsMenu .tabSelected:hover {
-    background-color: var(--rk-bg-surface, white) !important;
+    background-color: var(--rk-bg-surface) !important;
 }
 
 .tabsArea .tabsContentInit {

@@ -9,14 +9,31 @@
     "./*.css": "./src/*.css",
     "./css/base.css": "./src/css/base.css"
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
   "peerDependencies": {
-    "react": ">=18",
-    "react-dom": ">=18",
     "@grest-ts/schema": ">=0.0.17",
     "@grest-ts/schema-file": ">=0.0.17",
-    "react-datepicker": ">=7"
+    "react": ">=18",
+    "react-datepicker": ">=7",
+    "react-dom": ">=18"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "@grest-ts/schema": "^0.0.18",
+    "@grest-ts/schema-file": "^0.0.18",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.14",
+    "@types/react-datepicker": "^7.0.0",
+    "@types/react-dom": "^19.2.3",
+    "jsdom": "^26.1.0",
+    "react": "^19.2.4",
+    "react-datepicker": "^9.1.0",
+    "react-dom": "^19.2.4",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.3"
   }
 }

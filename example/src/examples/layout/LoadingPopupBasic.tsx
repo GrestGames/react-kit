@@ -37,7 +37,7 @@ export default function LoadingPopupBasic() {
 
   return (
     <>
-      <div className="demoRow">
+      <div>
         <Button onClick={startLoading}>Show LoadingPopup (2s)</Button>
         <Button onClick={startBatch}>Show BatchProgressPopup</Button>
       </div>
