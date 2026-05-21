@@ -110,7 +110,10 @@ export function ActionMenu({items, align = "right", position = "below", trigger 
              style={triggerColor ? {color: triggerColor} : undefined}
              onClick={() => open ? close() : openMenu()} onKeyDown={onTriggerKey}>{trigger}</div>
         {open && rect && createPortal(
-            <div className={dark ? "rk-dark" : undefined}>
+            // data-rk-dropdown-portal marks this as a dropdown surface so a host's
+            // outside-click handler can treat clicks here as "inside" — otherwise
+            // opening this menu inside another popup collapses both at once.
+            <div data-rk-dropdown-portal className={dark ? "rk-dark" : undefined}>
                 <div className="tv2ActionMenuBackdrop" onClick={close}/>
                 <div className="tv2ActionMenuDropdown" role="menu" style={posStyle}>
                     {items.map((item, i) => {

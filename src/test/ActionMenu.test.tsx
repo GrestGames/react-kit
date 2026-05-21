@@ -31,6 +31,13 @@ describe("ActionMenu", () => {
     expect(menu.style.transform).toContain("translateX(-50%)");
   });
 
+  it("marks its portal so a host's outside-click handler can treat it as inside", async () => {
+    render(<ActionMenu items={[{ label: "X" }]} />);
+    await userEvent.click(screen.getByRole("button"));
+    const menu = screen.getByRole("menu");
+    expect(menu.closest("[data-rk-dropdown-portal]")).not.toBeNull();
+  });
+
   it("arms a danger item before running it", async () => {
     const onClick = vi.fn();
     render(<ActionMenu items={[{ label: "Delete", onClick, danger: true }]} />);
