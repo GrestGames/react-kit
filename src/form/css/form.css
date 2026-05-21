@@ -24,7 +24,7 @@ form {
 
 .formSaving {
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: var(--rk-hover-overlay);
     border-radius: 10px;
     z-index: 1000;
     animation: fadeIn2 0.3s ease-out forwards;

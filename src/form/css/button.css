@@ -21,11 +21,11 @@ button:hover {
 }
 
 button.third {
-    background-color: #beb16f;;
+    background-color: var(--rk-btn-third);
 }
 
 button.third:hover {
-    background-color: #c2b674;;
+    background-color: var(--rk-btn-third-hover);
 }
 
 button.secondary {
@@ -44,7 +44,7 @@ button.formSubmit {
 
 button.warning {
     background-color: var(--rk-warning);
-    color: #241a00;
+    color: var(--rk-text-on-warning);
 }
 
 button.warning:hover {
@@ -72,11 +72,11 @@ button.deleteRowButton {
 }
 
 button[type="submit"] {
-    background-color: #22BAA0;
+    background-color: var(--rk-btn-submit);
 }
 
 button[type="submit"]:hover {
-    background-color: #26d0b3;
+    background-color: var(--rk-btn-submit-hover);
 }
 
 table.grid button {
@@ -101,7 +101,7 @@ table.grid button.danger {
 
 table.grid button.warning {
     background-color: var(--rk-warning);
-    color: #241a00;
+    color: var(--rk-text-on-warning);
 }
 
 

@@ -66,18 +66,18 @@
 
 .cb.changed input:checked + .cbBox {
     background: var(--rk-changed-bg);
-    border-color: #c5a83d;
+    border-color: var(--rk-checkbox-changed-border);
 }
 
 .cb.changed input:checked + .cbBox .cbCheck {
-    stroke: #a08520;
+    stroke: var(--rk-checkbox-changed-stroke);
 }
 
 .cb:not(.disabled).changed:hover .cbBox {
-    border-color: #c5a83d;
+    border-color: var(--rk-checkbox-changed-border);
 }
 
 .cb:not(.disabled).changed:hover input:checked + .cbBox {
-    border-color: #a07a20;
-    background: #ebda80;
+    border-color: var(--rk-checkbox-changed-border-hover);
+    background: var(--rk-checkbox-changed-bg);
 }

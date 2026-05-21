@@ -44,7 +44,7 @@
 
 .inlineEditDisplay.inlineEditEmpty:hover {
     border-color: var(--rk-border-strong);
-    background: rgba(0, 0, 0, 0.02);
+    background: var(--rk-hover-overlay);
     color: var(--rk-text-muted);
 }
 
@@ -119,7 +119,7 @@
 
 .inlineEditSuffixWrap.inlineEditClickable.inlineEditEmpty:hover {
     outline-color: var(--rk-border-strong);
-    background: rgba(0, 0, 0, 0.02);
+    background: var(--rk-hover-overlay);
 }
 
 .inlineEditSuffixWrap.inlineEditClickable.inlineEditEmpty:hover > .inlineEditDisplay {

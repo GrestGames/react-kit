@@ -111,12 +111,12 @@
 }
 
 .confirmDialogClose {
-    background-color: #e74c3c;
+    background-color: var(--rk-danger);
     color: white;
 }
 
 .confirmDialogClose:hover {
-    background-color: #c0392b;
+    background-color: color-mix(in srgb, var(--rk-danger) 80%, #000000);
 }
 
 .confirmDialogCancel {

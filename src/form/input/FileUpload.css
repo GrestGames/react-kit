@@ -36,5 +36,5 @@
 }
 
 .fileUploadDropZone table.list > tbody > tr.error:nth-child(even) {
-    background-color: #ffdede;
+    background-color: var(--rk-error-bg);
 }

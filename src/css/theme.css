@@ -52,6 +52,29 @@
 
     --rk-hover-overlay: rgba(0, 0, 0, 0.05);
 
+    --rk-topmenu-bg: #34425A;
+    --rk-topmenu-bg-raised: #2b384e;
+    --rk-topmenu-bg-hover: #283750;
+    --rk-topmenu-divider: #566a88;
+    --rk-topmenu-text: #899dc1;
+    --rk-topmenu-text-muted: #7a8fad;
+    --rk-topmenu-text-bright: #c5d0e0;
+    --rk-topmenu-text-active: #ffffff;
+
+    --rk-btn-third: #beb16f;
+    --rk-btn-third-hover: #c2b674;
+    --rk-btn-submit: #22BAA0;
+    --rk-btn-submit-hover: #26d0b3;
+    --rk-text-on-warning: #241a00;
+
+    --rk-checkbox-changed-border: #c5a83d;
+    --rk-checkbox-changed-border-hover: #a07a20;
+    --rk-checkbox-changed-stroke: #a08520;
+    --rk-checkbox-changed-bg: #ebda80;
+
+    --rk-toggle-knob: #ffffff;
+    --rk-toggle-on: #f0c040;
+
     /* Form field states */
     --rk-changed-bg: color-mix(in srgb, var(--rk-warning) 14%, var(--rk-bg-surface));
     --rk-changed-border: color-mix(in srgb, var(--rk-warning) 50%, var(--rk-bg-surface));
@@ -106,6 +129,15 @@
     --rk-tag-orange-fg: #e0b066;
 
     --rk-hover-overlay: rgba(255, 255, 255, 0.07);
+
+    --rk-topmenu-bg: #16171f;
+    --rk-topmenu-bg-raised: #1f222e;
+    --rk-topmenu-bg-hover: #2a2d3d;
+    --rk-topmenu-divider: #3b3d52;
+    --rk-topmenu-text: #8a90a6;
+    --rk-topmenu-text-muted: #6f7488;
+    --rk-topmenu-text-bright: #c0caf5;
+    --rk-topmenu-text-active: #ffffff;
 
     --rk-changed-bg: color-mix(in srgb, var(--rk-warning) 10%, var(--rk-bg-surface));
     --rk-changed-border: color-mix(in srgb, var(--rk-warning) 35%, var(--rk-bg-surface));
