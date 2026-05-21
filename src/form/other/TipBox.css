@@ -40,6 +40,27 @@
 
 .warningTip {
     --tip-color: var(--rk-warning);
+    border-color: #e7aa3a;
+    background-color: #fffaee;
+    color: #9a6414;
+}
+
+.warningTip .tipIcon {
+    border-color: #e7aa3a;
+    background-color: #fffaee;
+    color: #9a6414;
+}
+
+.rk-dark .warningTip {
+    border-color: color-mix(in srgb, var(--rk-warning) 40%, transparent);
+    background-color: color-mix(in srgb, var(--rk-warning) 11%, transparent);
+    color: var(--rk-warning);
+}
+
+.rk-dark .warningTip .tipIcon {
+    border-color: color-mix(in srgb, var(--rk-warning) 55%, transparent);
+    background-color: color-mix(in srgb, var(--rk-warning) 16%, transparent);
+    color: var(--rk-warning);
 }
 
 .errorTip {
