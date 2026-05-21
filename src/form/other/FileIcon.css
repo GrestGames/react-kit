@@ -1,4 +1,3 @@
-
 .fileIcon {
     display: inline-block;
     background-size: contain;
@@ -6,41 +5,41 @@
     background-position: center;
     min-width: 50px;
     min-height: 50px;
-    background-image: url("/img/unknown.png");
+    background-image: var(--rk-file-icon-unknown, url("/img/unknown.png"));
 }
 
 .fileIcon-pdf {
-    background-image: url("/img/pdf.png");
+    background-image: var(--rk-file-icon-pdf, url("/img/pdf.png"));
 }
 
 .fileIcon-bdoc {
-    background-image: url("/img/bdoc.webp");
+    background-image: var(--rk-file-icon-bdoc, url("/img/bdoc.webp"));
 }
 
 .fileIcon-asice {
-    background-image: url("/img/bdoc.webp");
+    background-image: var(--rk-file-icon-bdoc, url("/img/bdoc.webp"));
 }
 
 .fileIcon-zip {
-    background-image: url("/img/zip.svg");
+    background-image: var(--rk-file-icon-zip, url("/img/zip.svg"));
 }
 
 .fileIcon-gzip {
-    background-image: url("/img/zip.svg");
+    background-image: var(--rk-file-icon-zip, url("/img/zip.svg"));
 }
 
 .fileIcon-7zip {
-    background-image: url("/img/zip.svg");
+    background-image: var(--rk-file-icon-zip, url("/img/zip.svg"));
 }
 
 .fileIcon-tar {
-    background-image: url("/img/zip.svg");
+    background-image: var(--rk-file-icon-zip, url("/img/zip.svg"));
 }
 
 .fileIcon-bzip2 {
-    background-image: url("/img/zip.svg");
+    background-image: var(--rk-file-icon-zip, url("/img/zip.svg"));
 }
 
 .fileIcon-rar {
-    background-image: url("/img/zip.svg");
+    background-image: var(--rk-file-icon-zip, url("/img/zip.svg"));
 }
