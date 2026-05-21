@@ -7,10 +7,10 @@ export const ANIM_DURATION = 150;
 const popupStyle: React.CSSProperties = {
     position: "fixed",
     zIndex: 10000,
-    background: "#fff",
-    border: "1px solid #ddd",
+    background: "var(--rk-bg-surface)",
+    border: "1px solid var(--rk-border)",
     borderRadius: 8,
-    boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+    boxShadow: "var(--rk-shadow)",
     padding: 8,
     display: "flex",
     flexDirection: "column",

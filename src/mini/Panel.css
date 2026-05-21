@@ -112,7 +112,7 @@
 
 .confirmDialogClose {
     background-color: var(--rk-danger);
-    color: white;
+    color: var(--rk-text-on-accent);
 }
 
 .confirmDialogClose:hover {
