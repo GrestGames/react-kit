@@ -20,6 +20,7 @@
     --rk-bg-raised: #f5f6fa;
     --rk-bg-hover: #f0f2f5;
     --rk-bg-active: #e8ecf1;
+    --rk-bg-deep: #e9edf3;
 
     --rk-border: #dce1e4;
     --rk-border-light: #eef0f3;
@@ -28,6 +29,7 @@
 
     --rk-text: #2c3345;
     --rk-text-secondary: #6b7280;
+    --rk-text-bright: #3a4256;
     --rk-text-muted: #888888;
     --rk-text-on-accent: #ffffff;
 
@@ -83,6 +85,7 @@
     /* Form field states */
     --rk-changed-bg: color-mix(in srgb, var(--rk-warning) 14%, var(--rk-bg-surface));
     --rk-changed-border: color-mix(in srgb, var(--rk-warning) 50%, var(--rk-bg-surface));
+    --rk-warning-bg: color-mix(in srgb, var(--rk-warning) 15%, transparent);
     --rk-error-bg: #ffeaea;
     --rk-disabled-bg: #f3f2f2;
 
@@ -103,6 +106,7 @@
     --rk-bg-raised: #181825;
     --rk-bg-hover: #1f2335;
     --rk-bg-active: #292e42;
+    --rk-bg-deep: #11111b;
 
     --rk-border: #2a2b3d;
     --rk-border-light: #232433;
@@ -111,6 +115,7 @@
 
     --rk-text: #c0caf5;
     --rk-text-secondary: #7f849c;
+    --rk-text-bright: #a9b1d6;
     --rk-text-muted: #565f89;
     --rk-text-on-accent: #16161e;
 
