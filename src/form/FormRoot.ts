@@ -65,6 +65,11 @@ export class FormRoot<T> {
             }
         } else {
             this.data.setValue(this.listeners.init);
+            if (isReload) {
+                this._isReloading = false;
+            }
+            this._isLoading = false;
+            this.forceRender()
         }
     }
 

@@ -1,36 +1,37 @@
 
 .toolTip {
-    position: absolute;
+    --tt-border: var(--rk-border-strong, #181313);
+    position: fixed;
     left: 0;
     top: 0;
     pointer-events: none;
     z-index: 500;
-    border: 1px solid #181313;
-    background-color: white;
+    border: 1px solid var(--tt-border);
+    background-color: var(--rk-bg-surface, white);
+    color: var(--rk-text, #2c3345);
+    border-radius: var(--rk-radius-sm, 4px);
+    box-shadow: var(--rk-shadow, 0 4px 12px rgba(0, 0, 0, 0.18));
 }
 
-.toolTip .normal {
-
+.toolTip.error {
+    --tt-border: var(--rk-danger, #e73a3a);
+    color: var(--rk-danger, #e73a3a);
 }
 
-.toolTip.toolTipTop.normal .arrow {
-    border-top-color: #181313;
+.toolTip.toolTipTop .arrow {
+    border-top-color: var(--tt-border);
 }
 
-.toolTip.toolTipRight.normal .arrow {
-    border-right-color: #181313;
+.toolTip.toolTipRight .arrow {
+    border-right-color: var(--tt-border);
 }
 
-.toolTip.toolTipBottom.normal .arrow {
-    border-bottom-color: #181313;
+.toolTip.toolTipBottom .arrow {
+    border-bottom-color: var(--tt-border);
 }
 
-.toolTip.toolTipLeft.normal .arrow {
-    border-left-color: #181313;
-}
-
-.toolTip .error {
-
+.toolTip.toolTipLeft .arrow {
+    border-left-color: var(--tt-border);
 }
 
 .toolTip .text {
@@ -98,5 +99,3 @@
     right: -6px;
     left: auto;
 }
-
-

@@ -120,22 +120,20 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
     }, [ref.current]);
 
     const click = () => {
-        setIsLoading((isLoading) => {
-            if (!isLoading) {
-                const res = props.onClick();
-                if (isPromise(res)) {
-                    res.then(() => {
-                        setIsLoading(false);
-                    }).catch((err) => {
-                        setIsLoading(false);
-                        setError(ERROR.fromUnknown(err))
-                        setHadError(true)
-                    })
-                    return true;
-                }
-            }
-            return isLoading;
-        })
+        if (isLoading) {
+            return;
+        }
+        const res = props.onClick();
+        if (isPromise(res)) {
+            setIsLoading(true);
+            res.then(() => {
+                setIsLoading(false);
+            }).catch((err) => {
+                setIsLoading(false);
+                setError(ERROR.fromUnknown(err))
+                setHadError(true)
+            })
+        }
     }
     return <>
         {error && <ErrorAlert onClick={() => setError(undefined)}><ApiErrorMessage error={error}/></ErrorAlert>}

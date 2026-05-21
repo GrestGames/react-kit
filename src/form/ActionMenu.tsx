@@ -1,32 +1,118 @@
-import {useState, useRef} from "react";
-import {useOutsideClick} from "../helpers/useOutsideClick";
+import {useState, useRef, useEffect, KeyboardEvent, CSSProperties} from "react";
+import {createPortal} from "react-dom";
+import "./ActionMenu.css";
 
 export interface ActionMenuItem {
     label: string;
-    onClick?: () => void;
+    onClick?: () => void | Promise<void>;
     danger?: boolean;
+    /** Soft-warning color (orange). No arming — for non-destructive actions that warrant a visual flag. */
+    warning?: boolean;
+    /** Non-interactive label / section header. */
+    info?: boolean;
+    /** A divider line. `label`/`onClick` are ignored. */
+    separator?: boolean;
+    /** Opens in a new tab on activate. */
     href?: string;
+    /** Keep the menu open after an async onClick resolves (sync onClicks still close immediately). */
+    keepOpen?: boolean;
 }
 
-export function ActionMenu({items}: { items: ActionMenuItem[] }) {
-    const [open, setOpen] = useState(false);
-    const ref = useRef<HTMLDivElement>(null);
+const DANGER_CONFIRM_WINDOW_MS = 2000;
 
-    useOutsideClick([ref], () => setOpen(false), {active: open});
+/**
+ * Trigger and items are <div role="…"> rather than <button>/<a> so they inherit
+ * none of react-kit's global element styling — the menu is styled solely by its
+ * own classes and can't be broken by changes to the base button/anchor rules.
+ */
+export function ActionMenu({items, align = "right"}: { items: ActionMenuItem[]; align?: "left" | "right" }) {
+    const [open, setOpen] = useState(false);
+    const [rect, setRect] = useState<DOMRect | null>(null);
+    const [dark, setDark] = useState(false);
+    const [armedIdx, setArmedIdx] = useState<number | null>(null);
+    const [pendingIdxs, setPendingIdxs] = useState<ReadonlySet<number>>(() => new Set());
+    const armTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const triggerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => () => { if (armTimer.current) clearTimeout(armTimer.current); }, []);
 
     if (items.length === 0) return null;
 
-    return <div ref={ref} className="tv2ActionMenu">
-        <button className="tv2ActionMenuBtn" onClick={() => setOpen(!open)} title="Actions">{"\u22EF"}</button>
-        {open && <div className="tv2ActionMenuDropdown">
-            {items.map((item, i) => <a key={i}
-                className={item.danger ? "tv2ActionMenuDanger" : undefined}
-                href={item.href}
-                target={item.href ? "_blank" : undefined}
-                rel={item.href ? "noopener noreferrer" : undefined}
-                onClick={e => { if (!item.href) e.preventDefault(); setOpen(false); item.onClick?.(); }}>
-                {item.label}
-            </a>)}
-        </div>}
-    </div>;
+    const openMenu = () => {
+        const el = triggerRef.current;
+        if (!el) return;
+        setRect(el.getBoundingClientRect());
+        setDark(el.closest(".rk-dark") !== null);
+        setArmedIdx(null);
+        setOpen(true);
+    };
+    const close = () => { setOpen(false); setArmedIdx(null); };
+
+    const armDanger = (idx: number) => {
+        setArmedIdx(idx);
+        if (armTimer.current) clearTimeout(armTimer.current);
+        armTimer.current = setTimeout(() => setArmedIdx(prev => (prev === idx ? null : prev)), DANGER_CONFIRM_WINDOW_MS);
+    };
+
+    const run = async (idx: number, item: ActionMenuItem) => {
+        const result = item.onClick?.();
+        if (!(result instanceof Promise)) { close(); return; }
+        setPendingIdxs(prev => { const next = new Set(prev); next.add(idx); return next; });
+        try {
+            await result;
+        } finally {
+            setPendingIdxs(prev => { const next = new Set(prev); next.delete(idx); return next; });
+            if (!item.keepOpen) close();
+        }
+    };
+
+    const activate = (idx: number, item: ActionMenuItem) => {
+        if (pendingIdxs.has(idx)) return;
+        if (item.href) { window.open(item.href, "_blank", "noopener,noreferrer"); close(); return; }
+        if (item.danger && armedIdx !== idx) { armDanger(idx); return; }
+        run(idx, item);
+    };
+
+    const onTriggerKey = (e: KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") { e.preventDefault(); openMenu(); }
+        else if (e.key === "Escape") { close(); }
+    };
+    const onItemKey = (idx: number, item: ActionMenuItem) => (e: KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(idx, item); }
+        else if (e.key === "Escape") { close(); }
+    };
+
+    const posStyle: CSSProperties = rect ? {
+        top: rect.bottom + 4,
+        ...(align === "right" ? {right: window.innerWidth - rect.right} : {left: rect.left}),
+    } : {};
+
+    return <>
+        <div ref={triggerRef} className="tv2ActionMenuBtn" role="button" tabIndex={0}
+             aria-haspopup="menu" aria-expanded={open} title="Actions"
+             onClick={() => open ? close() : openMenu()} onKeyDown={onTriggerKey}>⋯</div>
+        {open && rect && createPortal(
+            <div className={dark ? "rk-dark" : undefined}>
+                <div className="tv2ActionMenuBackdrop" onClick={close}/>
+                <div className="tv2ActionMenuDropdown" role="menu" style={posStyle}>
+                    {items.map((item, i) => {
+                        if (item.separator) return <div key={i} className="tv2ActionMenuSeparator"/>;
+                        if (item.info) return <div key={i} className="tv2ActionMenuInfo">{item.label}</div>;
+                        const armed = armedIdx === i;
+                        const pending = pendingIdxs.has(i);
+                        const cls = ["tv2ActionMenuItem",
+                            item.danger ? "tv2ActionMenuDanger" : "",
+                            item.warning ? "tv2ActionMenuWarning" : "",
+                            armed ? "tv2ActionMenuArmed" : "",
+                            pending ? "tv2ActionMenuPending" : "",
+                        ].filter(Boolean).join(" ");
+                        return <div key={i} className={cls} role="menuitem" tabIndex={0}
+                                    onClick={() => activate(i, item)} onKeyDown={onItemKey(i, item)}>
+                            <span>{armed ? "Click again to confirm" : item.label}</span>
+                            {pending && <span className="tv2ActionMenuSpinner" aria-hidden>⟳</span>}
+                        </div>;
+                    })}
+                </div>
+            </div>, document.body)}
+    </>;
 }

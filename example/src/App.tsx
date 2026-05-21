@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import InputsPage from './pages/InputsPage';
 import TextPage from './pages/TextPage';
 import LayoutPage from './pages/LayoutPage';
@@ -17,7 +17,12 @@ const sections = [
 
 export default function App() {
   const [active, setActive] = useState<string>('inputs');
+  const [dark, setDark] = useState(false);
   const Page = sections.find(s => s.key === active)?.component ?? InputsPage;
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('rk-dark', dark);
+  }, [dark]);
 
   return (
     <div className="app">
@@ -32,6 +37,9 @@ export default function App() {
             {s.label}
           </div>
         ))}
+        <div className="sidebarItem themeToggle" onClick={() => setDark(d => !d)}>
+          {dark ? '☀ Light theme' : '🌙 Dark theme'}
+        </div>
       </nav>
       <main className="main content">
         <Page />

@@ -1,0 +1,92 @@
+/*
+ * react-kit theme tokens.
+ *
+ * :root holds the light palette; .rk-dark overrides for dark mode. Component
+ * CSS references var(--rk-*, <fallback>) where the fallback equals the light
+ * value — so a consumer that never loads this file (or these tokens) still
+ * renders the original light look unchanged.
+ *
+ * Imported by css/base.css, so any app pulling base.css gets the contract and
+ * can switch a subtree to dark by adding the .rk-dark class.
+ */
+
+:root {
+    --rk-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    --rk-font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+
+    --rk-bg-body: #F1F4F9;
+    --rk-bg-surface: #ffffff;
+    --rk-bg-raised: #f5f6fa;
+    --rk-bg-hover: #f0f2f5;
+    --rk-bg-active: #e8ecf1;
+
+    --rk-border: #dce1e4;
+    --rk-border-light: #eef0f3;
+    --rk-border-strong: #afb4bd;
+    --rk-border-focus: #12AFCB;
+
+    --rk-text: #2c3345;
+    --rk-text-secondary: #6b7280;
+    --rk-text-muted: #888888;
+    --rk-text-on-accent: #ffffff;
+
+    --rk-accent: #12AFCB;
+    --rk-accent-hover: #10a4bd;
+
+    --rk-success: #27ae60;
+    --rk-warning: #cc9a00;
+    --rk-danger: #d63031;
+    --rk-info: #2d7dd2;
+
+    /* Form field states */
+    --rk-changed-bg: color-mix(in srgb, var(--rk-warning) 14%, var(--rk-bg-surface));
+    --rk-changed-border: color-mix(in srgb, var(--rk-warning) 50%, var(--rk-bg-surface));
+    --rk-error-bg: #ffeaea;
+    --rk-disabled-bg: #f3f2f2;
+
+    --rk-radius-sm: 3px;
+    --rk-radius: 5px;
+    --rk-radius-lg: 6px;
+    --rk-radius-xl: 8px;
+
+    --rk-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --rk-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    --rk-shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.12);
+    --rk-shadow-focus: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.rk-dark {
+    --rk-bg-body: #1a1b26;
+    --rk-bg-surface: #1e1e2e;
+    --rk-bg-raised: #181825;
+    --rk-bg-hover: #1f2335;
+    --rk-bg-active: #292e42;
+
+    --rk-border: #2a2b3d;
+    --rk-border-light: #232433;
+    --rk-border-strong: #3b3d52;
+    --rk-border-focus: #7aa2f7;
+
+    --rk-text: #c0caf5;
+    --rk-text-secondary: #a9b1d6;
+    --rk-text-muted: #7f849c;
+    --rk-text-on-accent: #0c1320;
+
+    --rk-accent: #7aa2f7;
+    --rk-accent-hover: #89b4fa;
+
+    --rk-success: #9ece6a;
+    --rk-warning: #e0af68;
+    --rk-danger: #f7768e;
+    --rk-info: #7aa2f7;
+
+    --rk-changed-bg: color-mix(in srgb, var(--rk-warning) 10%, var(--rk-bg-surface));
+    --rk-changed-border: color-mix(in srgb, var(--rk-warning) 35%, var(--rk-bg-surface));
+    --rk-error-bg: #3a2230;
+    --rk-disabled-bg: #232433;
+
+    --rk-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+    --rk-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --rk-shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.5);
+    --rk-shadow-focus: 0 8px 32px rgba(0, 0, 0, 0.5);
+}

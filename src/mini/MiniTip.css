@@ -1,5 +1,6 @@
 .miniTip {
     font-size: 0.8em;
-    color: gray;
+    color: var(--rk-text-secondary, gray);
     font-weight: normal;
+    font-style: italic;
 }

@@ -23,15 +23,15 @@
     display: inline-block;
     width: 16px;
     height: 16px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--rk-border-strong, #bbb);
     border-radius: 3px;
-    background: #fff;
+    background: var(--rk-bg-surface, #fff);
     transition: background 0.15s, border-color 0.15s;
 }
 
 .cb input:checked + .cbBox {
-    background: #e0e0e0;
-    border-color: #999;
+    background: var(--rk-bg-active, #e0e0e0);
+    border-color: var(--rk-border-strong, #999);
 }
 
 .cbCheck {
@@ -48,22 +48,22 @@
 
 /* Hover */
 .cb:not(.disabled):hover .cbBox {
-    border-color: #888;
+    border-color: var(--rk-border-strong, #888);
 }
 
 .cb:not(.disabled):hover input:checked + .cbBox {
-    border-color: #777;
-    background: #d0d0d0;
+    border-color: var(--rk-border-strong, #777);
+    background: var(--rk-bg-active, #d0d0d0);
 }
 
 /* Changed (unsaved) state */
 .cb.changed .cbBox {
-    border-color: #e0c040;
-    background: #f5e6a0;
+    border-color: var(--rk-changed-border, #e0c040);
+    background: var(--rk-changed-bg, #f5e6a0);
 }
 
 .cb.changed input:checked + .cbBox {
-    background: #f5e6a0;
+    background: var(--rk-changed-bg, #f5e6a0);
     border-color: #c5a83d;
 }
 

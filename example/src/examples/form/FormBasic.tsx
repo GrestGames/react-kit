@@ -1,4 +1,4 @@
-import { useAsyncForm, Form, SubmitButton, TextInput, IntegerInput, Select, Checkbox } from '@grest-ts/react';
+import { useAsyncForm, Form, SubmitButton, TextInput, IntegerInput, Select, Checkbox, toast } from '@grest-ts/react';
 
 interface Person {
   name: string;
@@ -18,7 +18,7 @@ export default function FormBasic() {
     init: { name: 'Alice', age: 28, role: 'dev', active: true },
     onSubmit: async (obj) => {
       await new Promise(r => setTimeout(r, 800));
-      alert('Submitted: ' + JSON.stringify(obj, null, 2));
+      toast.success('Saved ' + obj.name);
     },
   }, []);
 

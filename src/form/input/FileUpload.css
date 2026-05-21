@@ -2,7 +2,7 @@
 .fileUploadDropZone {
     position: relative;
     top: 2px;
-    border: 2px dashed #ccc;
+    border: 2px dashed var(--rk-border-strong, #ccc);
     padding: 5px;
     min-width: 200px;
     width: 100%;
@@ -26,12 +26,12 @@
 }
 
 .fileUploadDropZone.disabled {
-    background: rgb(243, 242, 242);
+    background: var(--rk-disabled-bg, rgb(243, 242, 242));
     cursor: not-allowed;
 }
 
 .fileUploadDropZone tr.error {
-    background-color: #ffeaea;
+    background-color: var(--rk-error-bg, #ffeaea);
 }
 
 .fileUploadDropZone table.list > tbody > tr.error:nth-child(even) {

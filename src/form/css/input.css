@@ -1,23 +1,24 @@
 
 input.changed, select.changed, textarea.changed {
-    border: 1px solid #efdec1;
-    background-color: #fff8ea;
+    border: 1px solid var(--rk-changed-border, #efdec1);
+    background-color: var(--rk-changed-bg, #fff8ea);
 }
 
 select option.changed {
-    background-color: #fff8ea;
+    background-color: var(--rk-changed-bg, #fff8ea);
 }
 
 input[readonly], select[readonly], textarea[readonly], input[disabled], select[disabled], textarea[disabled] {
-    background: rgb(243, 242, 242);
+    background: var(--rk-disabled-bg, rgb(243, 242, 242));
+    color: var(--rk-text-muted, #888888);
 }
 
 input[readonly]:hover, select[disabled]:hover, textarea[readonly]:hover {
-    background: rgb(243, 242, 242);
+    background: var(--rk-disabled-bg, rgb(243, 242, 242));
 }
 
 input[readonly]:focus, select[disabled]:focus, textarea[readonly]:focus {
-    background: rgb(243, 242, 242);
+    background: var(--rk-disabled-bg, rgb(243, 242, 242));
 }
 
 input, select, textarea {
@@ -25,18 +26,19 @@ input, select, textarea {
     vertical-align: middle;
     box-sizing: border-box;
     outline: none !important;
-    border: 1px solid #dce1e4;
+    border: 1px solid var(--rk-border, #dce1e4);
+    background-color: var(--rk-bg-surface, transparent);
     border-radius: 5px;
     margin: 2px 4px 2px 4px;
 }
 
 input:hover, select:hover, textarea:hover {
-    border: 1px solid #afb4bd;
+    border: 1px solid var(--rk-border-strong, #afb4bd);
     transition: border 0.3s ease-in-out;
 }
 
 input:focus, select:focus, textarea:focus {
-    border: 1px solid #afb4bd;
+    border: 1px solid var(--rk-border-strong, #afb4bd);
     transition: border 0.3s ease-in-out;
 }
 
@@ -48,7 +50,7 @@ input, select, textarea {
 }
 
 select option {
-    background: white;
+    background: var(--rk-bg-surface, white);
 }
 
 select {
@@ -70,16 +72,16 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 input.error, select.error, textarea.error {
-    border: 1px solid #d63031;
-    background-color: #ffeaea;
+    border: 1px solid var(--rk-danger, #d63031);
+    background-color: var(--rk-error-bg, #ffeaea);
 }
 
 .errorForArea {
-    background-color: #ffeaea;
+    background-color: var(--rk-error-bg, #ffeaea);
 }
 
 .changedForArea {
-    background-color: #fff8ea;
+    background-color: var(--rk-changed-bg, #fff8ea);
 }
 
 .datePicker {
@@ -135,21 +137,22 @@ textarea.wide {
     margin: 2px 4px 2px 0;
     height: 32px;
     text-align: center;
-    background-color: rgb(241, 241, 241);
-    border: 1px solid rgb(220, 225, 228);
+    color: var(--rk-text-secondary, inherit);
+    background-color: var(--rk-bg-active, rgb(241, 241, 241));
+    border: 1px solid var(--rk-border, rgb(220, 225, 228));
     border-left: 0;
     border-radius: 0 5px 5px 0;
 }
 
 .inputSuffix.error {
-    border: 1px solid #d63031;
+    border: 1px solid var(--rk-danger, #d63031);
     border-left: 0;
-    background-color: #ffeaea;
+    background-color: var(--rk-error-bg, #ffeaea);
 }
 
 .validationErrorMsg {
     padding: 0 0 0 10px;
-    color: #d63031;
+    color: var(--rk-danger, #d63031);
     font-size: 0.8em;
     text-align: left;
 }

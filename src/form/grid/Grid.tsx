@@ -110,6 +110,11 @@ export function Grid<T extends { id: number }, Q>({
     const [filter, setFilter] = useState<FilterState<Q>>(undefined as FilterState<Q>);
     const [data, setData, dataState] = useAsyncState<T[]>(undefined, {disableErrorAutoHandling: true});
 
+    const lastRowsRef = useRef<T[] | undefined>(undefined);
+    if (data !== undefined) {
+        lastRowsRef.current = data;
+    }
+
     const updateData = (rows: undefined | ((data: T[]) => T[]) | ((data: T[]) => Promise<T[]>)): void => {
         if (rows === undefined) {
             setData(undefined);
@@ -272,10 +277,18 @@ export function Grid<T extends { id: number }, Q>({
 
     /* ── Footer status rows (shared between table and card modes) ── */
 
-    const hasMore = dataState.state === AsyncState.OK && data?.length === filter?.limit[1];
     const isEmpty = dataState.state === AsyncState.OK && data && data.length === 0;
-    const isLoading = dataState.state === AsyncState.LOADING || dataState.state === AsyncState.INIT;
-    const showFooter = !hideFooter && !isLoading && data?.length > 0 && !dataState.error && data?.length < filter?.limit[1];
+    const loadingState = dataState.state === AsyncState.LOADING || dataState.state === AsyncState.INIT;
+    // Keep the previous rows on screen during a reload (filter/sort change) so the table
+    // doesn't collapse to a loader and reflow. Only the first load (no prior rows) shows the loader.
+    const reloading = loadingState && data === undefined && lastRowsRef.current !== undefined;
+    const displayData = data !== undefined ? data : (reloading ? lastRowsRef.current : undefined);
+    const isLoading = loadingState && !reloading;
+    // hasMore and the footer derive from displayData (current rows, or the previous rows during a
+    // reload) so the "Load more" row and the "No more rows" footer stay put instead of vanishing
+    // and reflowing the table on every reload.
+    const hasMore = !isLoading && !dataState.error && displayData?.length === filter?.limit[1];
+    const showFooter = !hideFooter && !isLoading && !dataState.error && displayData?.length > 0 && displayData.length < filter?.limit[1];
     const isValidationError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type === VALIDATION_ERROR.TYPE;
     const isOtherError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type !== VALIDATION_ERROR.TYPE;
 
@@ -295,7 +308,7 @@ export function Grid<T extends { id: number }, Q>({
         </div>}
 
         {viewMode === "blocks" && blocksView ? <>
-            {data && data.length > 0 && blocksView(data)}
+            {displayData && displayData.length > 0 && <div className={"gridReloadWrap" + (reloading ? " gridReloading" : "")}>{blocksView(displayData)}</div>}
             {hasMore && <div className="area"><div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div></div>}
             {isEmpty && <div className="area"><WarningBox>No entries found!</WarningBox></div>}
             {isLoading && <div className="area"><div className="gridCardsLoading"><div className="loader"></div></div></div>}
@@ -304,21 +317,23 @@ export function Grid<T extends { id: number }, Q>({
         </> : isMobile && mobileCard ? (
             /* ── Mobile: card view ─────────────────────────────── */
             <div className="area">
+                {reloading && <div className="gridReloadBar"/>}
                 <MobileSortBar fields={fields} orderBy={filter.orderBy} onSort={applySort}/>
 
-                {data && <div className="gridCards">{data.map((row, i) => <div key={row.id ?? i} className="gridCard">{mobileCard(row, i)}</div>)}</div>}
+                {displayData && <div className={"gridCards" + (reloading ? " gridReloading" : "")}>{displayData.map((row, i) => <div key={row.id ?? i} className="gridCard">{mobileCard(row, i)}</div>)}</div>}
 
                 {hasMore && <div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div>}
                 {isEmpty && <WarningBox>No entries found!</WarningBox>}
                 {isLoading && <div className="gridCardsLoading"><div className="loader"></div></div>}
-                {showFooter && <div className="gridCardsFooter small gray">No more rows. Found {data.length} row(s)!</div>}
+                {showFooter && <div className="gridCardsFooter small gray">No more rows. Found {displayData.length} row(s)!</div>}
                 {isValidationError && <WarningBox>Check filters, some of the filters are invalid!</WarningBox>}
                 {isOtherError && <ErrorBox>{ApiErrors.getDisplayMessage(dataState.error)}</ErrorBox>}
             </div>
         ) : (
-            /* ── Desktop: table view (unchanged) ───────────────── */
+            /* ── Desktop: table view ───────────────────────────── */
             <div className="area">
-                <table className="list grid">
+                {reloading && <div className="gridReloadBar"/>}
+                <table className={"list grid" + (reloading ? " gridReloading" : "")}>
                     <tbody>
                     <tr>
                         {fields.map((f, s) => {
@@ -344,7 +359,7 @@ export function Grid<T extends { id: number }, Q>({
                             </th>
                         })}
                     </tr>
-                    {data?.map((row: any, i) => {
+                    {displayData?.map((row: any, i) => {
                         return <tr key={i}>{fields.map((f, s) => {
                             if (rowSpanCounts[s] > 1) {
                                 rowSpanCounts[s]--;
@@ -358,13 +373,13 @@ export function Grid<T extends { id: number }, Q>({
                             } else {
                                 rowSpan = f.rowSpan as any;
                             }
-                            const rowSpanValue = rowSpan?.(row, i, data);
+                            const rowSpanValue = rowSpan?.(row, i, displayData);
                             if (rowSpanValue > 1) {
                                 rowSpanCounts[s] = rowSpanValue;
                             }
 
                             const style: CSSProperties = {whiteSpace: f.wrap ? "normal" : "nowrap", ...f.style}
-                            return <td key={s} rowSpan={rowSpanValue} align={f.align} style={style}>{getValue(f, i, row, data)}</td>
+                            return <td key={s} rowSpan={rowSpanValue} align={f.align} style={style}>{getValue(f, i, row, displayData)}</td>
                         })}</tr>
                     })}
                     {hasMore && <tr>
@@ -379,7 +394,7 @@ export function Grid<T extends { id: number }, Q>({
                         </td>
                     </tr>}
                     {showFooter && <tr>
-                        <td colSpan={fields.length + 1} className="noMoreRows small gray">No more rows. Found {data.length} row(s)!</td>
+                        <td colSpan={fields.length + 1} className="noMoreRows small gray">No more rows. Found {displayData.length} row(s)!</td>
                     </tr>}
                     {isValidationError && <tr>
                         <td colSpan={fields.length + 1}><WarningBox>Check filters, some of the filters are invalid!</WarningBox></td>

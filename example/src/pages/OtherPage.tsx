@@ -6,6 +6,9 @@ import tipBoxVariantsSource from '../examples/other/TipBoxVariants.tsx?raw';
 import ToolTipBasic from '../examples/other/ToolTipBasic';
 import toolTipBasicSource from '../examples/other/ToolTipBasic.tsx?raw';
 
+import ToastBasic from '../examples/other/ToastBasic';
+import toastBasicSource from '../examples/other/ToastBasic.tsx?raw';
+
 import ActionMenuBasic from '../examples/other/ActionMenuBasic';
 import actionMenuBasicSource from '../examples/other/ActionMenuBasic.tsx?raw';
 
@@ -23,6 +26,10 @@ export default function OtherPage() {
 
       <ShowCase title="ToolTip, MiniTip" source={toolTipBasicSource}>
         <ToolTipBasic />
+      </ShowCase>
+
+      <ShowCase title="Toast notifications" source={toastBasicSource}>
+        <ToastBasic />
       </ShowCase>
 
       <ShowCase title="ActionMenu, PillButton, Separator" source={actionMenuBasicSource}>

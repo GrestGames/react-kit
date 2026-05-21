@@ -1,0 +1,125 @@
+.tv2ActionMenuBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 28px;
+    height: 24px;
+    color: var(--rk-text-secondary, #6b7280);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--rk-radius, 5px);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tv2ActionMenuBtn:hover {
+    background: var(--rk-bg-hover, #f0f2f5);
+    color: var(--rk-text, #2c3345);
+    border-color: var(--rk-border, #e8ecf1);
+}
+
+.tv2ActionMenuBtn:focus-visible {
+    outline: 2px solid var(--rk-border-focus, #12AFCB);
+    outline-offset: 1px;
+}
+
+.tv2ActionMenuBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+}
+
+.tv2ActionMenuDropdown {
+    position: fixed;
+    z-index: 10001;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    background: var(--rk-bg-surface, #fff);
+    border: 1px solid var(--rk-border, #e8ecf1);
+    border-radius: var(--rk-radius, 5px);
+    box-shadow: var(--rk-shadow, 0 4px 12px rgba(0, 0, 0, 0.12));
+}
+
+.tv2ActionMenuItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: var(--rk-radius-sm, 3px);
+    color: var(--rk-text, #2c3345);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tv2ActionMenuItem:hover,
+.tv2ActionMenuItem:focus-visible {
+    outline: none;
+    background: var(--rk-bg-hover, #f0f2f5);
+}
+
+.tv2ActionMenuDanger {
+    color: var(--rk-danger, #d63031);
+}
+
+.tv2ActionMenuDanger:hover,
+.tv2ActionMenuDanger:focus-visible {
+    background: color-mix(in srgb, var(--rk-danger, #d63031) 13%, transparent);
+}
+
+.tv2ActionMenuWarning {
+    color: var(--rk-warning, #cc9a00);
+}
+
+.tv2ActionMenuWarning:hover,
+.tv2ActionMenuWarning:focus-visible {
+    background: color-mix(in srgb, var(--rk-warning, #cc9a00) 13%, transparent);
+}
+
+/* Armed = first click on a danger item; second click within ~2s confirms. */
+.tv2ActionMenuArmed,
+.tv2ActionMenuArmed:hover {
+    background: var(--rk-danger, #d63031);
+    color: var(--rk-text-on-accent, #ffffff);
+}
+
+/* Pending = async onClick in flight: muted + progress cursor, same size. */
+.tv2ActionMenuPending,
+.tv2ActionMenuPending:hover {
+    color: var(--rk-text-muted, #888888);
+    background: transparent;
+    cursor: progress;
+}
+
+.tv2ActionMenuSpinner {
+    display: inline-block;
+    line-height: 1;
+    animation: tv2ActionMenuSpin 0.9s linear infinite;
+}
+
+@keyframes tv2ActionMenuSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.tv2ActionMenuSeparator {
+    height: 1px;
+    margin: 4px 6px;
+    background: var(--rk-border, #e8ecf1);
+}
+
+.tv2ActionMenuInfo {
+    padding: 6px 10px 2px;
+    font-size: var(--rk-font-size-sm, 11px);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--rk-text-muted, #888888);
+}

@@ -30,7 +30,7 @@ form {
 }
 
 .formSaving .loaderArea {
-    background-color: white;
+    background-color: var(--rk-bg-surface, white);
     border-radius: 15px;
     width: 150px;
     margin: 0 auto 0 auto;

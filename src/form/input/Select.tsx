@@ -11,10 +11,14 @@ export interface ValueType<T> {
     name: string
 }
 
+function isEmptyOptionId(id: unknown): boolean {
+    return id === null || id === undefined || id === "";
+}
+
 export function RadioSelect<T extends string | number>(props: AnySelectFormElement<T>) {
     const data = useInputData<T>(props);
     useEffect(() => {
-        if (!props.addEmpty && isWithProp(props) && !props.prop.val() && !props.options.find((e) => e.id == data.value)) {
+        if (!props.addEmpty && isWithProp(props) && !props.prop.val() && !isEmptyOptionId(props.options[0]?.id) && !props.options.find((e) => e.id == data.value)) {
             props.prop.set(props.options[0].id);
         }
     }, []);
@@ -51,7 +55,7 @@ export function RadioSelect<T extends string | number>(props: AnySelectFormEleme
 export function Select<T extends string | number>(props: AnySelectFormElement<T>) {
     const data = useInputData<T>(props);
     useEffect(() => {
-        if (!props.addEmpty && isWithProp(props) && !props.prop.val() && !props.options.find((e) => e.id == data.value)) {
+        if (!props.addEmpty && isWithProp(props) && !props.prop.val() && !isEmptyOptionId(props.options[0]?.id) && !props.options.find((e) => e.id == data.value)) {
             props.prop.set(props.options[0].id);
         }
     }, []);

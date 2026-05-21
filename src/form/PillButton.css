@@ -3,9 +3,9 @@
     padding: 3px 10px;
     margin: 2px;
     border-radius: 12px;
-    border: 1px solid #ddd;
-    background: #fff;
-    color: #555;
+    border: 1px solid var(--rk-border, #ddd);
+    background: var(--rk-bg-surface, #fff);
+    color: var(--rk-text-secondary, #555);
     font: inherit;
     font-weight: 400;
     cursor: pointer;
@@ -15,26 +15,26 @@
 }
 
 .pillBtn:hover {
-    background: #f0f0f0;
-    color: #333;
+    background: var(--rk-bg-hover, #f0f0f0);
+    color: var(--rk-text, #333);
 }
 
 .pillBtn.pillDotted {
     border-style: dashed;
     background: transparent;
-    color: #888;
+    color: var(--rk-text-muted, #888);
 }
 
 .pillBtn.pillDotted:hover {
-    background: #f5f5f5;
-    color: #555;
-    border-color: #0d6efd;
+    background: var(--rk-bg-hover, #f5f5f5);
+    color: var(--rk-text-secondary, #555);
+    border-color: var(--rk-accent, #0d6efd);
 }
 
 .pillBtn.pillActive {
-    background: #0d6efd;
-    color: #fff;
-    border-color: #0d6efd;
+    background: var(--rk-accent, #0d6efd);
+    color: var(--rk-text-on-accent, #fff);
+    border-color: var(--rk-accent, #0d6efd);
 }
 
 .pillBtn.pillActive:hover {
@@ -42,9 +42,9 @@
 }
 
 .pillBtn.pillSelected {
-    background: #f0f4ff;
-    border-color: #0d6efd;
-    color: #0d6efd;
+    background: var(--rk-bg-active, #f0f4ff);
+    border-color: var(--rk-accent, #0d6efd);
+    color: var(--rk-accent, #0d6efd);
     font-weight: 600;
 }
 
