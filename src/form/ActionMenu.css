@@ -119,7 +119,7 @@
 
 .tv2ActionMenuInfo {
     padding: 6px 10px 2px;
-    font-size: var(--rk-font-size-sm);
+    font-size: var(--rk-font-size-mini);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.3px;

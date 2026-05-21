@@ -2,7 +2,7 @@
 
 html {
     color: var(--rk-text);
-    font-size: 13px;
+    font-size: var(--rk-font-size-normal);
     line-height: 1.5;
     overflow-y: scroll;
 }
@@ -14,7 +14,7 @@ body {
 }
 
 body, textarea, input, button, select {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    font-family: var(--rk-font);
 }
 
 .page {
@@ -35,8 +35,8 @@ a {
 }
 
 a:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    border-radius: 3px;
+    background-color: var(--rk-hover-overlay);
+    border-radius: var(--rk-radius-sm);
     padding: 2px 0 2px 0;
 }
 
@@ -65,7 +65,7 @@ table tr td, table tr th {
 
 table.list > thead > tr > th {
     font-weight: 600;
-    font-size: 11px;
+    font-size: var(--rk-font-size-mini);
     text-transform: uppercase;
     letter-spacing: 0.3px;
     color: var(--rk-text-secondary);
@@ -118,14 +118,14 @@ table.shrinked td {
     padding: 10px;
     border: 0;
     background-color: var(--rk-bg-surface);
-    border-radius: 6px;
+    border-radius: var(--rk-radius-lg);
     box-shadow: var(--rk-shadow-sm);
     position: relative;
 }
 
 .box {
     border: 1px solid var(--rk-border);
-    border-radius: 6px;
+    border-radius: var(--rk-radius-lg);
     padding: 10px;
 }
 
@@ -155,23 +155,23 @@ hr {
 }
 
 .brown {
-    color: #8b5e3c;
+    color: var(--rk-brown);
 }
 
 .purple {
-    color: #7c5cbf;
+    color: var(--rk-purple);
 }
 
 .pink {
-    color: #d664a0;
+    color: var(--rk-pink);
 }
 
 .teal {
-    color: #2b9a8f;
+    color: var(--rk-teal);
 }
 
 .lightblue {
-    color: lightblue
+    color: var(--rk-lightblue)
 }
 
 .blue {
@@ -180,15 +180,15 @@ hr {
 
 .tag {
     display: inline-block;
-    font-size: 10px;
+    font-size: var(--rk-font-size-micro);
     padding: 1px 6px;
-    border-radius: 3px;
+    border-radius: var(--rk-radius-sm);
     font-weight: 500;
 }
 
 .tag-green {
-    background: #e6f4ea;
-    color: #1e7e34;
+    background: var(--rk-tag-green-bg);
+    color: var(--rk-tag-green-fg);
 }
 
 .tag-gray {
@@ -197,36 +197,36 @@ hr {
 }
 
 .tag-orange {
-    background: #fff3e0;
-    color: #b37100;
+    background: var(--rk-tag-orange-bg);
+    color: var(--rk-tag-orange-fg);
 }
 
 .micro {
-    font-size: 10px
+    font-size: var(--rk-font-size-micro)
 }
 
 .mini {
-    font-size: 11px
+    font-size: var(--rk-font-size-mini)
 }
 
 .small {
-    font-size: 12px;
+    font-size: var(--rk-font-size-small);
 }
 
 .normal {
-    font-size: 13px;
+    font-size: var(--rk-font-size-normal);
 }
 
 .large {
-    font-size: 14px;
+    font-size: var(--rk-font-size-large);
 }
 
 .huge {
-    font-size: 15px;
+    font-size: var(--rk-font-size-huge);
 }
 
 .gigantic {
-    font-size: 22px;
+    font-size: var(--rk-font-size-gigantic);
 }
 
 .singleLine {
@@ -300,7 +300,7 @@ hr {
     table.form > tbody > tr > td:nth-child(odd):not([colspan]) {
         padding-top: 6px;
         font-weight: bold;
-        font-size: 11px;
+        font-size: var(--rk-font-size-mini);
         color: var(--rk-text-muted);
     }
 

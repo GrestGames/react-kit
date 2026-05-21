@@ -1,5 +1,5 @@
 /*
- * react-kit theme tokens — the single source of truth for colors, radii and shadows.
+ * react-kit theme tokens — the single source of truth for colors, sizes and shadows.
  * :root is the light palette; add the .rk-dark class to a subtree to switch it to dark.
  */
 
@@ -7,8 +7,13 @@
     --rk-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
     --rk-font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
 
-    --rk-font-size-sm: 11px;
-    --rk-font-size-md: 13px;
+    --rk-font-size-micro: 10px;
+    --rk-font-size-mini: 11px;
+    --rk-font-size-small: 12px;
+    --rk-font-size-normal: 13px;
+    --rk-font-size-large: 14px;
+    --rk-font-size-huge: 15px;
+    --rk-font-size-gigantic: 22px;
 
     --rk-bg-body: #F1F4F9;
     --rk-bg-surface: #ffffff;
@@ -33,6 +38,19 @@
     --rk-warning: #cc9a00;
     --rk-danger: #d63031;
     --rk-info: #2d7dd2;
+
+    --rk-brown: #8b5e3c;
+    --rk-purple: #7c5cbf;
+    --rk-pink: #d664a0;
+    --rk-teal: #2b9a8f;
+    --rk-lightblue: #add8e6;
+
+    --rk-tag-green-bg: #e6f4ea;
+    --rk-tag-green-fg: #1e7e34;
+    --rk-tag-orange-bg: #fff3e0;
+    --rk-tag-orange-fg: #b37100;
+
+    --rk-hover-overlay: rgba(0, 0, 0, 0.05);
 
     /* Form field states */
     --rk-changed-bg: color-mix(in srgb, var(--rk-warning) 14%, var(--rk-bg-surface));
@@ -75,6 +93,19 @@
     --rk-warning: #e0af68;
     --rk-danger: #f7768e;
     --rk-info: #7aa2f7;
+
+    --rk-brown: #c89b7a;
+    --rk-purple: #b3a0e0;
+    --rk-pink: #e89bc4;
+    --rk-teal: #5fc9bd;
+    --rk-lightblue: #9bd0e0;
+
+    --rk-tag-green-bg: #1c3324;
+    --rk-tag-green-fg: #7ec995;
+    --rk-tag-orange-bg: #3a2e1a;
+    --rk-tag-orange-fg: #e0b066;
+
+    --rk-hover-overlay: rgba(255, 255, 255, 0.07);
 
     --rk-changed-bg: color-mix(in srgb, var(--rk-warning) 10%, var(--rk-bg-surface));
     --rk-changed-border: color-mix(in srgb, var(--rk-warning) 35%, var(--rk-bg-surface));
