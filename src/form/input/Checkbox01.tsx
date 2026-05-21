@@ -29,7 +29,7 @@ function InternalCheckbox(props: AnyInputElement<boolean | 0 | 1> & ExtraProps, 
                 }}
             />
             <span className="cbBox">
-                <svg className="cbCheck" viewBox="0 0 12 12" fill="none" stroke="#888" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="cbCheck" viewBox="0 0 12 12" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M2.5 6l2.5 2.5 4.5-5"/>
                 </svg>
             </span>

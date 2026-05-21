@@ -15,17 +15,17 @@ export function formatRelativeDate(date: string): string {
 }
 
 function dateStyle(date: string | null): React.CSSProperties {
-    if (!date) return {whiteSpace: "nowrap", color: "#bbb"};
+    if (!date) return {whiteSpace: "nowrap", color: "var(--rk-text-muted)"};
     const days = DateUtils.daysBetween(DateUtils.dateNow(), date);
     return {
         whiteSpace: "nowrap",
-        color: days === 0 ? "#0d6efd" : days < 0 ? "#e67e22" : "#888",
+        color: days === 0 ? "var(--rk-accent)" : days < 0 ? "var(--rk-warning)" : "var(--rk-text-muted)",
         fontWeight: days === 0 ? 600 : undefined,
     };
 }
 
 export function RelativeDate({date}: { date: string | null }) {
-    if (!date) return <span style={{whiteSpace: "nowrap", color: "#bbb"}}>No date</span>;
+    if (!date) return <span style={{whiteSpace: "nowrap", color: "var(--rk-text-muted)"}}>No date</span>;
     return <span style={dateStyle(date)} title={date}>{formatRelativeDate(date)}</span>;
 }
 
@@ -53,7 +53,7 @@ export function ClickableDate({date, onChange}: { date: string | null, onChange:
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [open]);
 
-    const label = !date ? <span style={{whiteSpace: "nowrap", color: "#bbb"}}>No date</span>
+    const label = !date ? <span style={{whiteSpace: "nowrap", color: "var(--rk-text-muted)"}}>No date</span>
         : <span style={dateStyle(date)} title={date}>{formatRelativeDate(date)}</span>;
 
     return <span ref={wrapperRef} style={{position: "relative", cursor: "pointer"}} onDoubleClick={(e) => { e.stopPropagation(); setOpen(!open); }}>

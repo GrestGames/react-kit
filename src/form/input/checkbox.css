@@ -41,6 +41,7 @@
     width: 16px;
     height: 16px;
     opacity: 0;
+    stroke: var(--rk-text-muted);
     transition: opacity 0.15s;
 }
 
