@@ -1,0 +1,45 @@
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { ActionMenu } from "../form/ActionMenu";
+
+describe("ActionMenu", () => {
+  it("opens on trigger click, runs an item, then closes", async () => {
+    const onClick = vi.fn();
+    render(<ActionMenu items={[{ label: "Rename", onClick }]} />);
+
+    await userEvent.click(screen.getByRole("button"));
+    await userEvent.click(screen.getByRole("menuitem", { name: "Rename" }));
+
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
+  it("renders a custom trigger with a trigger color", () => {
+    render(<ActionMenu items={[{ label: "X" }]} trigger="≡" triggerColor="#f00" />);
+    const trigger = screen.getByRole("button");
+    expect(trigger).toHaveTextContent("≡");
+    expect(trigger.style.color).toBe("rgb(255, 0, 0)");
+  });
+
+  it("positions above and centers when asked", async () => {
+    render(<ActionMenu items={[{ label: "X" }]} position="above" align="center" />);
+    await userEvent.click(screen.getByRole("button"));
+    const menu = screen.getByRole("menu");
+    expect(menu.style.bottom).not.toBe("");
+    expect(menu.style.top).toBe("");
+    expect(menu.style.transform).toContain("translateX(-50%)");
+  });
+
+  it("arms a danger item before running it", async () => {
+    const onClick = vi.fn();
+    render(<ActionMenu items={[{ label: "Delete", onClick, danger: true }]} />);
+
+    await userEvent.click(screen.getByRole("button"));
+    await userEvent.click(screen.getByRole("menuitem", { name: "Delete" }));
+    expect(onClick).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole("menuitem", { name: "Click again to confirm" }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+});

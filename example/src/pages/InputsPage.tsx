@@ -21,6 +21,9 @@ import toggleBasicSource from '../examples/inputs/ToggleBasic.tsx?raw';
 import ButtonVariants from '../examples/inputs/ButtonVariants';
 import buttonVariantsSource from '../examples/inputs/ButtonVariants.tsx?raw';
 
+import IconButtonBasic from '../examples/inputs/IconButtonBasic';
+import iconButtonBasicSource from '../examples/inputs/IconButtonBasic.tsx?raw';
+
 import FileUploadBasic from '../examples/inputs/FileUploadBasic';
 import fileUploadBasicSource from '../examples/inputs/FileUploadBasic.tsx?raw';
 
@@ -58,6 +61,10 @@ export default function InputsPage() {
 
       <ShowCase title="Button, DangerButton, WarningButton, SecondaryButton, AddNewButton" source={buttonVariantsSource}>
         <ButtonVariants />
+      </ShowCase>
+
+      <ShowCase title="IconButton (async spinner, glyph variant, size)" source={iconButtonBasicSource}>
+        <IconButtonBasic />
       </ShowCase>
 
       <ShowCase title="FileUpload, FileMultiUpload" source={fileUploadBasicSource}>
