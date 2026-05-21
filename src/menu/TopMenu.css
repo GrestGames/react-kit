@@ -41,7 +41,7 @@
     padding: 4px 12px 4px 8px;
     color: var(--rk-topmenu-text-active);
     font-weight: 700;
-    font-size: 15px;
+    font-size: var(--rk-font-size-huge);
     letter-spacing: 0.5px;
     flex-shrink: 0;
     cursor: default;
@@ -126,7 +126,7 @@
 }
 
 .topMenuRight > .button {
-    font-size: 22px;
+    font-size: var(--rk-font-size-gigantic);
     line-height: 20px;
     min-width: 20px;
     text-align: center;
@@ -161,7 +161,7 @@
 
     .topMenuLogo {
         padding: 8px 4px 8px 12px;
-        font-size: 14px;
+        font-size: var(--rk-font-size-large);
     }
 
     .menuToggle {
@@ -176,7 +176,7 @@
     .topMenuPageTitle {
         display: inline-block;
         color: var(--rk-topmenu-text-bright);
-        font-size: 15px;
+        font-size: var(--rk-font-size-huge);
         padding: 12px 4px;
         flex: 1;
         min-width: 0;
@@ -213,7 +213,7 @@
         display: block;
         height: auto;
         padding: 14px 16px;
-        font-size: 14px;
+        font-size: var(--rk-font-size-large);
         border-bottom: 1px solid var(--rk-topmenu-bg-hover);
     }
 
@@ -248,7 +248,7 @@
         display: block;
         padding: 12px 16px 12px 40px;
         color: var(--rk-topmenu-text-muted);
-        font-size: 13px;
+        font-size: var(--rk-font-size-normal);
         border-bottom: 1px solid var(--rk-topmenu-bg-hover);
     }
 
@@ -273,7 +273,7 @@
         display: inline-block;
         height: 20px;
         padding: 12px;
-        font-size: 22px;
+        font-size: var(--rk-font-size-gigantic);
         line-height: 20px;
         min-width: 20px;
         text-align: center;
@@ -299,7 +299,7 @@
 
     .topMenuIcons .submenuItem {
         padding: 12px 16px;
-        font-size: 14px;
+        font-size: var(--rk-font-size-large);
         color: var(--rk-topmenu-text);
         border-bottom: 1px solid var(--rk-topmenu-bg-hover);
     }

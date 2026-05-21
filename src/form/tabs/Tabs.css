@@ -71,7 +71,7 @@
 
     .tabsArea .tabsMenu .tab {
         flex-shrink: 0;
-        font-size: 12px;
+        font-size: var(--rk-font-size-small);
         padding: 6px 10px;
     }
 }

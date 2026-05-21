@@ -21,7 +21,7 @@
     flex-shrink: 0;
     text-align: center;
     line-height: 17px;
-    font-size: 12px;
+    font-size: var(--rk-font-size-small);
     font-weight: 700;
     font-style: normal;
     border-radius: 50%;

@@ -59,7 +59,7 @@
 
 .fileGrid .renameLink {
     cursor: pointer;
-    font-size: 12px;
+    font-size: var(--rk-font-size-small);
     padding-left: 3px;
     flex-shrink: 0;
     opacity: 0.5;
