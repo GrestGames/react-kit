@@ -221,7 +221,7 @@ a.mobileOnly {
 
     .gridFilters label {
         display: block;
-        font-size: 11px;
+        font-size: var(--rk-font-size-mini);
         color: var(--rk-text-muted);
         margin-top: 4px;
     }

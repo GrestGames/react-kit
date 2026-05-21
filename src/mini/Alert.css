@@ -54,7 +54,7 @@
     flex-shrink: 0;
     border-radius: 50%;
     font-weight: 700;
-    font-size: 14px;
+    font-size: var(--rk-font-size-large);
     color: var(--alert-color);
     border: 1px solid color-mix(in srgb, var(--alert-color) 55%, transparent);
     background: color-mix(in srgb, var(--alert-color) 16%, transparent);
