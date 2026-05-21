@@ -10,7 +10,7 @@
 }
 
 @keyframes fileViewerBgIn {
-    to { background: rgba(0, 0, 0, 0.7); }
+    to { background: var(--rk-scrim-strong); }
 }
 
 /* Content starts scaled down + transparent, waits for .fileViewerReady */
@@ -70,7 +70,7 @@
     top: 12px;
     right: 16px;
     z-index: 202;
-    color: white;
+    color: var(--rk-on-scrim);
     font-size: 32px;
     cursor: pointer;
     padding: 4px 10px;
@@ -102,7 +102,7 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 202;
-    color: white;
+    color: var(--rk-on-scrim);
     font-size: 36px;
     cursor: pointer;
     padding: 12px;
@@ -131,7 +131,7 @@
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    color: white;
+    color: var(--rk-on-scrim);
     pointer-events: auto;
 }
 
@@ -143,7 +143,7 @@
 }
 
 .fileViewerOther a {
-    color: white;
+    color: var(--rk-on-scrim);
     background: rgba(255, 255, 255, 0.15);
     padding: 8px 20px;
     border-radius: 4px;

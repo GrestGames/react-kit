@@ -52,6 +52,11 @@
 
     --rk-hover-overlay: rgba(0, 0, 0, 0.05);
 
+    /* Scrims dim toward black and their content stays light in both palettes, so these are not overridden in .rk-dark. */
+    --rk-scrim: rgba(0, 0, 0, 0.4);
+    --rk-scrim-strong: rgba(0, 0, 0, 0.7);
+    --rk-on-scrim: #ffffff;
+
     --rk-topmenu-bg: #34425A;
     --rk-topmenu-bg-raised: #2b384e;
     --rk-topmenu-bg-hover: #283750;
