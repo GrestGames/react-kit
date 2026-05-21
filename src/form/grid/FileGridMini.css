@@ -11,7 +11,7 @@
     height: var(--fgm-size);
     margin: 3px;
     padding: 3px;
-    border: 1px solid rgba(213, 213, 213, 0.52);
+    border: 1px solid var(--rk-border, rgba(213, 213, 213, 0.52));
     border-radius: 6px;
     text-align: center;
     overflow: hidden;
@@ -66,18 +66,18 @@
 .fileGridMini .fgmBoxAdd {
     cursor: pointer;
     border-style: dashed;
-    border-color: #ccc;
+    border-color: var(--rk-border-strong, #ccc);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #bbb;
+    color: var(--rk-text-muted, #bbb);
     font-size: 24px;
 }
 
 .fileGridMini .fgmBoxAdd:hover {
-    border-color: #999;
+    border-color: var(--rk-border-strong, #999);
     background-color: rgba(0, 0, 0, 0.04);
-    color: #888;
+    color: var(--rk-text-muted, #888);
 }
 
 .fileGridMini .fgmBoxAdd.fgmDropHint {

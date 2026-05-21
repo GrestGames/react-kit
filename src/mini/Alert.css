@@ -1,0 +1,59 @@
+.alertBody {
+    padding: 12px 14px;
+}
+
+.alertTitle {
+    margin-bottom: 8px;
+}
+
+.alertContent {
+    color: var(--rk-text);
+    line-height: 1.5;
+}
+
+.alertActions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+/* ── Themed variants (info / warning / error) — all share one core ── */
+
+.panelAlert.alertInfo {
+    --alert-color: var(--rk-info, #2d7dd2);
+}
+
+.panelAlert.alertWarning {
+    --alert-color: var(--rk-warning, #cc9a00);
+}
+
+.panelAlert.alertError {
+    --alert-color: var(--rk-danger, #d63031);
+}
+
+.panel.panelAlert {
+    border: 1px solid color-mix(in srgb, var(--alert-color) 55%, transparent);
+}
+
+.alertHead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--alert-color);
+    margin-bottom: 8px;
+}
+
+.alertIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--alert-color);
+    border: 1px solid color-mix(in srgb, var(--alert-color) 55%, transparent);
+    background: color-mix(in srgb, var(--alert-color) 16%, transparent);
+}

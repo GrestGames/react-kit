@@ -5,7 +5,7 @@
 .fileGrid .fileBox {
     margin: 5px;
     padding: 5px;
-    border: 1px solid rgba(213, 213, 213, 0.52);
+    border: 1px solid var(--rk-border, rgba(213, 213, 213, 0.52));
     border-radius: 10px;
     text-align: center;
     overflow: hidden;

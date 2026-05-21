@@ -1,0 +1,116 @@
+.tv2ActionMenu {
+    position: relative;
+    display: inline-block;
+}
+
+.tv2ActionMenuBtn {
+    background: transparent;
+    color: var(--rk-text-secondary, #6b7280);
+    border: 1px solid transparent;
+    border-radius: var(--rk-radius, 5px);
+    margin: 0;
+    min-width: 0;
+    padding: 2px 8px;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.tv2ActionMenuBtn:hover {
+    background: var(--rk-bg-hover, #f0f2f5);
+    color: var(--rk-text, #2c3345);
+    border-color: var(--rk-border, #e8ecf1);
+}
+
+.tv2ActionMenuBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+}
+
+.tv2ActionMenuDropdown {
+    z-index: 10001;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    background: var(--rk-bg-surface, #fff);
+    border: 1px solid var(--rk-border, #e8ecf1);
+    border-radius: var(--rk-radius, 5px);
+    box-shadow: var(--rk-shadow, 0 4px 12px rgba(0, 0, 0, 0.12));
+}
+
+.tv2ActionMenuDropdown a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: var(--rk-radius-sm, 3px);
+    color: var(--rk-text, #2c3345);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.tv2ActionMenuDropdown a:hover {
+    background: var(--rk-bg-hover, #f0f2f5);
+    text-decoration: none;
+}
+
+.tv2ActionMenuDanger {
+    color: var(--rk-danger, #d63031) !important;
+}
+
+.tv2ActionMenuDanger:hover {
+    background: color-mix(in srgb, var(--rk-danger, #d63031) 13%, transparent) !important;
+}
+
+.tv2ActionMenuWarning {
+    color: var(--rk-warning, #cc9a00) !important;
+}
+
+.tv2ActionMenuWarning:hover {
+    background: color-mix(in srgb, var(--rk-warning, #cc9a00) 13%, transparent) !important;
+}
+
+/* Armed = first click on a danger item; second click within ~2s confirms. */
+.tv2ActionMenuArmed,
+.tv2ActionMenuArmed:hover {
+    background: var(--rk-danger, #d63031) !important;
+    color: var(--rk-text-on-accent, #ffffff) !important;
+}
+
+/* Pending = async onClick in flight: muted + progress cursor, same size. */
+.tv2ActionMenuPending,
+.tv2ActionMenuPending:hover {
+    color: var(--rk-text-muted, #888888) !important;
+    background: transparent !important;
+    cursor: progress;
+}
+
+.tv2ActionMenuSpinner {
+    display: inline-block;
+    line-height: 1;
+    animation: tv2ActionMenuSpin 0.9s linear infinite;
+}
+
+@keyframes tv2ActionMenuSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.tv2ActionMenuSeparator {
+    height: 1px;
+    margin: 4px 6px;
+    background: var(--rk-border, #e8ecf1);
+}
+
+.tv2ActionMenuInfo {
+    padding: 6px 10px 2px;
+    font-size: var(--rk-font-size-sm, 11px);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--rk-text-muted, #888888);
+}

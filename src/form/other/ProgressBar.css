@@ -1,18 +1,40 @@
 .progressBar {
-    border: 1px solid #b0b0b0;
-    background-color: #efefef;
-    height: 35px
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--rk-border, #b0b0b0);
+    background-color: var(--rk-bg-body, #efefef);
+    border-radius: var(--rk-radius, 5px);
+    height: 35px;
 }
 
 .progressBar .progressBarBar {
-    background-color: #87ff87;
-    height: 35px
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--rk-accent, #87ff87);
+    transition: width 0.3s ease;
 }
 
+/* Two aligned, full-width text layers. The track layer (light) shows over the
+   unfilled area; the fill layer (button text color) is clipped to the filled
+   width and sits on top, so the label is readable over both. */
 .progressBar .progressBarText {
-    position: relative;
-    top: 8px;
-    height: 0;
-    overflow: visible;
-    text-align: center;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+.progressBar .progressBarTextTrack {
+    color: var(--rk-text, #2c3345);
+    z-index: 2;
+}
+
+.progressBar .progressBarTextFill {
+    color: var(--rk-text-on-accent, #ffffff);
+    z-index: 3;
 }

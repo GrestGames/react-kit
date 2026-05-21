@@ -2,67 +2,45 @@
 .tipBase {
     display: flex;
     align-items: center;
-    padding: 5px;
+    padding: 7px 11px;
+    border: 1px solid color-mix(in srgb, var(--tip-color) 40%, transparent);
+    background-color: color-mix(in srgb, var(--tip-color) 11%, transparent);
+    color: var(--tip-color);
+    border-radius: var(--rk-radius, 5px);
 }
 
 .tipBase .tipText {
-    flex-grow: 1
+    flex-grow: 1;
 }
 
 .tipBase .tipIcon {
-    width: 20px;
-    height: 17px;
-    padding: 2px 3px 4px 3px;
-    margin: 3px 10px 0 5px;
+    width: 18px;
+    height: 18px;
+    margin: 0 9px 0 1px;
+    flex-shrink: 0;
     text-align: center;
-    font-size: 14px;
-    border-radius: 25px;
+    line-height: 17px;
+    font-size: 12px;
+    font-weight: 700;
+    font-style: normal;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--tip-color) 55%, transparent);
+    background-color: color-mix(in srgb, var(--tip-color) 16%, transparent);
+    color: var(--tip-color);
 }
 
 .hintTip {
-    border: 1px solid #40a7e7;
-    background-color: #eaf5ff;
-    color: #2b384e;
-}
-
-.hintTip .tipIcon {
-    border: 1px solid #40a7e7;
-    background-color: #eaf5ff;
-    color: #40a7e7;
+    --tip-color: var(--rk-info, #40a7e7);
 }
 
 .infoTip {
-    border: 1px solid #51e73a;
-    background-color: #f1ffee;
-    color: #289a14;
-}
-
-.infoTip .tipIcon {
-    border: 1px solid #51e73a;
-    background-color: #f1ffee;
-    color: #289a14;
+    --tip-color: var(--rk-success, #51e73a);
 }
 
 .warningTip {
-    border: 1px solid #e7aa3a;
-    background-color: #fffaee;
-    color: #9a6414;
-}
-
-.warningTip .tipIcon {
-    border: 1px solid #e7aa3a;
-    background-color: #fffaee;
-    color: #9a6414;
+    --tip-color: var(--rk-warning, #e7aa3a);
 }
 
 .errorTip {
-    border: 1px solid #e73a3a;
-    background-color: #ffeeee;
-    color: #9a1414;
-}
-
-.errorTip .tipIcon {
-    border: 1px solid #e73a3a;
-    background-color: #ffeeee;
-    color: #9a1414;
+    --tip-color: var(--rk-danger, #e73a3a);
 }

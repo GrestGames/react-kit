@@ -19,28 +19,67 @@ table.grid .gridArrowNeutral {
 
 table.grid th {
     padding: 8px 4px;
-    border-bottom: 1px solid #dfe6e9 !important;
+    border-bottom: 1px solid var(--rk-border, #dfe6e9) !important;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.3px;
-    color: #6b7280;
-    background: #fafbfc;
+    color: var(--rk-text-secondary, #6b7280);
+    background: var(--rk-bg-raised, #fafbfc);
     white-space: nowrap;
 }
 
 table.grid th.sorted {
-    color: #0984e3;
+    color: var(--rk-accent, #0984e3);
 }
 
 table.grid th.sort:hover {
     cursor: pointer;
-    color: #2d3436;
+    color: var(--rk-text, #2d3436);
 }
 
 table.grid .loadingRows {
     padding: 30px;
     text-align: center;
-    background-color: white;
+    background-color: var(--rk-bg-surface, white);
+}
+
+/* ── Reload state: keep current rows, dim slightly, show top progress bar ── */
+
+.gridReloading {
+    opacity: 0.55;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+}
+
+.gridReloadBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    overflow: hidden;
+    background: var(--rk-bg-active, #e8ecf1);
+    z-index: 2;
+}
+
+.gridReloadBar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 35%;
+    background: var(--rk-accent, #12AFCB);
+    animation: gridReloadSlide 1s infinite ease-in-out;
+}
+
+@keyframes gridReloadSlide {
+    0% {
+        left: -35%;
+    }
+    100% {
+        left: 100%;
+    }
 }
 
 table.grid td {
@@ -51,18 +90,18 @@ table.grid td {
 table.grid .noMoreRows {
     padding: 10px;
     text-align: center;
-    background-color: white;
+    background-color: var(--rk-bg-surface, white);
 }
 
 table.grid .lastRow:hover {
-    background-color: white !important;
+    background-color: var(--rk-bg-surface, white) !important;
 }
 
 /* ── View toggle (grid / blocks) ─────────────────── */
 
 .gridViewToggle {
     display: inline-flex;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--rk-border, #d1d5db);
     border-radius: 4px;
     overflow: hidden;
 }
@@ -73,20 +112,20 @@ table.grid .lastRow:hover {
     padding: 4px 8px;
     cursor: pointer;
     user-select: none;
-    color: #6b7280;
+    color: var(--rk-text-secondary, #6b7280);
 }
 
 .gridViewToggle span:first-child {
-    border-right: 1px solid #d1d5db;
+    border-right: 1px solid var(--rk-border, #d1d5db);
 }
 
 .gridViewToggle span.selected {
-    background: #2c3345;
-    color: white;
+    background: var(--rk-text, #2c3345);
+    color: var(--rk-bg-surface, white);
 }
 
 .gridViewToggle span:hover:not(.selected) {
-    background: #f3f4f6;
+    background: var(--rk-bg-hover, #f3f4f6);
 }
 
 /* ── Grid filters ─────────────────────────────────── */
@@ -182,7 +221,7 @@ a.mobileOnly {
     .gridFilters label {
         display: block;
         font-size: 11px;
-        color: gray;
+        color: var(--rk-text-muted, gray);
         margin-top: 4px;
     }
 
@@ -192,4 +231,3 @@ a.mobileOnly {
         pointer-events: auto;
     }
 }
-

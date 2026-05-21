@@ -11,8 +11,8 @@
     box-sizing: border-box;
     left: 3px;
     top: -1px;
-    background-color: white;
-    border: 1px solid #dce1e4;
+    background-color: var(--rk-bg-surface, white);
+    border: 1px solid var(--rk-border, #dce1e4);
     border-radius: 10px 0 0 10px;
     max-height: 300px;
     min-width: 300px;
@@ -27,6 +27,6 @@
 }
 
 .autocompleteSearch > div > div.selected {
-    background-color: #1e90ff;
-    color: white;
+    background-color: var(--rk-accent, #1e90ff);
+    color: var(--rk-text-on-accent, white);
 }

@@ -9,7 +9,7 @@
     padding: 6px 7px;
     width: 200px;
     height: 32px;
-    color: #444;
+    color: var(--rk-text, #444);
     text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -21,29 +21,29 @@
 }
 
 .inlineEditDisplay.inlineEditClickable:hover {
-    background: #f0f4ff;
+    background: var(--rk-bg-hover, #f0f4ff);
 }
 
 /* Changed state — matches input.changed from input.css */
 .inlineEditDisplay.changed {
-    border: 1px solid #efdec1;
-    background-color: #fff8ea;
+    border: 1px solid var(--rk-changed-border, #efdec1);
+    background-color: var(--rk-changed-bg, #fff8ea);
 }
 
 /* Empty state */
 .inlineEditDisplay.inlineEditEmpty {
     border-style: dashed;
-    border-color: #ccc;
-    color: #bbb;
+    border-color: var(--rk-border-strong, #ccc);
+    color: var(--rk-text-muted, #bbb);
     display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
 .inlineEditDisplay.inlineEditEmpty:hover {
-    border-color: #999;
+    border-color: var(--rk-border-strong, #999);
     background: rgba(0, 0, 0, 0.02);
-    color: #888;
+    color: var(--rk-text-muted, #888);
 }
 
 /* Multiline — matches textarea sizing */
@@ -97,35 +97,35 @@
 }
 
 .inlineEditSuffixWrap.inlineEditClickable:hover {
-    background: #f0f4ff;
+    background: var(--rk-bg-hover, #f0f4ff);
 }
 
 /* Changed state on wrapper — full-width yellow */
 .inlineEditSuffixWrap.inlineEditChanged {
-    outline: 1px solid #efdec1;
-    background-color: #fff8ea;
+    outline: 1px solid var(--rk-changed-border, #efdec1);
+    background-color: var(--rk-changed-bg, #fff8ea);
 }
 
 /* Empty state on wrapper — full-width dashed box */
 .inlineEditSuffixWrap.inlineEditEmpty {
-    outline: 1px dashed #ccc;
+    outline: 1px dashed var(--rk-border-strong, #ccc);
 }
 
 .inlineEditSuffixWrap.inlineEditEmpty > .inlineEditDisplay {
-    color: #bbb;
+    color: var(--rk-text-muted, #bbb);
 }
 
 .inlineEditSuffixWrap.inlineEditClickable.inlineEditEmpty:hover {
-    outline-color: #999;
+    outline-color: var(--rk-border-strong, #999);
     background: rgba(0, 0, 0, 0.02);
 }
 
 .inlineEditSuffixWrap.inlineEditClickable.inlineEditEmpty:hover > .inlineEditDisplay {
-    color: #888;
+    color: var(--rk-text-muted, #888);
 }
 
 .inlineEditSuffixText {
-    color: #888;
+    color: var(--rk-text-muted, #888);
 }
 
 /* Select/autocomplete inline mode — borderless until focused */
@@ -138,15 +138,15 @@
 
 .inlineEditSelect.inlineEditEmpty {
     border-style: dashed;
-    border-color: #ccc;
+    border-color: var(--rk-border-strong, #ccc);
 }
 
 .inlineEditSelect:hover {
-    border-color: #dce1e4;
-    background: #f0f4ff;
+    border-color: var(--rk-border, #dce1e4);
+    background: var(--rk-bg-hover, #f0f4ff);
 }
 
 .inlineEditSelect:focus {
-    border-color: #afb4bd;
-    background: #fff;
+    border-color: var(--rk-border-strong, #afb4bd);
+    background: var(--rk-bg-surface, #fff);
 }
