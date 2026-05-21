@@ -42,7 +42,7 @@
 }
 
 .gridCard:nth-child(even) {
-    background-color: var(--rk-bg-raised);
+    background-color: var(--rk-bg-subtle);
 }
 
 /* ── Card title ────────────────────────────────────── */
