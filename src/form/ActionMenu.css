@@ -1,24 +1,29 @@
-.tv2ActionMenu {
-    position: relative;
-    display: inline-block;
-}
-
 .tv2ActionMenuBtn {
-    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 28px;
+    height: 24px;
     color: var(--rk-text-secondary, #6b7280);
+    background: transparent;
     border: 1px solid transparent;
     border-radius: var(--rk-radius, 5px);
-    margin: 0;
-    min-width: 0;
-    padding: 2px 8px;
     font-size: 18px;
     line-height: 1;
+    cursor: pointer;
+    user-select: none;
 }
 
 .tv2ActionMenuBtn:hover {
     background: var(--rk-bg-hover, #f0f2f5);
     color: var(--rk-text, #2c3345);
     border-color: var(--rk-border, #e8ecf1);
+}
+
+.tv2ActionMenuBtn:focus-visible {
+    outline: 2px solid var(--rk-border-focus, #12AFCB);
+    outline-offset: 1px;
 }
 
 .tv2ActionMenuBackdrop {
@@ -28,6 +33,7 @@
 }
 
 .tv2ActionMenuDropdown {
+    position: fixed;
     z-index: 10001;
     min-width: 200px;
     display: flex;
@@ -39,7 +45,7 @@
     box-shadow: var(--rk-shadow, 0 4px 12px rgba(0, 0, 0, 0.12));
 }
 
-.tv2ActionMenuDropdown a {
+.tv2ActionMenuItem {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -47,44 +53,47 @@
     padding: 6px 10px;
     border-radius: var(--rk-radius-sm, 3px);
     color: var(--rk-text, #2c3345);
-    text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
+    user-select: none;
 }
 
-.tv2ActionMenuDropdown a:hover {
+.tv2ActionMenuItem:hover,
+.tv2ActionMenuItem:focus-visible {
+    outline: none;
     background: var(--rk-bg-hover, #f0f2f5);
-    text-decoration: none;
 }
 
 .tv2ActionMenuDanger {
-    color: var(--rk-danger, #d63031) !important;
+    color: var(--rk-danger, #d63031);
 }
 
-.tv2ActionMenuDanger:hover {
-    background: color-mix(in srgb, var(--rk-danger, #d63031) 13%, transparent) !important;
+.tv2ActionMenuDanger:hover,
+.tv2ActionMenuDanger:focus-visible {
+    background: color-mix(in srgb, var(--rk-danger, #d63031) 13%, transparent);
 }
 
 .tv2ActionMenuWarning {
-    color: var(--rk-warning, #cc9a00) !important;
+    color: var(--rk-warning, #cc9a00);
 }
 
-.tv2ActionMenuWarning:hover {
-    background: color-mix(in srgb, var(--rk-warning, #cc9a00) 13%, transparent) !important;
+.tv2ActionMenuWarning:hover,
+.tv2ActionMenuWarning:focus-visible {
+    background: color-mix(in srgb, var(--rk-warning, #cc9a00) 13%, transparent);
 }
 
 /* Armed = first click on a danger item; second click within ~2s confirms. */
 .tv2ActionMenuArmed,
 .tv2ActionMenuArmed:hover {
-    background: var(--rk-danger, #d63031) !important;
-    color: var(--rk-text-on-accent, #ffffff) !important;
+    background: var(--rk-danger, #d63031);
+    color: var(--rk-text-on-accent, #ffffff);
 }
 
 /* Pending = async onClick in flight: muted + progress cursor, same size. */
 .tv2ActionMenuPending,
 .tv2ActionMenuPending:hover {
-    color: var(--rk-text-muted, #888888) !important;
-    background: transparent !important;
+    color: var(--rk-text-muted, #888888);
+    background: transparent;
     cursor: progress;
 }
 

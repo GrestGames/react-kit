@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect, MouseEvent, CSSProperties} from "react";
+import {useState, useRef, useEffect, KeyboardEvent, CSSProperties} from "react";
 import {createPortal} from "react-dom";
 import "./ActionMenu.css";
 
@@ -12,6 +12,7 @@ export interface ActionMenuItem {
     info?: boolean;
     /** A divider line. `label`/`onClick` are ignored. */
     separator?: boolean;
+    /** Opens in a new tab on activate. */
     href?: string;
     /** Keep the menu open after an async onClick resolves (sync onClicks still close immediately). */
     keepOpen?: boolean;
@@ -19,6 +20,11 @@ export interface ActionMenuItem {
 
 const DANGER_CONFIRM_WINDOW_MS = 2000;
 
+/**
+ * Trigger and items are <div role="…"> rather than <button>/<a> so they inherit
+ * none of react-kit's global element styling — the menu is styled solely by its
+ * own classes and can't be broken by changes to the base button/anchor rules.
+ */
 export function ActionMenu({items, align = "right"}: { items: ActionMenuItem[]; align?: "left" | "right" }) {
     const [open, setOpen] = useState(false);
     const [rect, setRect] = useState<DOMRect | null>(null);
@@ -26,21 +32,20 @@ export function ActionMenu({items, align = "right"}: { items: ActionMenuItem[]; 
     const [armedIdx, setArmedIdx] = useState<number | null>(null);
     const [pendingIdxs, setPendingIdxs] = useState<ReadonlySet<number>>(() => new Set());
     const armTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const btnRef = useRef<HTMLButtonElement>(null);
+    const triggerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => () => { if (armTimer.current) clearTimeout(armTimer.current); }, []);
 
     if (items.length === 0) return null;
 
     const openMenu = () => {
-        const el = btnRef.current;
+        const el = triggerRef.current;
         if (!el) return;
         setRect(el.getBoundingClientRect());
         setDark(el.closest(".rk-dark") !== null);
         setArmedIdx(null);
         setOpen(true);
     };
-
     const close = () => { setOpen(false); setArmedIdx(null); };
 
     const armDanger = (idx: number) => {
@@ -61,45 +66,51 @@ export function ActionMenu({items, align = "right"}: { items: ActionMenuItem[]; 
         }
     };
 
-    const handleClick = (idx: number, item: ActionMenuItem) => (e: MouseEvent) => {
-        e.preventDefault();
+    const activate = (idx: number, item: ActionMenuItem) => {
         if (pendingIdxs.has(idx)) return;
+        if (item.href) { window.open(item.href, "_blank", "noopener,noreferrer"); close(); return; }
         if (item.danger && armedIdx !== idx) { armDanger(idx); return; }
         run(idx, item);
     };
 
+    const onTriggerKey = (e: KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") { e.preventDefault(); openMenu(); }
+        else if (e.key === "Escape") { close(); }
+    };
+    const onItemKey = (idx: number, item: ActionMenuItem) => (e: KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(idx, item); }
+        else if (e.key === "Escape") { close(); }
+    };
+
     const posStyle: CSSProperties = rect ? {
-        position: "fixed",
         top: rect.bottom + 4,
         ...(align === "right" ? {right: window.innerWidth - rect.right} : {left: rect.left}),
     } : {};
 
     return <>
-        <button ref={btnRef} className="tv2ActionMenuBtn" onClick={() => open ? close() : openMenu()} title="Actions">{"⋯"}</button>
+        <div ref={triggerRef} className="tv2ActionMenuBtn" role="button" tabIndex={0}
+             aria-haspopup="menu" aria-expanded={open} title="Actions"
+             onClick={() => open ? close() : openMenu()} onKeyDown={onTriggerKey}>⋯</div>
         {open && rect && createPortal(
             <div className={dark ? "rk-dark" : undefined}>
                 <div className="tv2ActionMenuBackdrop" onClick={close}/>
-                <div className="tv2ActionMenuDropdown" style={posStyle}>
+                <div className="tv2ActionMenuDropdown" role="menu" style={posStyle}>
                     {items.map((item, i) => {
                         if (item.separator) return <div key={i} className="tv2ActionMenuSeparator"/>;
                         if (item.info) return <div key={i} className="tv2ActionMenuInfo">{item.label}</div>;
                         const armed = armedIdx === i;
                         const pending = pendingIdxs.has(i);
-                        const cls = [
+                        const cls = ["tv2ActionMenuItem",
                             item.danger ? "tv2ActionMenuDanger" : "",
                             item.warning ? "tv2ActionMenuWarning" : "",
                             armed ? "tv2ActionMenuArmed" : "",
                             pending ? "tv2ActionMenuPending" : "",
-                        ].filter(Boolean).join(" ") || undefined;
-                        if (item.href) {
-                            return <a key={i} className={cls} href={item.href} target="_blank" rel="noopener noreferrer" onClick={close}>
-                                <span>{item.label}</span>
-                            </a>;
-                        }
-                        return <a key={i} className={cls} onClick={handleClick(i, item)}>
+                        ].filter(Boolean).join(" ");
+                        return <div key={i} className={cls} role="menuitem" tabIndex={0}
+                                    onClick={() => activate(i, item)} onKeyDown={onItemKey(i, item)}>
                             <span>{armed ? "Click again to confirm" : item.label}</span>
                             {pending && <span className="tv2ActionMenuSpinner" aria-hidden>⟳</span>}
-                        </a>;
+                        </div>;
                     })}
                 </div>
             </div>, document.body)}
