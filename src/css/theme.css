@@ -110,16 +110,16 @@
     --rk-border-focus: #7aa2f7;
 
     --rk-text: #c0caf5;
-    --rk-text-secondary: #a9b1d6;
-    --rk-text-muted: #7f849c;
-    --rk-text-on-accent: #0c1320;
+    --rk-text-secondary: #7f849c;
+    --rk-text-muted: #565f89;
+    --rk-text-on-accent: #16161e;
 
     --rk-accent: #7aa2f7;
     --rk-accent-hover: #89b4fa;
 
     --rk-success: #9ece6a;
     --rk-warning: #e0af68;
-    --rk-danger: #f7768e;
+    --rk-danger: #f38ba8;
     --rk-info: #7aa2f7;
 
     --rk-brown: #c89b7a;
