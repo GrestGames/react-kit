@@ -296,7 +296,7 @@ export function Grid<T extends { id: number }, Q>({
     /* ── Render ────────────────────────────────────────────────── */
 
     const rowSpanCounts: number[] = new Array(fields.length).fill(1);
-    return <ButtonAppearanceContext.Provider value="outline">
+    return <>
         {filtersForm && <div className="area gridFilters" style={{zIndex: 1}}>
             <Form prop={F}>
                 <div>
@@ -308,6 +308,7 @@ export function Grid<T extends { id: number }, Q>({
             {summaryForm()}
         </div>}
 
+        <ButtonAppearanceContext.Provider value="outline">
         {viewMode === "blocks" && blocksView ? <>
             {displayData && displayData.length > 0 && <div className={"gridReloadWrap" + (reloading ? " gridReloading" : "")}>{blocksView(displayData)}</div>}
             {hasMore && <div className="area"><div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div></div>}
@@ -407,7 +408,8 @@ export function Grid<T extends { id: number }, Q>({
                 </table>
             </div>
         )}
-    </ButtonAppearanceContext.Provider>
+        </ButtonAppearanceContext.Provider>
+    </>
 }
 
 function parseFromUrl(urlKey: string): Partial<GridQuery> {
