@@ -69,7 +69,7 @@
     --rk-topmenu-text-bright: #c5d0e0;
     --rk-topmenu-text-active: #ffffff;
 
-    /* ── Variants — bold fill for buttons/badges (text on fill = --rk-text-on-accent) ── */
+    /* ── Variants — bold fill for buttons/badges ── */
     --rk-normal-fill: var(--rk-accent);
     --rk-normal-fill-hover: var(--rk-accent-hover);
     --rk-secondary-fill: #7a6fbe;
@@ -86,6 +86,16 @@
     --rk-danger-fill-hover: #fd6565;
     --rk-info-fill: #3b8ee0;
     --rk-info-fill-hover: #4a9bed;
+
+    /* Text/icon on the bold fill — defaults to --rk-text-on-accent; override a variant if its fill needs different contrast */
+    --rk-normal-fill-text: var(--rk-text-on-accent);
+    --rk-secondary-fill-text: var(--rk-text-on-accent);
+    --rk-third-fill-text: var(--rk-text-on-accent);
+    --rk-submit-fill-text: var(--rk-text-on-accent);
+    --rk-success-fill-text: var(--rk-text-on-accent);
+    --rk-warning-fill-text: var(--rk-text-on-accent);
+    --rk-danger-fill-text: var(--rk-text-on-accent);
+    --rk-info-fill-text: var(--rk-text-on-accent);
 
     /* ── Status intents — soft surface for alerts/tips/inputs (border + bg + readable text) ── */
     --rk-success-soft: color-mix(in srgb, var(--rk-success) 12%, var(--rk-bg-surface));

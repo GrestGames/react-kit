@@ -3,7 +3,7 @@
 button {
     cursor: pointer;
     padding: 8px;
-    color: var(--rk-text-on-accent);
+    color: var(--rk-normal-fill-text);
     background-color: var(--rk-normal-fill);
     outline: none !important;
     border: 1px solid var(--rk-border);
@@ -22,6 +22,7 @@ button:hover {
 
 button.third {
     background-color: var(--rk-third-fill);
+    color: var(--rk-third-fill-text);
 }
 
 button.third:hover {
@@ -30,7 +31,7 @@ button.third:hover {
 
 button.secondary {
     background-color: var(--rk-secondary-fill);
-    color: var(--rk-text-on-accent);
+    color: var(--rk-secondary-fill-text);
 }
 
 button.secondary:hover {
@@ -43,7 +44,7 @@ button.formSubmit {
 
 button.warning {
     background-color: var(--rk-warning-fill);
-    color: var(--rk-text-on-accent);
+    color: var(--rk-warning-fill-text);
 }
 
 button.warning:hover {
@@ -52,7 +53,7 @@ button.warning:hover {
 
 button.danger {
     background-color: var(--rk-danger-fill);
-    color: var(--rk-text-on-accent);
+    color: var(--rk-danger-fill-text);
 }
 
 button.danger:hover {
@@ -73,6 +74,7 @@ button.deleteRowButton {
 
 button[type="submit"] {
     background-color: var(--rk-submit-fill);
+    color: var(--rk-submit-fill-text);
 }
 
 button[type="submit"]:hover {
@@ -96,12 +98,12 @@ table.grid button:hover {
 
 table.grid button.danger {
     background-color: var(--rk-danger-fill);
-    color: var(--rk-text-on-accent);
+    color: var(--rk-danger-fill-text);
 }
 
 table.grid button.warning {
     background-color: var(--rk-warning-fill);
-    color: var(--rk-text-on-accent);
+    color: var(--rk-warning-fill-text);
 }
 
 
