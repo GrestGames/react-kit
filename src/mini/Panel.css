@@ -43,6 +43,7 @@
 
 .panel .panelTitle {
     color: var(--rk-text);
+    font-size: var(--rk-font-size-gigantic);
 }
 
 .panel .panelSubTitle {
