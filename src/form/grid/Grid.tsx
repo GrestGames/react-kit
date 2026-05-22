@@ -9,6 +9,7 @@ import {VALIDATION_ERROR} from "@grest-ts/schema";
 import {Form} from "../Form";
 import {useIsMobile} from "../../responsive/useResponsive";
 import {MobileSortBar} from "./GridCards";
+import {ButtonAppearanceContext} from "../input/buttonAppearance";
 
 type FilterState<Q> = Q & GridQuery;
 
@@ -295,7 +296,7 @@ export function Grid<T extends { id: number }, Q>({
     /* ── Render ────────────────────────────────────────────────── */
 
     const rowSpanCounts: number[] = new Array(fields.length).fill(1);
-    return <>
+    return <ButtonAppearanceContext.Provider value="outline">
         {filtersForm && <div className="area gridFilters" style={{zIndex: 1}}>
             <Form prop={F}>
                 <div>
@@ -406,7 +407,7 @@ export function Grid<T extends { id: number }, Q>({
                 </table>
             </div>
         )}
-    </>
+    </ButtonAppearanceContext.Provider>
 }
 
 function parseFromUrl(urlKey: string): Partial<GridQuery> {

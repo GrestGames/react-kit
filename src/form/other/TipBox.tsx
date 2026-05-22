@@ -11,7 +11,7 @@ export interface Props {
     onClick?: () => void;
 }
 
-export function TipBox({intent = "info", iconLetter, children, style, className, onClick}: Props) {
+export function TipBox({intent = "default", iconLetter, children, style, className, onClick}: Props) {
     const intentVars = {
         "--tip-bg": `var(--rk-${intent}-soft)`,
         "--tip-border": `var(--rk-${intent}-soft-border)`,

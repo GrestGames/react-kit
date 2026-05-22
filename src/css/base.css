@@ -188,6 +188,10 @@ hr {
     color: var(--tag-text);
 }
 
+.tag.tagBold {
+    font-weight: 600;
+}
+
 .micro {
     font-size: var(--rk-font-size-micro)
 }

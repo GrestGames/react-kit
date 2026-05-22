@@ -1,5 +1,5 @@
 import "../css/button.css";
-import {CSSProperties, PropsWithChildren, ReactNode, useEffect, useRef, useState} from "react";
+import {CSSProperties, PropsWithChildren, ReactNode, useContext, useEffect, useRef, useState} from "react";
 import {isPromise} from "../../util/isPromise";
 import {Alert} from "../../mini/Alert";
 import {ApiErrorMessage} from "../../ErrorTracker";
@@ -9,10 +9,12 @@ import {useForm} from "../Form";
 import {ERROR} from "@grest-ts/schema";
 import {useIsMobile} from "../../responsive/useResponsive";
 import {Intent} from "../../intents";
+import {ButtonAppearance, ButtonAppearanceContext} from "./buttonAppearance";
 
 export interface ButtonProps extends PropsWithChildren<AnyFormElement> {
     onClick: () => Promise<any> | void,
     intent?: Intent,
+    appearance?: ButtonAppearance,
 }
 
 /** @deprecated prefer `<Button intent="warning">` */
@@ -149,8 +151,11 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
     const intentVars = effectiveIntent ? {
         "--btn-bg": `var(--rk-${effectiveIntent}-fill)`,
         "--btn-bg-hover": `var(--rk-${effectiveIntent}-fill-hover)`,
-        "--btn-fg": "var(--rk-text-on-accent)",
+        "--btn-fg": `var(--rk-${effectiveIntent}-fill-text)`,
     } as CSSProperties : {};
+
+    const contextAppearance = useContext(ButtonAppearanceContext);
+    const appearance = props.appearance ?? contextAppearance ?? "gradient";
 
     return <>
         {error && <Alert intent="danger" onClick={() => setError(undefined)}><ApiErrorMessage error={error}/></Alert>}
@@ -158,7 +163,7 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
                 ref={ref}
                 disabled={props.disabled || props.readOnly || isLoading}
                 style={{width: size?.[0], height: size?.[1], ...intentVars, ...props.style}}
-                className={[props.className, isLoading && "loading"].filter(Boolean).join(" ")}
+                className={[props.className, appearance === "outline" && "rkBtn-outline", isLoading && "loading"].filter(Boolean).join(" ")}
                 onClick={click}
                 onMouseEnter={() => setHadError(false)}>
             {isLoading && <div className={size?.[0] <= 45 ? "smallAnimation" : "defaultAnimation"}/>}
