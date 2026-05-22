@@ -81,7 +81,7 @@ table.list > tbody > tr:nth-child(even) {
 }
 
 table.list > tbody > tr:hover {
-    background-color: var(--rk-bg-hover) !important;
+    background-color: var(--rk-bg-active) !important;
 }
 
 table.list > tbody > tr:hover th {

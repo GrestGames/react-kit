@@ -74,11 +74,11 @@ input[type="checkbox"], input[type="radio"] {
 
 input.error, select.error, textarea.error {
     border: 1px solid var(--rk-danger);
-    background-color: var(--rk-error-bg);
+    background-color: var(--rk-danger-soft);
 }
 
 .errorForArea {
-    background-color: var(--rk-error-bg);
+    background-color: var(--rk-danger-soft);
 }
 
 .changedForArea {
@@ -148,7 +148,7 @@ textarea.wide {
 .inputSuffix.error {
     border: 1px solid var(--rk-danger);
     border-left: 0;
-    background-color: var(--rk-error-bg);
+    background-color: var(--rk-danger-soft);
 }
 
 .validationErrorMsg {

@@ -32,9 +32,9 @@
 }
 
 .fileUploadDropZone tr.error {
-    background-color: var(--rk-error-bg);
+    background-color: var(--rk-danger-soft);
 }
 
 .fileUploadDropZone table.list > tbody > tr.error:nth-child(even) {
-    background-color: var(--rk-error-bg);
+    background-color: var(--rk-danger-soft);
 }
