@@ -7,8 +7,10 @@ export interface ActionMenuItem {
     label: string;
     onClick?: () => void | Promise<void>;
     danger?: boolean;
-    /** Soft-warning color (orange). No arming — for non-destructive actions that warrant a visual flag. */
+    /** Soft-warning color (orange). No arming on its own — for non-destructive actions that warrant a visual flag. Pair with `confirm` to also require a second click. */
     warning?: boolean;
+    /** Require a confirming second click ("Click again to confirm"), like `danger` but without the destructive red — the item keeps its own color. */
+    confirm?: boolean;
     /** Non-interactive label / section header. */
     info?: boolean;
     /** A divider line. `label`/`onClick` are ignored. */
@@ -17,7 +19,7 @@ export interface ActionMenuItem {
     href?: string;
     /** Keep the menu open after an async onClick resolves (sync onClicks still close immediately). */
     keepOpen?: boolean;
-    /** Armed-state label for a `danger` item. Default: "Click again to confirm". */
+    /** Armed-state label for a `danger`/`confirm` item. Default: "Click again to confirm". */
     confirmDoubleText?: string;
 }
 
@@ -83,7 +85,7 @@ export function ActionMenu({items, align = "right", position = "below", trigger 
     const activate = (idx: number, item: ActionMenuItem) => {
         if (pendingIdxs.has(idx)) return;
         if (item.href) { window.open(item.href, "_blank", "noopener,noreferrer"); close(); return; }
-        if (item.danger && armedIdx !== idx) { armDanger(idx); return; }
+        if ((item.danger || item.confirm) && armedIdx !== idx) { armDanger(idx); return; }
         run(idx, item);
     };
 

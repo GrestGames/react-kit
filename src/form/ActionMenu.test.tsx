@@ -49,4 +49,20 @@ describe("ActionMenu", () => {
     await userEvent.click(screen.getByRole("menuitem", { name: "Click again to confirm" }));
     expect(onClick).toHaveBeenCalledTimes(1);
   });
+
+  it("arms a confirm item before running it, keeping its non-danger color", async () => {
+    const onClick = vi.fn();
+    render(<ActionMenu items={[{ label: "Sync", onClick, warning: true, confirm: true }]} />);
+
+    await userEvent.click(screen.getByRole("button"));
+    await userEvent.click(screen.getByRole("menuitem", { name: "Sync" }));
+    expect(onClick).not.toHaveBeenCalled();
+
+    const armed = screen.getByRole("menuitem", { name: "Click again to confirm" });
+    expect(armed.className).toContain("tv2ActionMenuWarning");
+    expect(armed.className).not.toContain("tv2ActionMenuDanger");
+
+    await userEvent.click(armed);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
 });
