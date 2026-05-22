@@ -28,7 +28,7 @@ export function Form<T>(props: PropsWithChildren<{ prop: FormObject<T> }>) {
 
         return <div ref={ref}>
             {(f.isReloading() || f.isSaving()) && <FormLoader f={f} containerRef={ref}/>}
-            <form method="POST" onSubmit={(e) => {
+            <form className="rkForm" method="POST" onSubmit={(e) => {
                 props.prop.getForm().submit()
                     .then(() => {
                     })

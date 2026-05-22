@@ -15,6 +15,7 @@ export function MobileSortBar<T>({fields, orderBy, onSort}: MobileSortBarProps<T
 
     return <div className="gridMobileSort">
         <select
+            className="rkSelect"
             value={orderBy?.field || ""}
             onChange={(e) => {
                 const field = e.target.value;
