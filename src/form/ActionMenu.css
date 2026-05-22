@@ -84,10 +84,17 @@
     background: color-mix(in srgb, var(--rk-warning) 13%, transparent);
 }
 
-/* Armed = first click on a danger item; second click within ~2s confirms. */
+/* Armed = first click on a danger/confirm item; second click within ~2s confirms. */
 .tv2ActionMenuArmed,
 .tv2ActionMenuArmed:hover {
     background: var(--rk-danger);
+    color: var(--rk-text-on-accent);
+}
+
+/* A confirm-armed warning item keeps its orange identity instead of flashing red. */
+.tv2ActionMenuWarning.tv2ActionMenuArmed,
+.tv2ActionMenuWarning.tv2ActionMenuArmed:hover {
+    background: var(--rk-warning);
     color: var(--rk-text-on-accent);
 }
 
