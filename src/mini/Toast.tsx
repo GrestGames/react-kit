@@ -44,6 +44,7 @@ export interface ToastOptions {
 export const toast = Object.assign(
     (message: ReactNode, opts: ToastOptions = {}) => show(message, opts.intent ?? "neutral", opts.duration ?? 3200),
     {
+        default: (message: ReactNode, duration = 3200) => show(message, "default", duration),
         neutral: (message: ReactNode, duration = 3200) => show(message, "neutral", duration),
         info: (message: ReactNode, duration = 3200) => show(message, "info", duration),
         cool: (message: ReactNode, duration = 3200) => show(message, "cool", duration),

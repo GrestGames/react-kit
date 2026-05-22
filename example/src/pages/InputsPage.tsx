@@ -59,7 +59,7 @@ export default function InputsPage() {
         <ToggleBasic />
       </ShowCase>
 
-      <ShowCase title="Button, DangerButton, WarningButton, SecondaryButton, AddNewButton" source={buttonVariantsSource}>
+      <ShowCase title="Button" source={buttonVariantsSource}>
         <ButtonVariants />
       </ShowCase>
 

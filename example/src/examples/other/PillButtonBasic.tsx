@@ -1,8 +1,12 @@
-import { PillButton, toast } from '@grest-ts/react';
+import { PillButton, toast, type Intent } from '@grest-ts/react';
 import { useState } from 'react';
+
+const intents: Intent[] = ['neutral', 'info', 'cool', 'success', 'warning', 'danger', 'critical'];
 
 export default function PillButtonBasic() {
   const [active, setActive] = useState('all');
+  const [chosen, setChosen] = useState<Intent[]>([]);
+  const toggle = (i: Intent) => setChosen(prev => prev.includes(i) ? prev.filter(x => x !== i) : [...prev, i]);
 
   return (
     <>
@@ -14,12 +18,12 @@ export default function PillButtonBasic() {
         ))}
         <PillButton dotted onClick={() => toast('Dotted pill clicked')}>Dotted</PillButton>
         <PillButton bold>Bold</PillButton>
-        <PillButton selected>Selected</PillButton>
-        <PillButton active activeColor="#22c55e">Custom color</PillButton>
+        <PillButton disabled onClick={() => toast('should not fire')}>Disabled</PillButton>
+        <PillButton intent="success" active disabled>Disabled active</PillButton>
       </div>
       <div>
-        {(['neutral', 'info', 'cool', 'success', 'warning', 'danger', 'critical'] as const).map(intent => (
-          <PillButton key={intent} intent={intent}>{intent}</PillButton>
+        {intents.map(intent => (
+          <PillButton key={intent} intent={intent} active={chosen.includes(intent)} onClick={() => toggle(intent)}>{intent}</PillButton>
         ))}
       </div>
     </>

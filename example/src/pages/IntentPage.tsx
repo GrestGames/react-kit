@@ -18,6 +18,9 @@ export default function IntentPage() {
             </tr>
           </thead>
           <tbody>
+            <tr key="default">
+              <Elements />
+            </tr>
             {intents.map(intent => (
               <tr key={intent}>
                 <Elements intent={intent} />

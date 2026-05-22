@@ -46,6 +46,14 @@
 
     /* ── Status intents — per family: base hue, bold fill (text on fill = --rk-text-on-accent), soft surface (bg + border + readable text) ── */
     
+    /* default = no status: accent when filled (fill), plain surface when quiet (soft) */
+    --rk-default: var(--rk-accent);
+    --rk-default-fill: var(--rk-accent);
+    --rk-default-fill-hover: var(--rk-accent-hover);
+    --rk-default-soft: var(--rk-bg-surface);
+    --rk-default-soft-border: var(--rk-border);
+    --rk-default-soft-text: var(--rk-text-secondary);
+
     --rk-neutral: #6b7280;
     --rk-neutral-fill: #6b7280;
     --rk-neutral-fill-hover: #7b8392;
@@ -97,13 +105,6 @@
 
     /* ── Button ── */
     --rk-hover-overlay: rgba(0, 0, 0, 0.05);
-
-    --rk-secondary-fill: #7a6fbe; /* TODO -DEPRECATED; SHOULD BE HUE: purple */
-    --rk-secondary-fill-hover: #887cd2; /* TODO -DEPRECATED; SHOULD BE HUE: purple */
-    --rk-third-fill: #beb16f; /* TODO -DEPRECATED; SHOULD BE HUE: sand */
-    --rk-third-fill-hover: #c2b674; /* TODO -DEPRECATED; SHOULD BE HUE: sand */
-    --rk-submit-fill: #22BAA0; /* TODO -DEPRECATED; SHOULD BE HUE: teal */
-    --rk-submit-fill-hover: #26d0b3; /* TODO -DEPRECATED; SHOULD BE HUE: teal */
 
     /* Scrims dim toward black and their content stays light in both palettes, so these are not overridden in .rk-dark. */
     --rk-scrim: rgba(0, 0, 0, 0.4);

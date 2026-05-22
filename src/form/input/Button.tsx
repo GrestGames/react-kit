@@ -25,7 +25,7 @@ export function DangerButton(props: ButtonProps) {
 }
 
 export function SecondaryButton(props: ButtonProps) {
-    return AnyButton({...props, type: "button", design: "secondary"})
+    return AnyButton({...props, type: "button", intent: "cool"})
 }
 
 export function Button(props: ButtonProps) {
@@ -37,7 +37,7 @@ export function SubmitButton(props: Omit<ButtonProps, "onClick">) {
     return AnyButton({
         ...props,
         type: form ? "button" : "submit",
-        design: "secondary",
+        intent: "warning",
         children: props.children || "Save",
         onClick: form ? async () => form.getForm().submit() : () => undefined
     })
@@ -48,7 +48,7 @@ export function FormSubmitButton(props: Omit<ButtonProps, "onClick">) {
     return AnyButton({
         ...props,
         type: form ? "button" : "submit",
-        design: "danger",
+        intent: "danger",
         children: props.children || "Save",
         className: "formSubmit " + props.className,
         onClick: form ? async () => form.getForm().submit() : () => undefined
@@ -56,7 +56,7 @@ export function FormSubmitButton(props: Omit<ButtonProps, "onClick">) {
 }
 
 export function FormCancelButton(props: ButtonProps) {
-    return AnyButton({...props, type: "button", design: "warning", children: props.children || "Cancel", className: "formSubmit " + props.className, style: {float: "left", ...props.style}})
+    return AnyButton({...props, type: "button", intent: "warning", children: props.children || "Cancel", className: "formSubmit " + props.className, style: {float: "left", ...props.style}})
 }
 
 export function ArrayPushButton<T>(props: Omit<ButtonProps, "onClick"> & { prop: FormObject<T[]>, blank?: Partial<T> | (() => Partial<T>) }) {
@@ -64,7 +64,8 @@ export function ArrayPushButton<T>(props: Omit<ButtonProps, "onClick"> & { prop:
         children: props.children || "Add row",
         ...props,
         type: "button",
-        className: "addRowButton secondary",
+        intent: "cool",
+        className: "addRowButton",
         onClick: () => {
             const value = typeof props.blank === "function" ? (props.blank as (() => T))() : props.blank;
             props.prop.push(value || {} as any)
@@ -80,7 +81,8 @@ export function ArrayRemoveButtonOLD<T>(props: { prop: FormObject<T[]>, index: n
         children: "X",
         ...props,
         type: "button",
-        className: "deleteRowButton danger",
+        intent: "danger",
+        className: "deleteRowButton",
         onClick: () => {
             props.prop.splice(props.index, 1)
         }
@@ -92,7 +94,8 @@ export function ArrayRemoveButton<T>(props: { prop: FormObject<T>, style?: CSSPr
         children: "X",
         ...props,
         type: "button",
-        className: "deleteRowButton danger",
+        intent: "danger",
+        className: "deleteRowButton",
         onClick: () => {
             props.prop.removeFromParentArray();
         }
@@ -111,7 +114,6 @@ export function AddNewButton({onClick, children}: {onClick: () => void, children
 
 function AnyButton(props: PropsWithChildren<ButtonProps & {
     type: "button" | "submit" | "reset",
-    design?: "warning" | "secondary" | "danger"
 }>) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<ERROR<string, any>>();
@@ -140,9 +142,11 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
         }
     }
 
-    const intentVars = props.intent ? {
-        "--btn-bg": `var(--rk-${props.intent}-fill)`,
-        "--btn-bg-hover": `var(--rk-${props.intent}-fill-hover)`,
+    const effectiveIntent = hadError ? "warning" : props.intent;
+    const intentVars = effectiveIntent ? {
+        "--btn-bg": `var(--rk-${effectiveIntent}-fill)`,
+        "--btn-bg-hover": `var(--rk-${effectiveIntent}-fill-hover)`,
+        "--btn-fg": "var(--rk-text-on-accent)",
     } as CSSProperties : {};
 
     return <>
@@ -151,7 +155,7 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
                 ref={ref}
                 disabled={props.disabled || props.readOnly || isLoading}
                 style={{width: size?.[0], height: size?.[1], ...intentVars, ...props.style}}
-                className={props.design + " " + props.className + " " + (isLoading && " loading ") + " " + (hadError && " warning ")}
+                className={[props.className, isLoading && "loading"].filter(Boolean).join(" ")}
                 onClick={click}
                 onMouseEnter={() => setHadError(false)}>
             {isLoading && <div className={size?.[0] <= 45 ? "smallAnimation" : "defaultAnimation"}/>}

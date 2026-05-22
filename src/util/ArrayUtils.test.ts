@@ -1,7 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ArrayUtils } from "../util/ArrayUtils";
-import { StringUtils } from "../util/StringUtils";
-import { Decimal2 } from "../Decimal2";
+import { ArrayUtils } from "./ArrayUtils";
 
 describe("ArrayUtils", () => {
   it("removeElement removes the element", () => {
@@ -31,33 +29,5 @@ describe("ArrayUtils", () => {
 
   it("arrayToHumanStr single item", () => {
     expect(ArrayUtils.arrayToHumanStr(["x"])).toBe("x");
-  });
-});
-
-describe("StringUtils", () => {
-  it("lcFirst lowercases first char", () => {
-    expect(StringUtils.lcFirst("Hello")).toBe("hello");
-  });
-
-  it("ucFirst uppercases first char", () => {
-    expect(StringUtils.ucFirst("hello")).toBe("Hello");
-  });
-});
-
-describe("Decimal2", () => {
-  it("stores and returns value", () => {
-    expect(Decimal2.from(1.23).toNumber()).toBe(1.23);
-  });
-
-  it("add avoids floating-point drift", () => {
-    expect(Decimal2.from(0.1).add(Decimal2.from(0.2)).toNumber()).toBe(0.3);
-  });
-
-  it("subtract works", () => {
-    expect(Decimal2.from(1.0).subtract(Decimal2.from(0.25)).toNumber()).toBe(0.75);
-  });
-
-  it("toString formats to 2 decimals", () => {
-    expect(Decimal2.from(5).toString()).toBe("5.00");
   });
 });

@@ -18,9 +18,6 @@ import miniTipBasicSource from '../examples/other/MiniTipBasic.tsx?raw';
 import ToastBasic from '../examples/other/ToastBasic';
 import toastBasicSource from '../examples/other/ToastBasic.tsx?raw';
 
-import ActionMenuBasic from '../examples/other/ActionMenuBasic';
-import actionMenuBasicSource from '../examples/other/ActionMenuBasic.tsx?raw';
-
 import PillButtonBasic from '../examples/other/PillButtonBasic';
 import pillButtonBasicSource from '../examples/other/PillButtonBasic.tsx?raw';
 
@@ -47,6 +44,10 @@ export default function OtherPage() {
         <ButtonIntents />
       </ShowCase>
 
+      <ShowCase title="PillButton" source={pillButtonBasicSource}>
+        <PillButtonBasic />
+      </ShowCase>
+
       <ShowCase title="Toast notifications" source={toastBasicSource}>
         <ToastBasic />
       </ShowCase>
@@ -57,14 +58,6 @@ export default function OtherPage() {
 
       <ShowCase title="MiniTip" source={miniTipBasicSource}>
         <MiniTipBasic />
-      </ShowCase>
-
-      <ShowCase title="ActionMenu" source={actionMenuBasicSource}>
-        <ActionMenuBasic />
-      </ShowCase>
-
-      <ShowCase title="PillButton" source={pillButtonBasicSource}>
-        <PillButtonBasic />
       </ShowCase>
 
       <ShowCase title="ProgressBar" source={progressBarBasicSource}>

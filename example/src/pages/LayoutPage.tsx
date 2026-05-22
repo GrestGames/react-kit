@@ -15,6 +15,9 @@ import tabsBasicSource from '../examples/layout/TabsBasic.tsx?raw';
 import LoadingPopupBasic from '../examples/layout/LoadingPopupBasic';
 import loadingPopupBasicSource from '../examples/layout/LoadingPopupBasic.tsx?raw';
 
+import ActionMenuBasic from '../examples/other/ActionMenuBasic';
+import actionMenuBasicSource from '../examples/other/ActionMenuBasic.tsx?raw';
+
 export default function LayoutPage() {
   return (
     <>
@@ -22,6 +25,10 @@ export default function LayoutPage() {
 
       <ShowCase title="TopMenu (logo, dropdowns, right items)" source={topMenuBasicSource}>
         <TopMenuBasic />
+      </ShowCase>
+
+      <ShowCase title="ActionMenu" source={actionMenuBasicSource}>
+        <ActionMenuBasic />
       </ShowCase>
 
       <ShowCase title="PopupPanel" source={panelBasicSource}>

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ActionMenu } from "../form/ActionMenu";
+import { ActionMenu } from "./ActionMenu";
 
 describe("ActionMenu", () => {
   it("opens on trigger click, runs an item, then closes", async () => {

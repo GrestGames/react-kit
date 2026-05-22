@@ -42,11 +42,12 @@ export default function FormBasic() {
             <td style={{ padding: '4px 12px 4px 0' }}>Active:</td>
             <td><Checkbox prop={F.active} /></td>
           </tr>
+          <tr>
+            <td style={{ padding: '4px 12px 4px 0' }}>Active:</td>
+            <td><SubmitButton>Save Person</SubmitButton></td>
+          </tr>
         </tbody>
       </table>
-      <div style={{ marginTop: 12 }}>
-        <SubmitButton>Save Person</SubmitButton>
-      </div>
       <div style={{ marginTop: 8, fontSize: 12, color: '#64748b' }}>
         Current data: {JSON.stringify(data)}
       </div>

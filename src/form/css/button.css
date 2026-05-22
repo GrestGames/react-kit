@@ -3,7 +3,7 @@
 button {
     cursor: pointer;
     padding: 8px;
-    color: var(--rk-text-on-accent);
+    color: var(--btn-fg, var(--rk-text-on-accent));
     background-color: var(--btn-bg, var(--rk-accent));
     outline: none !important;
     border: 1px solid var(--rk-border);
@@ -20,43 +20,8 @@ button:hover {
     background-color: var(--btn-bg-hover, var(--rk-accent-hover));
 }
 
-button.third {
-    background-color: var(--rk-third-fill);
-}
-
-button.third:hover {
-    background-color: var(--rk-third-fill-hover);
-}
-
-button.secondary {
-    background-color: var(--rk-secondary-fill);
-    color: var(--rk-text-on-accent);
-}
-
-button.secondary:hover {
-    background-color: var(--rk-secondary-fill-hover);
-}
-
 button.formSubmit {
     width: 200px;
-}
-
-button.warning {
-    background-color: var(--rk-warning-fill);
-    color: var(--rk-text-on-accent);
-}
-
-button.warning:hover {
-    background-color: var(--rk-warning-fill-hover);
-}
-
-button.danger {
-    background-color: var(--rk-danger-fill);
-    color: var(--rk-text-on-accent);
-}
-
-button.danger:hover {
-    background-color: var(--rk-danger-fill-hover);
 }
 
 button.addRowButton {
@@ -71,37 +36,19 @@ button.deleteRowButton {
     padding: 0;
 }
 
-button[type="submit"] {
-    background-color: var(--rk-submit-fill);
-}
-
-button[type="submit"]:hover {
-    background-color: var(--rk-submit-fill-hover);
-}
-
 table.grid button {
-    color: inherit;
+    color: var(--btn-fg, inherit);
     border: 1px solid var(--rk-border-light);
-    background-color: transparent;
+    background-color: var(--btn-bg, transparent);
     margin: 0 2px 0 2px;
     padding: 4px 6px 3px 6px;
     border-radius: 5px;
 }
 
 table.grid button:hover {
-    background-color: var(--rk-bg-hover);
-    color: var(--rk-accent);
+    background-color: var(--btn-bg-hover, var(--rk-bg-hover));
+    color: var(--btn-fg, var(--rk-accent));
     border-color: var(--rk-border-strong);
-}
-
-table.grid button.danger {
-    background-color: var(--rk-danger-fill);
-    color: var(--rk-text-on-accent);
-}
-
-table.grid button.warning {
-    background-color: var(--rk-warning-fill);
-    color: var(--rk-text-on-accent);
 }
 
 

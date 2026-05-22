@@ -1,4 +1,5 @@
 export type Intent =
+    | "default"
     | "neutral"
     | "info"
     | "cool"
