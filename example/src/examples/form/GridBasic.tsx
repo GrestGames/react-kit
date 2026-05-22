@@ -11,7 +11,7 @@ interface Row {
 
 interface Filters {
   search?: string;
-  role?: string;
+  role?: string | null;
 }
 
 const mockData: Row[] = [
@@ -26,7 +26,7 @@ const mockData: Row[] = [
 ];
 
 const roleOptions = [
-  { id: '', name: 'All' },
+  { id: null, name: 'All' },
   { id: 'dev', name: 'Developer' },
   { id: 'design', name: 'Designer' },
   { id: 'pm', name: 'Product Manager' },
@@ -71,11 +71,12 @@ export default function GridBasic() {
         return { rows };
       }}
       filtersForm={(F: FormObject<Filters>) => (
-        <div className="demoRow">
-          <label>Search: <TextInput prop={F.search} placeholder="Search..." /></label>
-          <label>Role: <Select prop={F.role} options={roleOptions} /></label>
+        <div className="demoRow" style={{ alignItems: 'center' }}>
+          <label style={{ flexDirection: 'row', alignItems: 'center' }}>Search: <TextInput prop={F.search} placeholder="Search..." /></label>
+          <label style={{ flexDirection: 'row', alignItems: 'center' }}>Role: <Select prop={F.role} options={roleOptions} /></label>
           {/* Header buttons keep the default gradient appearance — only row buttons render as outline. */}
-          <Button intent="info" onClick={() => toast('New entry')}>New entry</Button>
+          <Button intent="default" onClick={() => F.getForm().submit()}>Search</Button>
+          <Button onClick={() => { F.search.set(''); F.role.set(null); F.getForm().submit(); }}>Reset</Button>
         </div>
       )}
     />
