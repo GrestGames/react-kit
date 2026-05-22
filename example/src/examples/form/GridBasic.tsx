@@ -41,6 +41,7 @@ const fields: GridField<Row>[] = [
   // Buttons inside <Grid> auto-render as outline (pass appearance="gradient" to opt one back out).
   { title: 'Actions', value: (row) => (
     <>
+      <Button onClick={() => toast(`View ${row.name}`)}>View</Button>
       <Button intent="info" onClick={() => toast(`Edit ${row.name}`)}>Edit</Button>
       <Button intent="danger" confirmDouble confirmDoubleText={`Delete ${row.name}?`} onClick={() => toast.danger(`Delete ${row.name}`)}>Delete</Button>
     </>
