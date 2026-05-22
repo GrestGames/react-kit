@@ -4,6 +4,12 @@
     padding: 12px 14px;
 }
 
+.alertTitle,
+.alertHeadTitle {
+    font-size: var(--rk-font-size-huge);
+    font-weight: 600;
+}
+
 .alertTitle {
     margin-bottom: 8px;
 }

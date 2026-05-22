@@ -311,7 +311,7 @@ export function Grid<T extends { id: number }, Q>({
         {viewMode === "blocks" && blocksView ? <>
             {displayData && displayData.length > 0 && <div className={"gridReloadWrap" + (reloading ? " gridReloading" : "")}>{blocksView(displayData)}</div>}
             {hasMore && <div className="area"><div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div></div>}
-            {isEmpty && <div className="area"><TipBox intent="warning" iconLetter="!">No entries found!</TipBox></div>}
+            {isEmpty && <div className="area"><TipBox intent="default">No entries found!</TipBox></div>}
             {isLoading && <div className="area"><div className="gridCardsLoading"><div className="loader"></div></div></div>}
             {isValidationError && <div className="area"><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></div>}
             {isOtherError && <div className="area"><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error)}</TipBox></div>}
@@ -324,9 +324,9 @@ export function Grid<T extends { id: number }, Q>({
                 {displayData && <div className={"gridCards" + (reloading ? " gridReloading" : "")}>{displayData.map((row, i) => <div key={row.id ?? i} className="gridCard">{mobileCard(row, i)}</div>)}</div>}
 
                 {hasMore && <div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div>}
-                {isEmpty && <TipBox intent="warning" iconLetter="!">No entries found!</TipBox>}
+                {isEmpty && <TipBox intent="default">No entries found!</TipBox>}
                 {isLoading && <div className="gridCardsLoading"><div className="loader"></div></div>}
-                {showFooter && <div className="gridCardsFooter small gray">No more rows. Found {displayData.length} row(s)!</div>}
+                {showFooter && <div className="gridCardsFooter">No more rows. Found {displayData.length} row(s)!</div>}
                 {isValidationError && <TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox>}
                 {isOtherError && <TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error)}</TipBox>}
             </div>
@@ -387,7 +387,7 @@ export function Grid<T extends { id: number }, Q>({
                         <td colSpan={fields.length + 1} onClick={loadMore} ref={containerRef} className="lastRow">Load more</td>
                     </tr>}
                     {isEmpty && <tr>
-                        <td colSpan={fields.length + 1}><TipBox intent="warning" iconLetter="!">No entries found!</TipBox></td>
+                        <td colSpan={fields.length + 1}><TipBox intent="default">No entries found!</TipBox></td>
                     </tr>}
                     {isLoading && <tr>
                         <td colSpan={fields.length + 1} className="loadingRows">
@@ -395,7 +395,7 @@ export function Grid<T extends { id: number }, Q>({
                         </td>
                     </tr>}
                     {showFooter && <tr>
-                        <td colSpan={fields.length + 1} className="noMoreRows small gray">No more rows. Found {displayData.length} row(s)!</td>
+                        <td colSpan={fields.length + 1} className="noMoreRows">No more rows. Found {displayData.length} row(s)!</td>
                     </tr>}
                     {isValidationError && <tr>
                         <td colSpan={fields.length + 1}><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></td>

@@ -35,8 +35,8 @@ export function Alert({intent, iconLetter, title, children, buttonTitle, onClick
         <Panel className={intent ? "panelAlert" : undefined} width={width || "400px"} zIndex={201} style={{marginTop: "180px", ...alertVars}}>
             <div className="alertBody">
                 {intent
-                    ? <div className="alertHead"><span className="alertIcon">{letter}</span><span className="huge bold">{title || "Alert"}</span></div>
-                    : <div className="huge bold alertTitle">{title || "Alert"}</div>}
+                    ? <div className="alertHead"><span className="alertIcon">{letter}</span><span className="alertHeadTitle">{title || "Alert"}</span></div>
+                    : <div className="alertTitle">{title || "Alert"}</div>}
                 <div className="alertContent">{content}</div>
                 <div className="alertActions">
                     <button className="rkBtn" style={btnVars} onClick={onClick}>{buttonTitle || 'OK'}</button>

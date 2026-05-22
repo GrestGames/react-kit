@@ -55,6 +55,12 @@
     text-overflow: ellipsis;
     flex: 1;
     min-width: 0;
+    color: var(--rk-text-muted);
+}
+
+.fileGrid .fileCreated {
+    font-size: var(--rk-font-size-mini);
+    color: var(--rk-text-muted);
 }
 
 .fileGrid .renameLink {
@@ -63,6 +69,7 @@
     padding-left: 3px;
     flex-shrink: 0;
     opacity: 0.5;
+    color: var(--rk-text-muted);
 }
 
 .fileGrid .renameLink:hover {
