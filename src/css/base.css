@@ -183,9 +183,13 @@ hr {
     font-size: var(--tag-font-size, var(--rk-font-size-micro));
     padding: 1px 6px;
     border-radius: var(--rk-radius-sm);
-    font-weight: 500;
+    font-weight: 400;
     background: var(--tag-bg);
     color: var(--tag-text);
+}
+
+.tag.tagBold {
+    font-weight: 600;
 }
 
 .micro {
