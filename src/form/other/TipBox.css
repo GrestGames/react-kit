@@ -4,9 +4,9 @@
     display: flex;
     align-items: center;
     padding: 7px 11px;
-    border: 1px solid color-mix(in srgb, var(--tip-color) 40%, transparent);
-    background-color: color-mix(in srgb, var(--tip-color) 11%, transparent);
-    color: var(--tip-color);
+    border: 1px solid var(--tip-border);
+    background-color: var(--tip-bg);
+    color: var(--tip-text);
     border-radius: var(--rk-radius);
 }
 
@@ -25,44 +25,31 @@
     font-weight: 700;
     font-style: normal;
     border-radius: 50%;
-    border: 1px solid color-mix(in srgb, var(--tip-color) 55%, transparent);
-    background-color: color-mix(in srgb, var(--tip-color) 16%, transparent);
-    color: var(--tip-color);
+    border: 1px solid var(--tip-border);
+    background-color: var(--tip-bg);
+    color: var(--tip-text);
 }
 
 .hintTip {
-    --tip-color: var(--rk-info);
+    --tip-bg: var(--rk-info-soft);
+    --tip-border: var(--rk-info-soft-border);
+    --tip-text: var(--rk-info-soft-text);
 }
 
 .infoTip {
-    --tip-color: var(--rk-success);
+    --tip-bg: var(--rk-success-soft);
+    --tip-border: var(--rk-success-soft-border);
+    --tip-text: var(--rk-success-soft-text);
 }
 
 .warningTip {
-    --tip-color: var(--rk-warning);
-    border-color: #e7aa3a;
-    background-color: #fffaee;
-    color: #9a6414;
-}
-
-.warningTip .tipIcon {
-    border-color: #e7aa3a;
-    background-color: #fffaee;
-    color: #9a6414;
-}
-
-.rk-dark .warningTip {
-    border-color: color-mix(in srgb, var(--rk-warning) 40%, transparent);
-    background-color: color-mix(in srgb, var(--rk-warning) 11%, transparent);
-    color: var(--rk-warning);
-}
-
-.rk-dark .warningTip .tipIcon {
-    border-color: color-mix(in srgb, var(--rk-warning) 55%, transparent);
-    background-color: color-mix(in srgb, var(--rk-warning) 16%, transparent);
-    color: var(--rk-warning);
+    --tip-bg: var(--rk-warning-soft);
+    --tip-border: var(--rk-warning-soft-border);
+    --tip-text: var(--rk-warning-soft-text);
 }
 
 .errorTip {
-    --tip-color: var(--rk-danger);
+    --tip-bg: var(--rk-danger-soft);
+    --tip-border: var(--rk-danger-soft-border);
+    --tip-text: var(--rk-danger-soft-text);
 }

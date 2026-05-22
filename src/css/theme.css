@@ -69,18 +69,38 @@
     --rk-topmenu-text-bright: #c5d0e0;
     --rk-topmenu-text-active: #ffffff;
 
-    --rk-btn-default: var(--rk-accent);
-    --rk-btn-default-hover: var(--rk-accent-hover);
-    --rk-btn-third: #beb16f;
-    --rk-btn-third-hover: #c2b674;
-    --rk-btn-submit: #22BAA0;
-    --rk-btn-submit-hover: #26d0b3;
-    --rk-btn-secondary: #7a6fbe;
-    --rk-btn-secondary-hover: #887cd2;
-    --rk-btn-warning: #f2ca4c;
-    --rk-btn-warning-hover: #ffd660;
-    --rk-btn-danger: #f25656;
-    --rk-btn-danger-hover: #fd6565;
+    /* ── Variants — bold fill for buttons/badges (text on fill = --rk-text-on-accent) ── */
+    --rk-normal-fill: var(--rk-accent);
+    --rk-normal-fill-hover: var(--rk-accent-hover);
+    --rk-secondary-fill: #7a6fbe;
+    --rk-secondary-fill-hover: #887cd2;
+    --rk-third-fill: #beb16f;
+    --rk-third-fill-hover: #c2b674;
+    --rk-submit-fill: #22BAA0;
+    --rk-submit-fill-hover: #26d0b3;
+    --rk-success-fill: #2ecc71;
+    --rk-success-fill-hover: #33d27a;
+    --rk-warning-fill: #f2ca4c;
+    --rk-warning-fill-hover: #ffd660;
+    --rk-danger-fill: #f25656;
+    --rk-danger-fill-hover: #fd6565;
+    --rk-info-fill: #3b8ee0;
+    --rk-info-fill-hover: #4a9bed;
+
+    /* ── Status intents — soft surface for alerts/tips/inputs (border + bg + readable text) ── */
+    --rk-success-soft: color-mix(in srgb, var(--rk-success) 12%, var(--rk-bg-surface));
+    --rk-success-soft-border: color-mix(in srgb, var(--rk-success) 45%, var(--rk-bg-surface));
+    --rk-success-soft-text: var(--rk-success);
+    /* warning's base is too dull to mix into the warm box the design wants — explicit in light, derived in dark */
+    --rk-warning-soft: #fffaee;
+    --rk-warning-soft-border: #e7aa3a;
+    --rk-warning-soft-text: #9a6414;
+    --rk-danger-soft: color-mix(in srgb, var(--rk-danger) 12%, var(--rk-bg-surface));
+    --rk-danger-soft-border: color-mix(in srgb, var(--rk-danger) 45%, var(--rk-bg-surface));
+    --rk-danger-soft-text: var(--rk-danger);
+    --rk-info-soft: color-mix(in srgb, var(--rk-info) 12%, var(--rk-bg-surface));
+    --rk-info-soft-border: color-mix(in srgb, var(--rk-info) 45%, var(--rk-bg-surface));
+    --rk-info-soft-text: var(--rk-info);
 
     --rk-checkbox-changed-border: #c5a83d;
     --rk-checkbox-changed-border-hover: #a07a20;
@@ -94,7 +114,6 @@
     --rk-changed-bg: color-mix(in srgb, var(--rk-warning) 14%, var(--rk-bg-surface));
     --rk-changed-border: color-mix(in srgb, var(--rk-warning) 50%, var(--rk-bg-surface));
     --rk-warning-bg: color-mix(in srgb, var(--rk-warning) 15%, transparent);
-    --rk-error-bg: #ffeaea;
     --rk-disabled-bg: #f3f2f2;
 
     --rk-radius-sm: 3px;
@@ -136,6 +155,11 @@
     --rk-danger: #f38ba8;
     --rk-info: #7aa2f7;
 
+    /* Warning's dark base mixes fine, so derive (the dull-mustard problem is light-only). Fills + other softs inherit/derive from :root. */
+    --rk-warning-soft: color-mix(in srgb, var(--rk-warning) 14%, var(--rk-bg-surface));
+    --rk-warning-soft-border: color-mix(in srgb, var(--rk-warning) 45%, var(--rk-bg-surface));
+    --rk-warning-soft-text: var(--rk-warning);
+
     --rk-brown: #c89b7a;
     --rk-purple: #bb9af7;
     --rk-pink: #e89bc4;
@@ -160,7 +184,6 @@
 
     --rk-changed-bg: color-mix(in srgb, var(--rk-warning) 10%, var(--rk-bg-surface));
     --rk-changed-border: color-mix(in srgb, var(--rk-warning) 35%, var(--rk-bg-surface));
-    --rk-error-bg: #3a2230;
     --rk-disabled-bg: #232433;
 
     --rk-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
