@@ -11,7 +11,7 @@ export interface TagProps {
     title?: string;
 }
 
-export function Tag({children, intent = "neutral", size = "micro", className, style, onClick, title}: TagProps) {
+export function Tag({children, intent = "default", size = "micro", className, style, onClick, title}: TagProps) {
     const intentVars = {
         "--tag-bg": `var(--rk-${intent}-soft)`,
         "--tag-text": `var(--rk-${intent}-soft-text)`,
