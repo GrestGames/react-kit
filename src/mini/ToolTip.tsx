@@ -1,6 +1,7 @@
 import {CSSProperties, ReactNode, ReactPortal, useEffect, useRef, useState} from "react";
 import "./ToolTip.css"
 import {AddToBody} from "../helpers/AddToBody";
+import {Intent} from "../intents";
 
 interface State {
     x: number
@@ -15,13 +16,13 @@ export type ToolTipTemplate = "normal" | "error";
 export type ToolTipAlign = "vertical" | "horizontal";
 
 export interface ToolTipControls {
-    display: (message: MessageType, template?: ToolTipTemplate, align?: ToolTipAlign) => void,
+    display: (message: MessageType, template?: ToolTipTemplate, align?: ToolTipAlign, intent?: Intent) => void,
     hide: () => void,
     portal: ReactPortal | undefined
 }
 
 export function GetToolTipControls(): ToolTipControls {
-    const [base, setBase] = useState<{ message: MessageType, className: string, align: ToolTipAlign }>(undefined);
+    const [base, setBase] = useState<{ message: MessageType, className: string, align: ToolTipAlign, intentVars?: CSSProperties }>(undefined);
     const [state, setState] = useState<State>({x: -1000, y: -1000, className: ""});
     const ref = useRef<HTMLDivElement>(null);
 
@@ -113,31 +114,36 @@ export function GetToolTipControls(): ToolTipControls {
 
     return {
         portal: base && AddToBody({
-            id: "tooltip", children: <div ref={ref} className={["toolTip", state.className, base.className].join(" ")} style={{left: state.x + 'px', top: state.y + 'px'}}>
+            id: "tooltip", children: <div ref={ref} className={["toolTip", state.className, base.className].join(" ")} style={{left: state.x + 'px', top: state.y + 'px', ...base.intentVars}}>
                 <div className="arrow"/>
                 {getMessageBox(base.message)}
             </div>
         }),
-        display: (message: MessageType, template: ToolTipTemplate, align: ToolTipAlign) => {
-            setBase({message: message, className: template || "normal", align: align});
+        display: (message: MessageType, template: ToolTipTemplate, align: ToolTipAlign, intent?: Intent) => {
+            const effectiveIntent = intent ?? (template === "error" ? "danger" : undefined);
+            const intentVars = effectiveIntent ? {
+                "--tt-border": `var(--rk-${effectiveIntent})`,
+                color: `var(--rk-${effectiveIntent})`,
+            } as CSSProperties : undefined;
+            setBase({message: message, className: template === "error" ? "normal" : (template || "normal"), align: align, intentVars});
         },
         hide: () => setBase(undefined)
     }
 }
 
-export function ToolTip({children, message, align, template, style, className}:
-                            { message: MessageType, template?: ToolTipTemplate, align?: ToolTipAlign, children?: ReactNode, className?: string, style?: CSSProperties }) {
+export function ToolTip({children, message, align, template, intent, style, className}:
+                            { message: MessageType, /** @deprecated use intent instead */ template?: ToolTipTemplate, intent?: Intent, align?: ToolTipAlign, children?: ReactNode, className?: string, style?: CSSProperties }) {
     const provider = GetToolTipControls();
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
     let interval: any = undefined;
     useEffect(() => {
         if (isVisible) {
-            provider.display(message, template, align)
+            provider.display(message, template, align, intent)
 
             if (typeof message !== "string") {
                 interval = setInterval(() => {
-                    provider.display(message, template, align)
+                    provider.display(message, template, align, intent)
                 }, 200)
                 return () => {
                     clearInterval(interval);
@@ -148,7 +154,7 @@ export function ToolTip({children, message, align, template, style, className}:
             provider.hide();
         }
         return undefined;
-    }, [isVisible, message, template]);
+    }, [isVisible, message, template, intent]);
 
     return <>
         {provider.portal}

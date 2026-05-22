@@ -81,7 +81,7 @@ table.list > tbody > tr:nth-child(even) {
 }
 
 table.list > tbody > tr:hover {
-    background-color: var(--rk-bg-hover) !important;
+    background-color: var(--rk-bg-active) !important;
 }
 
 table.list > tbody > tr:hover th {
@@ -180,25 +180,16 @@ hr {
 
 .tag {
     display: inline-block;
-    font-size: var(--rk-font-size-micro);
+    font-size: var(--tag-font-size, var(--rk-font-size-micro));
     padding: 1px 6px;
     border-radius: var(--rk-radius-sm);
     font-weight: 500;
+    background: var(--tag-bg);
+    color: var(--tag-text);
 }
 
-.tag-green {
-    background: var(--rk-tag-green-bg);
-    color: var(--rk-tag-green-fg);
-}
-
-.tag-gray {
-    background: var(--rk-bg-active);
-    color: var(--rk-text-muted);
-}
-
-.tag-orange {
-    background: var(--rk-tag-orange-bg);
-    color: var(--rk-tag-orange-fg);
+.tag.tagBold {
+    font-weight: 600;
 }
 
 .micro {

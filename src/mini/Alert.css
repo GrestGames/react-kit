@@ -19,29 +19,15 @@
     margin-top: 12px;
 }
 
-/* ── Themed variants (info / warning / error) — all share one core ── */
-
-.panelAlert.alertInfo {
-    --alert-color: var(--rk-info);
-}
-
-.panelAlert.alertWarning {
-    --alert-color: var(--rk-warning);
-}
-
-.panelAlert.alertError {
-    --alert-color: var(--rk-danger);
-}
-
 .panel.panelAlert {
-    border: 1px solid color-mix(in srgb, var(--alert-color) 55%, transparent);
+    border: 1px solid var(--alert-border);
 }
 
 .alertHead {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--alert-color);
+    color: var(--alert-text);
     margin-bottom: 8px;
 }
 
@@ -55,7 +41,7 @@
     border-radius: 50%;
     font-weight: 700;
     font-size: var(--rk-font-size-large);
-    color: var(--alert-color);
-    border: 1px solid color-mix(in srgb, var(--alert-color) 55%, transparent);
-    background: color-mix(in srgb, var(--alert-color) 16%, transparent);
+    color: var(--alert-text);
+    border: 1px solid var(--alert-border);
+    background: var(--alert-bg);
 }

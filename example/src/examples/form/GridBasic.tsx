@@ -1,4 +1,4 @@
-import { Grid, TextInput, Select } from '@grest-ts/react';
+import { Grid, TextInput, Select, Button, toast } from '@grest-ts/react';
 import type { GridField, GridQuery, FormObject } from '@grest-ts/react';
 
 interface Row {
@@ -38,6 +38,13 @@ const fields: GridField<Row>[] = [
   { title: 'Email', value: 'email' },
   { title: 'Role', value: (row) => roleOptions.find(r => r.id === row.role)?.name ?? row.role, sortName: 'role' },
   { title: 'Score', value: 'score', sortName: 'score', sortDir: 'desc', align: 'right' },
+  // Buttons inside <Grid> auto-render as outline (pass appearance="gradient" to opt one back out).
+  { title: 'Actions', value: (row) => (
+    <>
+      <Button intent="info" onClick={() => toast(`Edit ${row.name}`)}>Edit</Button>
+      <Button intent="danger" confirmDouble confirmDoubleText={`Delete ${row.name}?`} onClick={() => toast.danger(`Delete ${row.name}`)}>Delete</Button>
+    </>
+  ), width: 200 },
 ];
 
 export default function GridBasic() {

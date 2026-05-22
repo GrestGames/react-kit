@@ -14,15 +14,15 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "@grest-ts/schema": ">=0.0.17",
-    "@grest-ts/schema-file": ">=0.0.17",
+    "@grest-ts/schema": ">=0.0.42",
+    "@grest-ts/schema-file": ">=0.0.42",
     "react": ">=18",
     "react-datepicker": ">=7",
     "react-dom": ">=18"
   },
   "devDependencies": {
-    "@grest-ts/schema": "^0.0.18",
-    "@grest-ts/schema-file": "^0.0.18",
+    "@grest-ts/schema": "^0.0.42",
+    "@grest-ts/schema-file": "^0.0.42",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",

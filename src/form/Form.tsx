@@ -1,7 +1,7 @@
 import React, {PropsWithChildren, useContext, useEffect, useRef} from "react";
 import {FormObject} from "./useAsyncForm";
-import {ErrorBox} from "./other/TipBox";
-import {ErrorAlert} from "../mini/Alert";
+import {TipBox} from "./other/TipBox";
+import {Alert} from "../mini/Alert";
 import {ApiErrorMessage} from "../ErrorTracker";
 import {FormRoot} from "./FormRoot";
 import {AddToBody} from "../helpers/AddToBody";
@@ -19,7 +19,7 @@ export function Form<T>(props: PropsWithChildren<{ prop: FormObject<T> }>) {
     }, [closeGuard, props.prop]);
 
     if (f.getLoadError()) {
-        return <ErrorBox><ApiErrorMessage error={f.getLoadError()}/></ErrorBox>
+        return <TipBox intent="danger" iconLetter="!"><ApiErrorMessage error={f.getLoadError()}/></TipBox>
     } else if (f.isLoading() && !f.isReloading()) {
         return <div className="formLoading">
             <div className="loader"></div>
@@ -38,9 +38,9 @@ export function Form<T>(props: PropsWithChildren<{ prop: FormObject<T> }>) {
                 e.preventDefault();
             }}>
                 <FormContext.Provider value={props.prop}>
-                    {f.getSubmitError() && <ErrorAlert width={500} onClick={() => f.resetSubmitError()}>
+                    {f.getSubmitError() && <Alert intent="danger" width={500} onClick={() => f.resetSubmitError()}>
                         <ApiErrorMessage error={f.getSubmitError()}/>
-                    </ErrorAlert>}
+                    </Alert>}
                     {props.children}
                 </FormContext.Provider>
             </form>

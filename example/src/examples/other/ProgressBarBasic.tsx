@@ -1,29 +1,17 @@
 import { useState } from 'react';
-import { ProgressBar, FileIcon, Button } from '@grest-ts/react';
+import { ProgressBar, Button } from '@grest-ts/react';
 
 export default function ProgressBarBasic() {
   const [current, setCurrent] = useState(35);
 
   return (
-    <>
-      <div>
-        <div>ProgressBar:</div>
-        <ProgressBar current={current} total={100} width={300} />
-        <div style={{ marginTop: 8 }}>
-          <Button onClick={() => setCurrent(c => Math.max(0, c - 10))}>-10</Button>
-          <Button onClick={() => setCurrent(c => Math.min(100, c + 10))}>+10</Button>
-          <Button onClick={() => setCurrent(0)}>Reset</Button>
-        </div>
+    <div>
+      <ProgressBar current={current} total={100} width={300} />
+      <div style={{ marginTop: 8 }}>
+        <Button onClick={() => setCurrent(c => Math.max(0, c - 10))}>-10</Button>
+        <Button onClick={() => setCurrent(c => Math.min(100, c + 10))}>+10</Button>
+        <Button onClick={() => setCurrent(0)}>Reset</Button>
       </div>
-      <div>
-        <div>FileIcon (by extension):</div>
-        <div>
-          <FileIcon fileName="document.pdf" width={48} height={48} />
-          <FileIcon fileName="photo.jpg" width={48} height={48} />
-          <FileIcon fileName="data.xlsx" width={48} height={48} />
-          <FileIcon fileName="archive.zip" width={48} height={48} />
-        </div>
-      </div>
-    </>
+    </div>
   );
 }

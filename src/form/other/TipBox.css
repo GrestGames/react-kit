@@ -4,9 +4,9 @@
     display: flex;
     align-items: center;
     padding: 7px 11px;
-    border: 1px solid color-mix(in srgb, var(--tip-color) 40%, transparent);
-    background-color: color-mix(in srgb, var(--tip-color) 11%, transparent);
-    color: var(--tip-color);
+    border: 1px solid var(--tip-border);
+    background-color: var(--tip-bg);
+    color: var(--tip-text);
     border-radius: var(--rk-radius);
 }
 
@@ -25,23 +25,7 @@
     font-weight: 700;
     font-style: normal;
     border-radius: 50%;
-    border: 1px solid color-mix(in srgb, var(--tip-color) 55%, transparent);
-    background-color: color-mix(in srgb, var(--tip-color) 16%, transparent);
-    color: var(--tip-color);
-}
-
-.hintTip {
-    --tip-color: var(--rk-info);
-}
-
-.infoTip {
-    --tip-color: var(--rk-success);
-}
-
-.warningTip {
-    --tip-color: var(--rk-warning);
-}
-
-.errorTip {
-    --tip-color: var(--rk-danger);
+    border: 1px solid var(--tip-border);
+    background-color: var(--tip-bg);
+    color: var(--tip-text);
 }

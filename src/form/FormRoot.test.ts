@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { FormRoot } from "../form/FormRoot";
+import { FormRoot } from "./FormRoot";
 
 describe("FormRoot", () => {
   it("clears loading state after sync init", () => {
