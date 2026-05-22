@@ -22,6 +22,14 @@ export default function ButtonVariants() {
         <Button appearance="outline" intent="warning" onClick={() => toast.warning('Outline warning')}>Warning</Button>
         <Button appearance="outline" intent="danger" onClick={() => toast.danger('Outline danger')}>Danger</Button>
       </div>
+
+      {/* confirmDouble — first click arms a pulsing ring + confirm label (sized to fit, so width never changes),
+          a second click within ~2s fires. The label adapts to button width: "?" / "Sure?" / the full phrase. */}
+      <div className="demoRow">
+        <Button intent="danger" confirmDouble onClick={() => toast.danger('Deleted')}>Go</Button>
+        <Button intent="danger" confirmDouble onClick={() => toast.danger('Deleted')}>Delete</Button>
+        <Button confirmDouble onClick={() => toast.warning('Reset')}>Reset everything to defaults</Button>
+      </div>
     </>
   );
 }
