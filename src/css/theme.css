@@ -63,9 +63,9 @@
     --rk-cool: #7c5cbf;
     --rk-cool-fill: #7a6fbe;
     --rk-cool-fill-hover: #887cd2;
-    --rk-cool-soft: color-mix(in srgb, var(--rk-info) 12%, var(--rk-bg-surface));
-    --rk-cool-soft-border: color-mix(in srgb, var(--rk-info) 45%, var(--rk-bg-surface));
-    --rk-cool-soft-text: var(--rk-info);
+    --rk-cool-soft: color-mix(in srgb, var(--rk-cool) 12%, var(--rk-bg-surface));
+    --rk-cool-soft-border: color-mix(in srgb, var(--rk-cool) 45%, var(--rk-bg-surface));
+    --rk-cool-soft-text: var(--rk-cool);
 
     --rk-success: #27ae60;
     --rk-success-fill: #2ecc71;
