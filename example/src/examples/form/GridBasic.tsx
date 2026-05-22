@@ -38,11 +38,11 @@ const fields: GridField<Row>[] = [
   { title: 'Email', value: 'email' },
   { title: 'Role', value: (row) => roleOptions.find(r => r.id === row.role)?.name ?? row.role, sortName: 'role' },
   { title: 'Score', value: 'score', sortName: 'score', sortDir: 'desc', align: 'right' },
-  // Buttons inside <Grid> auto-render as outline; appearance="gradient" opts a button back out.
+  // Buttons inside <Grid> auto-render as outline (pass appearance="gradient" to opt one back out).
   { title: 'Actions', value: (row) => (
     <>
       <Button intent="info" onClick={() => toast(`Edit ${row.name}`)}>Edit</Button>
-      <Button intent="danger" appearance="gradient" onClick={() => toast.danger(`Delete ${row.name}`)}>Delete</Button>
+      <Button intent="danger" onClick={() => toast.danger(`Delete ${row.name}`)}>Delete</Button>
     </>
   ), width: 200 },
 ];
