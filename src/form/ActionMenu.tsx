@@ -1,5 +1,6 @@
 import {useState, useRef, useEffect, KeyboardEvent, CSSProperties, ReactNode} from "react";
 import {createPortal} from "react-dom";
+import {CONFIRM_DOUBLE_WINDOW_MS, DEFAULT_CONFIRM_DOUBLE_TEXT} from "./confirmDouble";
 import "./ActionMenu.css";
 
 export interface ActionMenuItem {
@@ -16,9 +17,9 @@ export interface ActionMenuItem {
     href?: string;
     /** Keep the menu open after an async onClick resolves (sync onClicks still close immediately). */
     keepOpen?: boolean;
+    /** Armed-state label for a `danger` item. Default: "Click again to confirm". */
+    confirmDoubleText?: string;
 }
-
-const DANGER_CONFIRM_WINDOW_MS = 2000;
 
 interface ActionMenuProps {
     items: ActionMenuItem[];
@@ -64,7 +65,7 @@ export function ActionMenu({items, align = "right", position = "below", trigger 
     const armDanger = (idx: number) => {
         setArmedIdx(idx);
         if (armTimer.current) clearTimeout(armTimer.current);
-        armTimer.current = setTimeout(() => setArmedIdx(prev => (prev === idx ? null : prev)), DANGER_CONFIRM_WINDOW_MS);
+        armTimer.current = setTimeout(() => setArmedIdx(prev => (prev === idx ? null : prev)), CONFIRM_DOUBLE_WINDOW_MS);
     };
 
     const run = async (idx: number, item: ActionMenuItem) => {
@@ -129,7 +130,7 @@ export function ActionMenu({items, align = "right", position = "below", trigger 
                         ].filter(Boolean).join(" ");
                         return <div key={i} className={cls} role="menuitem" tabIndex={0}
                                     onClick={() => activate(i, item)} onKeyDown={onItemKey(i, item)}>
-                            <span>{armed ? "Click again to confirm" : item.label}</span>
+                            <span>{armed ? (item.confirmDoubleText ?? DEFAULT_CONFIRM_DOUBLE_TEXT) : item.label}</span>
                             {pending && <span className="tv2ActionMenuSpinner" aria-hidden>⟳</span>}
                         </div>;
                     })}

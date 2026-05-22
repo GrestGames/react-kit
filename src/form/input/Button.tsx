@@ -10,11 +10,17 @@ import {ERROR} from "@grest-ts/schema";
 import {useIsMobile} from "../../responsive/useResponsive";
 import {Intent} from "../../intents";
 import {ButtonAppearance, ButtonAppearanceContext} from "./buttonAppearance";
+import {CONFIRM_DOUBLE_WINDOW_MS, DEFAULT_CONFIRM_DOUBLE_TEXT, pickConfirmText} from "../confirmDouble";
 
 export interface ButtonProps extends PropsWithChildren<AnyFormElement> {
     onClick: () => Promise<any> | void,
     intent?: Intent,
     appearance?: ButtonAppearance,
+    /** First click arms (pulsing ring + confirm label, keeps intent color); a second click within ~2s fires onClick. */
+    confirmDouble?: boolean,
+    /** Full confirm phrase: the armed tooltip, and the widest rung of the adaptive armed label
+     *  (which degrades to "Sure?" / "?" on narrow buttons). Default: "Click again to confirm". */
+    confirmDoubleText?: string,
 }
 
 /** @deprecated prefer `<Button intent="warning">` */
@@ -123,17 +129,20 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<ERROR<string, any>>();
     const [hadError, setHadError] = useState(false);
+    const [armed, setArmed] = useState(false);
+    const [confirmText, setConfirmText] = useState<string>();
     const [size, setSize] = useState<[number, number]>(undefined)
     const ref = useRef<HTMLButtonElement>(null);
+    const armTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         setSize([ref.current.offsetWidth, ref.current.offsetHeight])
+        if (props.confirmDouble) setConfirmText(pickConfirmText(ref.current, props.confirmDoubleText ?? DEFAULT_CONFIRM_DOUBLE_TEXT))
     }, [ref.current]);
 
-    const click = () => {
-        if (isLoading) {
-            return;
-        }
+    useEffect(() => () => { if (armTimer.current) clearTimeout(armTimer.current); }, []);
+
+    const run = () => {
         const res = props.onClick();
         if (isPromise(res)) {
             setIsLoading(true);
@@ -145,6 +154,21 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
                 setHadError(true)
             })
         }
+    }
+
+    const click = () => {
+        if (isLoading) {
+            return;
+        }
+        if (props.confirmDouble && !armed) {
+            setArmed(true);
+            if (armTimer.current) clearTimeout(armTimer.current);
+            armTimer.current = setTimeout(() => setArmed(false), CONFIRM_DOUBLE_WINDOW_MS);
+            return;
+        }
+        if (armTimer.current) clearTimeout(armTimer.current);
+        setArmed(false);
+        run();
     }
 
     const effectiveIntent = hadError ? "warning" : props.intent;
@@ -162,12 +186,13 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
         <button type={props.type}
                 ref={ref}
                 disabled={props.disabled || props.readOnly || isLoading}
+                title={armed ? (props.confirmDoubleText ?? DEFAULT_CONFIRM_DOUBLE_TEXT) : undefined}
                 style={{width: size?.[0], height: size?.[1], ...intentVars, ...props.style}}
-                className={[props.className, appearance === "outline" && "rkBtn-outline", isLoading && "loading"].filter(Boolean).join(" ")}
+                className={["rkBtn", props.className, appearance === "outline" && "rkBtn-outline", armed && "rkBtn-armed", isLoading && "loading"].filter(Boolean).join(" ")}
                 onClick={click}
                 onMouseEnter={() => setHadError(false)}>
             {isLoading && <div className={size?.[0] <= 45 ? "smallAnimation" : "defaultAnimation"}/>}
-            {!isLoading && props.children}
+            {!isLoading && (armed ? (confirmText ?? props.children) : props.children)}
         </button>
     </>
 }

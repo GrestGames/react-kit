@@ -39,7 +39,7 @@ export function Alert({intent, iconLetter, title, children, buttonTitle, onClick
                     : <div className="huge bold alertTitle">{title || "Alert"}</div>}
                 <div className="alertContent">{content}</div>
                 <div className="alertActions">
-                    <button style={btnVars} onClick={onClick}>{buttonTitle || 'OK'}</button>
+                    <button className="rkBtn" style={btnVars} onClick={onClick}>{buttonTitle || 'OK'}</button>
                 </div>
             </div>
         </Panel>

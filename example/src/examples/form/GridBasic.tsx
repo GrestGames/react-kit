@@ -42,7 +42,7 @@ const fields: GridField<Row>[] = [
   { title: 'Actions', value: (row) => (
     <>
       <Button intent="info" onClick={() => toast(`Edit ${row.name}`)}>Edit</Button>
-      <Button intent="danger" onClick={() => toast.danger(`Delete ${row.name}`)}>Delete</Button>
+      <Button intent="danger" confirmDouble confirmDoubleText={`Delete ${row.name}?`} onClick={() => toast.danger(`Delete ${row.name}`)}>Delete</Button>
     </>
   ), width: 200 },
 ];
