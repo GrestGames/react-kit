@@ -92,6 +92,8 @@ table.grid .noMoreRows {
     padding: 10px;
     text-align: center;
     background-color: var(--rk-bg-surface);
+    font-size: var(--rk-font-size-small);
+    color: var(--rk-text-muted);
 }
 
 table.grid .lastRow:hover {

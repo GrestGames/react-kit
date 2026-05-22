@@ -28,7 +28,7 @@ export function Panel({children, title, subTitle, width, zIndex, style, classNam
 
         <div className="panelTop">
             {title && <div className="panelTitleArea" onClick={onClickTitle} style={{cursor: onClickTitle ? "pointer" : undefined}}>
-                <span className="panelTitle gigantic">{title}</span>
+                <span className="panelTitle">{title}</span>
                 {subTitle && <><br/><span className="panelSubTitle">{subTitle}</span></>}
             </div>}
 

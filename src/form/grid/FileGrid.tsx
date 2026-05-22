@@ -38,13 +38,13 @@ export function FileGrid({data, box, showDeleteButton}: Props) {
                 </span><br/>
 
                 <span className="fileNameRow" style={{width: box.width}}>
-                    <span className="fileName gray" style={{cursor: "pointer"}} onClick={() => setViewerIndex(i)}>
+                    <span className="fileName" style={{cursor: "pointer"}} onClick={() => setViewerIndex(i)}>
                         {e.fileName}
                     </span>
-                    {e.renameAction && <span className="renameLink gray" onClick={e.renameAction}>&#9998;</span>}
+                    {e.renameAction && <span className="renameLink" onClick={e.renameAction}>&#9998;</span>}
                 </span>
                 <br/>
-                <span className="mini gray">{e.created}</span>
+                <span className="fileCreated">{e.created}</span>
 
             </div>)}
         </div>

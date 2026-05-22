@@ -92,4 +92,6 @@
 .gridCardsFooter {
     padding: 8px;
     text-align: center;
+    font-size: var(--rk-font-size-small);
+    color: var(--rk-text-muted);
 }

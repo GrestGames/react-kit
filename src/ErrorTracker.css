@@ -1,0 +1,14 @@
+@import "./css/theme.css";
+
+.errTitle {
+    font-weight: 600;
+}
+
+.errType {
+    color: var(--rk-danger);
+}
+
+.errMuted {
+    font-size: var(--rk-font-size-mini);
+    color: var(--rk-text-muted);
+}

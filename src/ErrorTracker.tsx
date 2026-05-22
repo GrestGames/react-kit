@@ -3,6 +3,7 @@ import {ArrayUtils} from "./util/ArrayUtils";
 import {ApiErrors} from "./ApiError";
 import {TipBox} from "./form/other/TipBox";
 import {ERROR, VALIDATION_ERROR} from "@grest-ts/schema";
+import "./ErrorTracker.css";
 
 type AnyError = ERROR<string, any> | Error | unknown;
 
@@ -41,10 +42,10 @@ export function ApiErrorMessage({error}: { error: AnyError }) {
         if (error.type === VALIDATION_ERROR.TYPE) {
             const issues = ApiErrors.getValidationErrors(error as typeof VALIDATION_ERROR.infer);
             return <div>
-                <div className="bold">{error.context?.displayMessage || "Problems!"}</div>
+                <div className="errTitle">{error.context?.displayMessage || "Problems!"}</div>
                 {issues.map((issue, index) => {
                     return <div key={index}>
-                        <span className="mini gray">({issue.path})</span><br/>{issue.message}
+                        <span className="errMuted">({issue.path})</span><br/>{issue.message}
                     </div>
                 })}
             </div>
@@ -54,14 +55,14 @@ export function ApiErrorMessage({error}: { error: AnyError }) {
             const rawDebugData = debug?.debugData ?? (error as any).context?.debugData;
             const debugIssues = Array.isArray(rawDebugData) ? rawDebugData : undefined;
             return <div>
-                <div><span className="red">{error.type}:</span> {ApiErrors.getDisplayMessage(error)}</div>
-                {debugMessage && <div className="mini gray" style={{marginTop: 4}}>{debugMessage}</div>}
+                <div><span className="errType">{error.type}:</span> {ApiErrors.getDisplayMessage(error)}</div>
+                {debugMessage && <div className="errMuted" style={{marginTop: 4}}>{debugMessage}</div>}
                 {debugIssues && debugIssues.map((issue: any, index: number) => {
                     return <div key={index}>
-                        <span className="mini gray">({issue.path})</span> {issue.message}
+                        <span className="errMuted">({issue.path})</span> {issue.message}
                     </div>
                 })}
-                {rawDebugData && !debugIssues && <div className="mini gray" style={{marginTop: 4}}>{JSON.stringify(rawDebugData)}</div>}
+                {rawDebugData && !debugIssues && <div className="errMuted" style={{marginTop: 4}}>{JSON.stringify(rawDebugData)}</div>}
             </div>
         }
     } else {

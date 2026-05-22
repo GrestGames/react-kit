@@ -25,13 +25,13 @@ export function BatchProgressPopup({title, progress, onDone}: { title?: string, 
             {title && <div style={{marginBottom: 10}}><b>{title}</b></div>}
             {!isDone && <ProgressBar total={progress.total} current={progress.handled}/>}
             {isDone && <div>
-                {progress.sent > 0 && <span className="green bold">Sent: {progress.sent}</span>}
+                {progress.sent > 0 && <span style={{color: "var(--rk-success)", fontWeight: 600}}>Sent: {progress.sent}</span>}
                 {progress.sent > 0 && progress.errors > 0 && <span>. </span>}
-                {progress.errors > 0 && <span className="red bold">Failed: {progress.errors}</span>}
-                {progress.failures.length > 0 && <div style={{marginTop: 8, maxHeight: 200, overflowY: "auto"}} className="small">
+                {progress.errors > 0 && <span style={{color: "var(--rk-danger)", fontWeight: 600}}>Failed: {progress.errors}</span>}
+                {progress.failures.length > 0 && <div style={{marginTop: 8, maxHeight: 200, overflowY: "auto", fontSize: "var(--rk-font-size-small)"}}>
                     {progress.failures.map((f, i) => <div key={i}>
-                        <span className="bold">#{f.id}</span>{" "}
-                        <span className="gray">{f.reason}</span>
+                        <span style={{fontWeight: 600}}>#{f.id}</span>{" "}
+                        <span style={{color: "var(--rk-text-muted)"}}>{f.reason}</span>
                     </div>)}
                 </div>}
                 <div style={{marginTop: 10, textAlign: "right"}}>
