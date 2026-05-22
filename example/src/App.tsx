@@ -5,6 +5,7 @@ import TextPage from './pages/TextPage';
 import LayoutPage from './pages/LayoutPage';
 import FormPage from './pages/FormPage';
 import OtherPage from './pages/OtherPage';
+import IntentPage from './pages/IntentPage';
 import UtilsPage from './pages/UtilsPage';
 
 const sections = [
@@ -13,6 +14,7 @@ const sections = [
   { key: 'layout', label: 'Layout', component: LayoutPage },
   { key: 'form', label: 'Form & Grid', component: FormPage },
   { key: 'other', label: 'Other UI', component: OtherPage },
+  { key: 'intent', label: 'Intent', component: IntentPage },
   { key: 'utils', label: 'Utilities', component: UtilsPage },
 ] as const;
 

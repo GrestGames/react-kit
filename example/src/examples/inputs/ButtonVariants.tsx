@@ -7,7 +7,7 @@ export default function ButtonVariants() {
         <Button onClick={() => toast('Button clicked!')}>Button</Button>
         <SecondaryButton onClick={() => toast.info('Secondary clicked')}>Secondary</SecondaryButton>
         <WarningButton onClick={() => toast.warning('Warning — proceed with care')}>Warning</WarningButton>
-        <DangerButton onClick={() => toast.error('Danger — something went wrong')}>Danger</DangerButton>
+        <DangerButton onClick={() => toast.danger('Danger — something went wrong')}>Danger</DangerButton>
       </div>
       <div className="demoRow">
         <Button onClick={() => new Promise(r => setTimeout(r, 1500))}>Async (1.5s)</Button>

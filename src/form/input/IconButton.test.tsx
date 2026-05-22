@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { IconButton } from "../form/input/IconButton";
+import { IconButton } from "./IconButton";
 
 describe("IconButton", () => {
   it("renders the icon and fires onClick once", async () => {

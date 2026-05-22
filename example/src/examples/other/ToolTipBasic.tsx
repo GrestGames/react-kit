@@ -1,23 +1,21 @@
-import { CSSProperties } from 'react';
-import { ToolTip, MiniTip } from '@grest-ts/react';
+import { ToolTip, Tag, type Intent } from '@grest-ts/react';
+
+const intents: Intent[] = ['neutral', 'info', 'cool', 'success', 'warning', 'danger', 'critical'];
 
 export default function ToolTipBasic() {
   return (
-    <>
-      <div>
-        <ToolTip message="This is a tooltip! It follows your cursor.">
-          <span style={{padding:"3px",margin: "5px"}}>Hover me (ToolTip)</span>
+    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+      <ToolTip message="This is a tooltip! It follows your cursor.">
+        <Tag size="small">Hover me</Tag>
+      </ToolTip>
+      <ToolTip message="<b>HTML</b> content works too!<br/>Second line here.">
+        <Tag intent="info" size="small">Hover</Tag>
+      </ToolTip>
+      {intents.map(intent => (
+        <ToolTip key={intent} message={`${intent} intent tooltip`} intent={intent}>
+          <Tag intent={intent} size="small">{intent}</Tag>
         </ToolTip>
-        <ToolTip message="<b>HTML</b> content works too!<br/>Second line here.">
-          <span style={{ padding:"3px",margin: "5px"}}>Hover (HTML tooltip)</span>
-        </ToolTip>
-        <ToolTip message="Error style tooltip" template="error">
-          <span style={{padding:"3px", margin: "5px"}}>Hover (error template)</span>
-        </ToolTip>
-      </div>
-      <div style={{ marginTop: 12 }}>
-        <span>MiniTip is small inline hint text: <MiniTip>e.g. a field note</MiniTip></span>
-      </div>
-    </>
+      ))}
+    </div>
   );
 }

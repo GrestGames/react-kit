@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
-import { Button } from "../form/input/Button";
+import { Button } from "./Button";
 
 describe("Button onClick fires exactly once per click", () => {
   it("calls onClick once when clicked", async () => {

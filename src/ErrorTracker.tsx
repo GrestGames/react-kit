@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {ArrayUtils} from "./util/ArrayUtils";
 import {ApiErrors} from "./ApiError";
-import {ErrorBox} from "./form/other/TipBox";
+import {TipBox} from "./form/other/TipBox";
 import {ERROR, VALIDATION_ERROR} from "@grest-ts/schema";
 
 type AnyError = ERROR<string, any> | Error | unknown;
@@ -26,11 +26,11 @@ export function ErrorTrackerProvider({children}: { children: React.ReactNode | R
         }
     }}>
         {errors.map((e, i) => {
-            return <ErrorBox key={i} onClick={() => {
+            return <TipBox intent="danger" iconLetter="!" key={i} onClick={() => {
                 const copy = [...errors]
                 ArrayUtils.removeElement(copy, e);
                 setErrors(copy)
-            }}><ApiErrorMessage error={e}/></ErrorBox>
+            }}><ApiErrorMessage error={e}/></TipBox>
         })}
         {children}
     </ApiContext.Provider>

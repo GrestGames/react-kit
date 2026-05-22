@@ -29,27 +29,3 @@
     background-color: var(--tip-bg);
     color: var(--tip-text);
 }
-
-.hintTip {
-    --tip-bg: var(--rk-info-soft);
-    --tip-border: var(--rk-info-soft-border);
-    --tip-text: var(--rk-info-soft-text);
-}
-
-.infoTip {
-    --tip-bg: var(--rk-success-soft);
-    --tip-border: var(--rk-success-soft-border);
-    --tip-text: var(--rk-success-soft-text);
-}
-
-.warningTip {
-    --tip-bg: var(--rk-warning-soft);
-    --tip-border: var(--rk-warning-soft-border);
-    --tip-text: var(--rk-warning-soft-text);
-}
-
-.errorTip {
-    --tip-bg: var(--rk-danger-soft);
-    --tip-border: var(--rk-danger-soft-border);
-    --tip-text: var(--rk-danger-soft-text);
-}

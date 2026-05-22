@@ -2,7 +2,7 @@ import {CSSProperties, ReactNode, useEffect, useRef, useState} from "react";
 import "../css/grid.css"
 import {Tracker, TrackerOperation} from "../../EntityTracker";
 import {ApiErrors} from "../../ApiError";
-import {ErrorBox, WarningBox} from "../other/TipBox";
+import {TipBox} from "../other/TipBox";
 import {AsyncState, useAsyncState} from "../../helpers/useAsyncState";
 import {FormObject, useAsyncForm} from "../useAsyncForm";
 import {VALIDATION_ERROR} from "@grest-ts/schema";
@@ -310,10 +310,10 @@ export function Grid<T extends { id: number }, Q>({
         {viewMode === "blocks" && blocksView ? <>
             {displayData && displayData.length > 0 && <div className={"gridReloadWrap" + (reloading ? " gridReloading" : "")}>{blocksView(displayData)}</div>}
             {hasMore && <div className="area"><div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div></div>}
-            {isEmpty && <div className="area"><WarningBox>No entries found!</WarningBox></div>}
+            {isEmpty && <div className="area"><TipBox intent="warning" iconLetter="!">No entries found!</TipBox></div>}
             {isLoading && <div className="area"><div className="gridCardsLoading"><div className="loader"></div></div></div>}
-            {isValidationError && <div className="area"><WarningBox>Check filters, some of the filters are invalid!</WarningBox></div>}
-            {isOtherError && <div className="area"><ErrorBox>{ApiErrors.getDisplayMessage(dataState.error)}</ErrorBox></div>}
+            {isValidationError && <div className="area"><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></div>}
+            {isOtherError && <div className="area"><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error)}</TipBox></div>}
         </> : isMobile && mobileCard ? (
             /* ── Mobile: card view ─────────────────────────────── */
             <div className="area">
@@ -323,11 +323,11 @@ export function Grid<T extends { id: number }, Q>({
                 {displayData && <div className={"gridCards" + (reloading ? " gridReloading" : "")}>{displayData.map((row, i) => <div key={row.id ?? i} className="gridCard">{mobileCard(row, i)}</div>)}</div>}
 
                 {hasMore && <div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div>}
-                {isEmpty && <WarningBox>No entries found!</WarningBox>}
+                {isEmpty && <TipBox intent="warning" iconLetter="!">No entries found!</TipBox>}
                 {isLoading && <div className="gridCardsLoading"><div className="loader"></div></div>}
                 {showFooter && <div className="gridCardsFooter small gray">No more rows. Found {displayData.length} row(s)!</div>}
-                {isValidationError && <WarningBox>Check filters, some of the filters are invalid!</WarningBox>}
-                {isOtherError && <ErrorBox>{ApiErrors.getDisplayMessage(dataState.error)}</ErrorBox>}
+                {isValidationError && <TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox>}
+                {isOtherError && <TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error)}</TipBox>}
             </div>
         ) : (
             /* ── Desktop: table view ───────────────────────────── */
@@ -386,7 +386,7 @@ export function Grid<T extends { id: number }, Q>({
                         <td colSpan={fields.length + 1} onClick={loadMore} ref={containerRef} className="lastRow">Load more</td>
                     </tr>}
                     {isEmpty && <tr>
-                        <td colSpan={fields.length + 1}><WarningBox>No entries found!</WarningBox></td>
+                        <td colSpan={fields.length + 1}><TipBox intent="warning" iconLetter="!">No entries found!</TipBox></td>
                     </tr>}
                     {isLoading && <tr>
                         <td colSpan={fields.length + 1} className="loadingRows">
@@ -397,10 +397,10 @@ export function Grid<T extends { id: number }, Q>({
                         <td colSpan={fields.length + 1} className="noMoreRows small gray">No more rows. Found {displayData.length} row(s)!</td>
                     </tr>}
                     {isValidationError && <tr>
-                        <td colSpan={fields.length + 1}><WarningBox>Check filters, some of the filters are invalid!</WarningBox></td>
+                        <td colSpan={fields.length + 1}><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></td>
                     </tr>}
                     {isOtherError && <tr>
-                        <td colSpan={fields.length + 1}><ErrorBox>{ApiErrors.getDisplayMessage(dataState.error)}</ErrorBox></td>
+                        <td colSpan={fields.length + 1}><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error)}</TipBox></td>
                     </tr>}
                     </tbody>
                 </table>

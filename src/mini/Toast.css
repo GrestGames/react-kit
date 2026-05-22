@@ -53,22 +53,6 @@
     animation: rkToastIn 0.18s ease-out;
 }
 
-.rkToast-info {
-    --toast-color: var(--rk-info);
-}
-
-.rkToast-success {
-    --toast-color: var(--rk-success);
-}
-
-.rkToast-warning {
-    --toast-color: var(--rk-warning);
-}
-
-.rkToast-error {
-    --toast-color: var(--rk-danger);
-}
-
 @keyframes rkToastIn {
     from {
         opacity: 0;

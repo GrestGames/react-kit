@@ -16,42 +16,21 @@
     user-select: none;
 }
 
-.pillBtn:hover {
-    background: var(--rk-bg-hover);
-    color: var(--rk-text);
+.pillBtn:not(.pillDisabled):hover {
+    box-shadow: inset 0 0 0 100px var(--rk-hover-overlay);
 }
 
 .pillBtn.pillDotted {
     border-style: dashed;
-    background: transparent;
-    color: var(--rk-text-muted);
-}
-
-.pillBtn.pillDotted:hover {
-    background: var(--rk-bg-hover);
-    color: var(--rk-text-secondary);
-    border-color: var(--rk-accent);
-}
-
-.pillBtn.pillActive {
-    background: var(--rk-accent);
-    color: var(--rk-text-on-accent);
-    border-color: var(--rk-accent);
-}
-
-.pillBtn.pillActive:hover {
-    opacity: 0.9;
-}
-
-.pillBtn.pillSelected {
-    background: var(--rk-bg-active);
-    border-color: var(--rk-accent);
-    color: var(--rk-accent);
-    font-weight: 600;
 }
 
 .pillBtn.pillBold {
     font-weight: 600;
+}
+
+.pillBtn.pillDisabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .pillPopupGrid {
