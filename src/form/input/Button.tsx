@@ -1,3 +1,4 @@
+import "../css/button.css";
 import {CSSProperties, PropsWithChildren, ReactNode, useEffect, useRef, useState} from "react";
 import {isPromise} from "../../util/isPromise";
 import {Alert} from "../../mini/Alert";
@@ -39,6 +40,7 @@ export function SubmitButton(props: Omit<ButtonProps, "onClick">) {
         type: form ? "button" : "submit",
         intent: "warning",
         children: props.children || "Save",
+        disabled: props.disabled || (form ? !form.isChanged() : false),
         onClick: form ? async () => form.getForm().submit() : () => undefined
     })
 }
@@ -51,6 +53,7 @@ export function FormSubmitButton(props: Omit<ButtonProps, "onClick">) {
         intent: "danger",
         children: props.children || "Save",
         className: "formSubmit " + props.className,
+        disabled: props.disabled || (form ? !form.isChanged() : false),
         onClick: form ? async () => form.getForm().submit() : () => undefined
     })
 }
