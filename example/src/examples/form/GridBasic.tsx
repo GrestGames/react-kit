@@ -74,6 +74,8 @@ export default function GridBasic() {
         <div className="demoRow">
           <label>Search: <TextInput prop={F.search} placeholder="Search..." /></label>
           <label>Role: <Select prop={F.role} options={roleOptions} /></label>
+          {/* Header buttons keep the default gradient appearance — only row buttons render as outline. */}
+          <Button intent="info" onClick={() => toast('New entry')}>New entry</Button>
         </div>
       )}
     />
