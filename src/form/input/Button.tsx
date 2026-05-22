@@ -149,7 +149,7 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
     const intentVars = effectiveIntent ? {
         "--btn-bg": `var(--rk-${effectiveIntent}-fill)`,
         "--btn-bg-hover": `var(--rk-${effectiveIntent}-fill-hover)`,
-        "--btn-fg": "var(--rk-text-on-accent)",
+        "--btn-fg": `var(--rk-${effectiveIntent}-fill-text)`,
     } as CSSProperties : {};
 
     return <>

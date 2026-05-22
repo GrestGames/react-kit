@@ -44,7 +44,7 @@
     --rk-hue-teal: #2b9a8f;
     --rk-hue-lightblue: #add8e6;
 
-    /* ── Status intents — per family: base hue, bold fill (text on fill = --rk-text-on-accent), soft surface (bg + border + readable text) ── */
+    /* ── Status intents — per family: base hue, bold fill (text on fill = --rk-{family}-fill-text), soft surface (bg + border + readable text) ── */
     
     /* default = no status: accent when filled (fill), plain surface when quiet (soft) */
     --rk-default: var(--rk-accent);
@@ -102,6 +102,17 @@
     --rk-critical-soft: color-mix(in srgb, var(--rk-critical) 12%, var(--rk-bg-surface));
     --rk-critical-soft-border: color-mix(in srgb, var(--rk-critical) 45%, var(--rk-bg-surface));
     --rk-critical-soft-text: var(--rk-critical);
+
+    /* Readable text on each bold fill. Fills are shared hex across palettes, so these are too —
+       except default, which tracks --rk-text-on-accent (white in light, near-black in dark). */
+    --rk-default-fill-text: var(--rk-text-on-accent);
+    --rk-neutral-fill-text: #ffffff;
+    --rk-info-fill-text: #ffffff;
+    --rk-cool-fill-text: #ffffff;
+    --rk-success-fill-text: #ffffff;
+    --rk-warning-fill-text: #16161e;
+    --rk-danger-fill-text: #ffffff;
+    --rk-critical-fill-text: #ffffff;
 
     /* ── Button ── */
     --rk-hover-overlay: rgba(0, 0, 0, 0.05);

@@ -1,0 +1,132 @@
+.blThemes {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.buttonLab {
+  background: var(--rk-bg-body);
+  color: var(--rk-text);
+  padding: 20px 24px 24px;
+  border-radius: 8px;
+  --bl-raise: 0 1px 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.09);
+  --bl-raise-hover: 0 3px 6px rgba(0, 0, 0, 0.16), 0 7px 16px rgba(0, 0, 0, 0.12);
+}
+.buttonLab.rk-dark {
+  --bl-raise: 0 1px 2px rgba(0, 0, 0, 0.45), 0 2px 5px rgba(0, 0, 0, 0.3);
+  --bl-raise-hover: 0 4px 8px rgba(0, 0, 0, 0.5), 0 8px 18px rgba(0, 0, 0, 0.35);
+}
+
+.blPanelHead {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rk-text-secondary);
+  margin-bottom: 16px;
+}
+
+.blRow {
+  margin-bottom: 24px;
+}
+.blRow:last-child { margin-bottom: 0; }
+
+.blRowHead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.blName { font-size: 13px; font-weight: 600; color: var(--rk-text); }
+.blDesc { font-size: 12px; color: var(--rk-text-secondary); }
+
+.blButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+/* shared reset/base for every lab button */
+.buttonLab .blBtn {
+  margin: 0;
+  min-width: 0;
+  border: 1px solid transparent;
+  box-shadow: none;
+  font-family: var(--rk-font);
+  font-size: var(--rk-font-size-normal);
+  font-weight: 600;
+  line-height: 1;
+  padding: 9px 15px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.12s ease, box-shadow 0.12s ease, transform 0.08s ease, border-color 0.12s ease, color 0.12s ease, filter 0.12s ease;
+}
+.buttonLab .blBtn:disabled { opacity: 0.45; cursor: not-allowed; }
+/* neutralise the global button:active 1px nudge so resting alignment is clean */
+.buttonLab .blBtn:active:not(:disabled) { top: 0 !important; left: 0 !important; }
+
+/* 1 · Solid */
+.buttonLab .blSolid { background: var(--c); color: var(--onfill); }
+.buttonLab .blSolid:not(:disabled):hover { background: var(--ch); }
+
+/* 2 · Raised */
+.buttonLab .blRaised {
+  background: var(--c);
+  color: var(--onfill);
+  box-shadow: var(--bl-raise);
+}
+.buttonLab .blRaised:not(:disabled):hover {
+  background: var(--ch);
+  transform: translateY(-1px);
+  box-shadow: var(--bl-raise-hover);
+}
+.buttonLab .blRaised:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: var(--bl-raise);
+}
+
+/* 3 · Soft tint */
+.buttonLab .blSoft {
+  background: color-mix(in srgb, var(--c) 16%, var(--rk-bg-surface));
+  color: var(--c);
+  border-color: color-mix(in srgb, var(--c) 45%, var(--rk-bg-surface));
+}
+.buttonLab .blSoft:not(:disabled):hover {
+  background: color-mix(in srgb, var(--c) 26%, var(--rk-bg-surface));
+  border-color: var(--c);
+}
+
+/* 4 · Outline */
+.buttonLab .blOutline {
+  background: transparent;
+  color: var(--c);
+  border-color: var(--c);
+}
+.buttonLab .blOutline:not(:disabled):hover {
+  background: var(--c);
+  color: var(--onfill);
+}
+
+/* 5 · Gradient */
+.buttonLab .blGradient {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 82%, #fff) 0%, var(--c) 48%, var(--ch) 100%);
+  color: var(--onfill);
+  border-color: color-mix(in srgb, var(--c) 55%, #000);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+.buttonLab .blGradient:not(:disabled):hover { filter: brightness(1.08); }
+.buttonLab .blGradient:not(:disabled):active { filter: brightness(0.95); }
+
+/* 6 · Glow pill */
+.buttonLab .blPill {
+  background: var(--c);
+  color: var(--onfill);
+  border-radius: 999px;
+  padding: 9px 18px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--c) 60%, transparent), 0 0 14px color-mix(in srgb, var(--c) 40%, transparent);
+}
+.buttonLab .blPill:not(:disabled):hover {
+  background: var(--ch);
+  box-shadow: 0 0 0 1px var(--c), 0 0 18px color-mix(in srgb, var(--c) 55%, transparent);
+}

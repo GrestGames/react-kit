@@ -21,6 +21,9 @@ import toggleBasicSource from '../examples/inputs/ToggleBasic.tsx?raw';
 import ButtonVariants from '../examples/inputs/ButtonVariants';
 import buttonVariantsSource from '../examples/inputs/ButtonVariants.tsx?raw';
 
+import ButtonStyleLab from '../examples/inputs/ButtonStyleLab';
+import buttonStyleLabSource from '../examples/inputs/ButtonStyleLab.tsx?raw';
+
 import IconButtonBasic from '../examples/inputs/IconButtonBasic';
 import iconButtonBasicSource from '../examples/inputs/IconButtonBasic.tsx?raw';
 
@@ -61,6 +64,10 @@ export default function InputsPage() {
 
       <ShowCase title="Button" source={buttonVariantsSource}>
         <ButtonVariants />
+      </ShowCase>
+
+      <ShowCase title="Button style lab — gradient direction (dark + light)" source={buttonStyleLabSource}>
+        <ButtonStyleLab />
       </ShowCase>
 
       <ShowCase title="IconButton (async spinner, glyph variant, size)" source={iconButtonBasicSource}>
