@@ -43,21 +43,23 @@ button.deleteRowButton {
     padding: 0;
 }
 
-table.grid button {
-    color: var(--btn-fg, inherit);
-    border: 1px solid var(--rk-border-light);
-    background: var(--btn-bg, transparent);
+button.rkBtn-outline {
+    background: transparent;
+    color: var(--btn-bg, var(--rk-accent));
+    border-color: var(--btn-bg, var(--rk-accent));
     box-shadow: none;
+}
+
+button.rkBtn-outline:hover {
+    background: var(--btn-bg, var(--rk-accent));
+    color: var(--btn-fg, var(--rk-text-on-accent));
+    filter: none;
+}
+
+table.grid button {
     margin: 0 2px 0 2px;
     padding: 4px 6px 3px 6px;
     border-radius: 5px;
-}
-
-table.grid button:hover {
-    background: var(--btn-bg-hover, var(--rk-bg-hover));
-    color: var(--btn-fg, var(--rk-accent));
-    border-color: var(--rk-border-strong);
-    filter: none;
 }
 
 

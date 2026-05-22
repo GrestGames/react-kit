@@ -28,6 +28,7 @@ export * from "./form/input/CheckboxGroup";
 export * from "./form/input/Toggle";
 export * from "./form/input/FileUpload";
 export * from "./form/input/Button";
+export * from "./form/input/buttonAppearance";
 export {IconButton} from "./form/input/IconButton";
 export {DeleteObjectSection} from "./form/input/DeleteObjectSection";
 export * from "./form/input/InlineEditWrap";

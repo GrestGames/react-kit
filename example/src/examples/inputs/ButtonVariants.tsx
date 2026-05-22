@@ -14,6 +14,14 @@ export default function ButtonVariants() {
         <Button onClick={() => {}} disabled>Disabled</Button>
         <AddNewButton onClick={() => toast.success('Added a new item')}>Add new item</AddNewButton>
       </div>
+
+      {/* appearance="outline" — also auto-applied to buttons inside <Grid> */}
+      <div className="demoRow">
+        <Button appearance="outline" onClick={() => toast('Outline')}>Outline</Button>
+        <Button appearance="outline" intent="cool" onClick={() => toast.info('Outline secondary')}>Secondary</Button>
+        <Button appearance="outline" intent="warning" onClick={() => toast.warning('Outline warning')}>Warning</Button>
+        <Button appearance="outline" intent="danger" onClick={() => toast.danger('Outline danger')}>Danger</Button>
+      </div>
     </>
   );
 }
