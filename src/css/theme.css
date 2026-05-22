@@ -40,6 +40,19 @@
     --rk-warning: #cc9a00;
     --rk-danger: #d63031;
     --rk-info: #2d7dd2;
+    --rk-critical: #e65100;
+
+    /* Status surfaces — soft tinted fill + border for tiles, pills, callouts. */
+    --rk-success-bg: color-mix(in srgb, var(--rk-success) 15%, var(--rk-bg-surface));
+    --rk-success-border: color-mix(in srgb, var(--rk-success) 55%, var(--rk-bg-surface));
+    --rk-info-bg: color-mix(in srgb, var(--rk-info) 15%, var(--rk-bg-surface));
+    --rk-info-border: color-mix(in srgb, var(--rk-info) 55%, var(--rk-bg-surface));
+    --rk-warning-bg: color-mix(in srgb, var(--rk-warning) 15%, var(--rk-bg-surface));
+    --rk-warning-border: color-mix(in srgb, var(--rk-warning) 55%, var(--rk-bg-surface));
+    --rk-critical-bg: color-mix(in srgb, var(--rk-critical) 15%, var(--rk-bg-surface));
+    --rk-critical-border: color-mix(in srgb, var(--rk-critical) 55%, var(--rk-bg-surface));
+    --rk-danger-bg: color-mix(in srgb, var(--rk-danger) 15%, var(--rk-bg-surface));
+    --rk-danger-border: color-mix(in srgb, var(--rk-danger) 55%, var(--rk-bg-surface));
 
     --rk-brown: #8b5e3c;
     --rk-purple: #7c5cbf;
@@ -126,6 +139,7 @@
     --rk-warning: #e0af68;
     --rk-danger: #f38ba8;
     --rk-info: #7aa2f7;
+    --rk-critical: #ff9e64;
 
     --rk-brown: #c89b7a;
     --rk-purple: #bb9af7;
