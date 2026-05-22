@@ -14,11 +14,6 @@
     box-shadow: var(--rk-shadow);
 }
 
-.toolTip.error {
-    --tt-border: var(--rk-danger);
-    color: var(--rk-danger);
-}
-
 .toolTip.toolTipTop .arrow {
     border-top-color: var(--tt-border);
 }

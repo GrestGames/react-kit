@@ -1,23 +1,27 @@
 import {CSSProperties, PropsWithChildren, ReactNode, useEffect, useRef, useState} from "react";
 import {isPromise} from "../../util/isPromise";
-import {ErrorAlert} from "../../mini/Alert";
+import {Alert} from "../../mini/Alert";
 import {ApiErrorMessage} from "../../ErrorTracker";
 import {AnyFormElement} from "./StandardFormElementProps";
 import {FormObject} from "../useAsyncForm";
 import {useForm} from "../Form";
 import {ERROR} from "@grest-ts/schema";
 import {useIsMobile} from "../../responsive/useResponsive";
+import {Intent} from "../../intents";
 
 export interface ButtonProps extends PropsWithChildren<AnyFormElement> {
     onClick: () => Promise<any> | void,
+    intent?: Intent,
 }
 
+/** @deprecated prefer `<Button intent="warning">` */
 export function WarningButton(props: ButtonProps) {
-    return AnyButton({...props, type: "button", design: "warning"})
+    return AnyButton({...props, type: "button", intent: "warning"})
 }
 
+/** @deprecated prefer `<Button intent="danger">` */
 export function DangerButton(props: ButtonProps) {
-    return AnyButton({...props, type: "button", design: "danger"})
+    return AnyButton({...props, type: "button", intent: "danger"})
 }
 
 export function SecondaryButton(props: ButtonProps) {
@@ -25,7 +29,7 @@ export function SecondaryButton(props: ButtonProps) {
 }
 
 export function Button(props: ButtonProps) {
-    return AnyButton({...props, type: "button"})
+    return AnyButton({...props, type: "button", intent: props.intent})
 }
 
 export function SubmitButton(props: Omit<ButtonProps, "onClick">) {
@@ -135,12 +139,18 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
             })
         }
     }
+
+    const intentVars = props.intent ? {
+        "--btn-bg": `var(--rk-${props.intent}-fill)`,
+        "--btn-bg-hover": `var(--rk-${props.intent}-fill-hover)`,
+    } as CSSProperties : {};
+
     return <>
-        {error && <ErrorAlert onClick={() => setError(undefined)}><ApiErrorMessage error={error}/></ErrorAlert>}
+        {error && <Alert intent="danger" onClick={() => setError(undefined)}><ApiErrorMessage error={error}/></Alert>}
         <button type={props.type}
                 ref={ref}
                 disabled={props.disabled || props.readOnly || isLoading}
-                style={{width: size?.[0], height: size?.[1], ...props.style}}
+                style={{width: size?.[0], height: size?.[1], ...intentVars, ...props.style}}
                 className={props.design + " " + props.className + " " + (isLoading && " loading ") + " " + (hadError && " warning ")}
                 onClick={click}
                 onMouseEnter={() => setHadError(false)}>

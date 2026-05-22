@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {GGFile} from "@grest-ts/schema-file";
 import {ApiErrors} from "../ApiError";
-import {ErrorBox} from "../form/other/TipBox";
+import {TipBox} from "../form/other/TipBox";
 
 export interface Props {
     src: GGFile | (() => Promise<GGFile>)
@@ -42,7 +42,7 @@ export function FileIframe({src, width, height}: Props) {
     }, [src]);
 
     return <div style={{width: width || "100%", height: height || "100%"}}>
-        {error && <ErrorBox>{error}</ErrorBox>}
+        {error && <TipBox intent="danger" iconLetter="!">{error}</TipBox>}
         {url && <iframe src={url} style={{width: "100%", height: "100%"}}></iframe>}
     </div>
 }

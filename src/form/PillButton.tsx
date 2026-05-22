@@ -1,4 +1,5 @@
-import {forwardRef} from "react";
+import {CSSProperties, forwardRef} from "react";
+import {Intent} from "../intents";
 import "./PillButton.css";
 
 interface PillButtonProps {
@@ -9,12 +10,13 @@ interface PillButtonProps {
     selected?: boolean;
     bold?: boolean;
     activeColor?: string;
+    intent?: Intent;
     className?: string;
     title?: string;
 }
 
 export const PillButton = forwardRef<HTMLSpanElement, PillButtonProps>(function PillButton(
-    {children, onClick, dotted, active, selected, bold, activeColor, className, title}, ref
+    {children, onClick, dotted, active, selected, bold, activeColor, intent, className, title}, ref
 ) {
     let cls = "pillBtn";
     if (dotted) cls += " pillDotted";
@@ -23,7 +25,13 @@ export const PillButton = forwardRef<HTMLSpanElement, PillButtonProps>(function 
     if (bold) cls += " pillBold";
     if (className) cls += " " + className;
 
-    const style = active && activeColor ? {background: activeColor, borderColor: activeColor} : undefined;
+    let style: CSSProperties | undefined;
+    if (intent) style = {
+        background: `var(--rk-${intent}-soft)`,
+        color: `var(--rk-${intent}-soft-text)`,
+        borderColor: `var(--rk-${intent}-soft-border)`,
+    };
+    if (active && activeColor) style = {...style, background: activeColor, borderColor: activeColor};
 
     return <span ref={ref} className={cls} style={style} onClick={onClick} title={title}>{children}</span>;
 });

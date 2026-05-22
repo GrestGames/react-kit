@@ -1,14 +1,14 @@
-import {ReactNode, useEffect, useState} from "react";
+import {CSSProperties, ReactNode, useEffect, useState} from "react";
+import {Intent} from "../intents";
 import {AddToBody} from "../helpers/AddToBody";
 import "./Toast.css";
 
-export type ToastType = "info" | "success" | "warning" | "error";
 export type ToastPosition = "top-right" | "top" | "bottom-right" | "bottom";
 
 interface ToastItem {
     id: number;
     message: ReactNode;
-    type: ToastType;
+    intent: Intent;
 }
 
 const MAX_VISIBLE = 4;
@@ -26,9 +26,9 @@ function remove(id: number) {
     emit();
 }
 
-function show(message: ReactNode, type: ToastType, duration: number): number {
+function show(message: ReactNode, intent: Intent, duration: number): number {
     const id = ++counter;
-    items = [...items, {id, message, type}].slice(-MAX_VISIBLE);
+    items = [...items, {id, message, intent}].slice(-MAX_VISIBLE);
     emit();
     if (duration > 0) {
         setTimeout(() => remove(id), duration);
@@ -37,17 +37,20 @@ function show(message: ReactNode, type: ToastType, duration: number): number {
 }
 
 export interface ToastOptions {
-    type?: ToastType;
+    intent?: Intent;
     duration?: number;
 }
 
 export const toast = Object.assign(
-    (message: ReactNode, opts: ToastOptions = {}) => show(message, opts.type ?? "info", opts.duration ?? 3200),
+    (message: ReactNode, opts: ToastOptions = {}) => show(message, opts.intent ?? "neutral", opts.duration ?? 3200),
     {
+        neutral: (message: ReactNode, duration = 3200) => show(message, "neutral", duration),
         info: (message: ReactNode, duration = 3200) => show(message, "info", duration),
+        cool: (message: ReactNode, duration = 3200) => show(message, "cool", duration),
         success: (message: ReactNode, duration = 3200) => show(message, "success", duration),
         warning: (message: ReactNode, duration = 4000) => show(message, "warning", duration),
-        error: (message: ReactNode, duration = 4500) => show(message, "error", duration),
+        danger: (message: ReactNode, duration = 4500) => show(message, "danger", duration),
+        critical: (message: ReactNode, duration = 4500) => show(message, "critical", duration),
         dismiss: (id: number) => remove(id),
     }
 );
@@ -69,7 +72,9 @@ export function Toaster({position = "top-right"}: { position?: ToastPosition } =
     return <AddToBody id="rkToaster">
         <div className={"rkToaster rkToaster-" + position}>
             {items.map(t => (
-                <div key={t.id} className={"rkToast rkToast-" + t.type} onClick={() => remove(t.id)}>
+                <div key={t.id} className="rkToast"
+                     style={{"--toast-color": `var(--rk-${t.intent})`} as CSSProperties}
+                     onClick={() => remove(t.id)}>
                     {t.message}
                 </div>
             ))}

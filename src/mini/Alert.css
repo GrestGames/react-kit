@@ -19,26 +19,6 @@
     margin-top: 12px;
 }
 
-/* ── Themed variants (info / warning / error) — all share one core ── */
-
-.panelAlert.alertInfo {
-    --alert-bg: var(--rk-info-soft);
-    --alert-border: var(--rk-info-soft-border);
-    --alert-text: var(--rk-info-soft-text);
-}
-
-.panelAlert.alertWarning {
-    --alert-bg: var(--rk-warning-soft);
-    --alert-border: var(--rk-warning-soft-border);
-    --alert-text: var(--rk-warning-soft-text);
-}
-
-.panelAlert.alertError {
-    --alert-bg: var(--rk-danger-soft);
-    --alert-border: var(--rk-danger-soft-border);
-    --alert-text: var(--rk-danger-soft-text);
-}
-
 .panel.panelAlert {
     border: 1px solid var(--alert-border);
 }

@@ -1,7 +1,7 @@
 import "./FileGrid.css";
 import {useState} from "react";
 import {FileIcon} from "../other/FileIcon";
-import {DangerButton} from "../input/Button";
+import {Button} from "../input/Button";
 import {FileViewer} from "../../mini/FileViewer";
 
 export interface Props {
@@ -30,7 +30,7 @@ export function FileGrid({data, box, showDeleteButton}: Props) {
             {data.map((e, i) => <div key={i} className="fileBox" style={{width: box.width}}>
 
                 {showDeleteButton && <div className="deleteLinkArea">
-                    <DangerButton onClick={async () => e.deleteAction()} className="deleteLink">X</DangerButton>
+                    <Button intent="danger" onClick={async () => e.deleteAction()} className="deleteLink">X</Button>
                 </div>}
 
                 <span className="fileLink" style={{cursor: "pointer"}} onClick={() => setViewerIndex(i)}>
