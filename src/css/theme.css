@@ -40,6 +40,7 @@
     --rk-success: #27ae60;
     --rk-warning: #cc9a00;
     --rk-danger: #d63031;
+    --rk-critical: #e65100;
     --rk-info: #2d7dd2;
 
     --rk-brown: #8b5e3c;
@@ -108,6 +109,9 @@
     --rk-danger-soft: color-mix(in srgb, var(--rk-danger) 12%, var(--rk-bg-surface));
     --rk-danger-soft-border: color-mix(in srgb, var(--rk-danger) 45%, var(--rk-bg-surface));
     --rk-danger-soft-text: var(--rk-danger);
+    --rk-critical-soft: color-mix(in srgb, var(--rk-critical) 12%, var(--rk-bg-surface));
+    --rk-critical-soft-border: color-mix(in srgb, var(--rk-critical) 45%, var(--rk-bg-surface));
+    --rk-critical-soft-text: var(--rk-critical);
     --rk-info-soft: color-mix(in srgb, var(--rk-info) 12%, var(--rk-bg-surface));
     --rk-info-soft-border: color-mix(in srgb, var(--rk-info) 45%, var(--rk-bg-surface));
     --rk-info-soft-text: var(--rk-info);
@@ -163,6 +167,7 @@
     --rk-success: #9ece6a;
     --rk-warning: #e0af68;
     --rk-danger: #f38ba8;
+    --rk-critical: #ff9e64;
     --rk-info: #7aa2f7;
 
     /* Warning's dark base mixes fine, so derive (the dull-mustard problem is light-only). Fills + other softs inherit/derive from :root. */
