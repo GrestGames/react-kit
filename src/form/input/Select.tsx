@@ -74,7 +74,7 @@ export function Select<T extends string | number>(props: AnySelectFormElement<T>
                 data.onChange(SelectParser.toOutput<T>(e.target.value, [...(props.addEmpty ? [{id: null, name: ""}] : []), ...props.options]));
                 if (props.inlineEdit) e.target.blur();
             }}
-            className={(props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + inlineClass}
+            className={"rkSelect " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + inlineClass}
             style={props.style}
         >
             {props.addEmpty && <option value="" key={0}></option>}

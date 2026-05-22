@@ -1,6 +1,6 @@
 @import "../../css/theme.css";
 
-form {
+.rkForm {
     max-height: 0;
     opacity: 1;
     transition: opacity 1000ms ease-in;

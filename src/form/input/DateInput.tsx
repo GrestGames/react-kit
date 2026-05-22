@@ -16,7 +16,7 @@ export function DateInput<T extends string>(props: AnyInputElement<T>) {
             readOnly={props.readOnly || data.readOnly}
             disabled={props.disabled}
             onChange={(date: Date | null) => data.onChange(DateParser.toOutput(date) as T)}
-            className={"datePicker " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}
+            className={"datePicker rkInput " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}
         />
     </div>
 }
@@ -35,7 +35,7 @@ export function YearMonthSelect<T extends string>(props: AnyInputElement<T> & { 
             readOnly={props.readOnly || data.readOnly}
             disabled={props.disabled}
             onChange={(date: Date | null) => data.onChange(DateParser.toYearMonthOutput(date) as T)}
-            className={"datePicker " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}
+            className={"datePicker rkInput " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}
         />
     </div>
 }

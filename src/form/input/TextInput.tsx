@@ -63,7 +63,7 @@ export function TextArea<T>(props: InputProps<T> & { autoResize?: boolean, rows?
                         if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); inlineSaveOrCancel(opts, props, data); }
                         if (e.key === "Escape") { opts.onCancel(); props.onInlineEditCancel?.(); }
                     } : undefined}
-                    className={(props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}
+                    className={"rkTextarea " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}
                     style={opts ? {...props.style, overflow: "hidden", resize: "none"} : props.style}
                     rows={opts ? 1 : props.rows}
                 />
@@ -111,7 +111,7 @@ function InternalTextInput<T>(props: BasicInputProps2<T>) {
                         if (e.key === "Escape") { opts.onCancel(); props.onInlineEditCancel?.(); }
                     } : undefined}
                     placeholder={props.placeholder}
-                    className={(props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + " " + (props.suffix ? "inputWithSuffix" : "")}
+                    className={"rkInput " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + " " + (props.suffix ? "inputWithSuffix" : "")}
                     style={props.style}
                 />
                 {props.suffix && <div className={"inputSuffix " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}>{props.suffix}</div>}

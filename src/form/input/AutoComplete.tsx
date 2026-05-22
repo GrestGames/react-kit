@@ -77,14 +77,14 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
         <div className="formItem">
             {data.validationError ? <div className="validationErrorMsg">{data.validationError.msg}</div> : ""}
             {(setOptionsState.state === AsyncState.LOADING || setOptionsState.state === AsyncState.INIT) &&
-                <input type="search" value="Loading..." disabled={true} style={props.style} className={props.className + inlineClass}/>}
-            {setOptionsState.state === AsyncState.ERROR && <input type="search" value="Failed to load options!" disabled={true} style={props.style} className={"error " + props.className + inlineClass}/>}
+                <input type="search" value="Loading..." disabled={true} style={props.style} className={"rkInput " + props.className + inlineClass}/>}
+            {setOptionsState.state === AsyncState.ERROR && <input type="search" value="Failed to load options!" disabled={true} style={props.style} className={"rkInput error " + props.className + inlineClass}/>}
             {setOptionsState.state === AsyncState.OK && <>
                 <input type="search" ref={inputRef}
                        autoComplete="off"
                        style={props.style}
                        name={data.name}
-                       className={props.className + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + inlineClass}
+                       className={"rkInput " + props.className + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + inlineClass}
                        readOnly={props.readOnly || data.readOnly}
                        disabled={props.disabled}
                        value={searchString}

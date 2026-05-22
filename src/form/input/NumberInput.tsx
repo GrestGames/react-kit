@@ -74,7 +74,7 @@ function InternalNumberInput<T extends number>(props: DecimalInputProps<T>) {
                         if (e.key === "Enter") { e.preventDefault(); inlineSaveOrCancel(opts, props, data); }
                         if (e.key === "Escape") { opts.onCancel(); props.onInlineEditCancel?.(); }
                     } : undefined}
-                    className={(props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + " " + (props.suffix ? "inputWithSuffix" : "")}
+                    className={"rkInput " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + " " + (props.suffix ? "inputWithSuffix" : "")}
                     style={props.style}
                 />
                 {props.suffix && <div className={"inputSuffix " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}>{props.suffix}</div>}

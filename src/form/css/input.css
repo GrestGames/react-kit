@@ -1,28 +1,28 @@
 @import "../../css/theme.css";
 
-input.changed, select.changed, textarea.changed {
+.rkInput.changed, .rkSelect.changed, .rkTextarea.changed {
     border: 1px solid var(--rk-changed-border);
     background-color: var(--rk-changed-bg);
 }
 
-select option.changed {
+.rkSelect option.changed {
     background-color: var(--rk-changed-bg);
 }
 
-input[readonly], select[readonly], textarea[readonly], input[disabled], select[disabled], textarea[disabled] {
+.rkInput[readonly], .rkSelect[readonly], .rkTextarea[readonly], .rkInput[disabled], .rkSelect[disabled], .rkTextarea[disabled] {
     background: var(--rk-disabled-bg);
     color: var(--rk-text-muted);
 }
 
-input[readonly]:hover, select[disabled]:hover, textarea[readonly]:hover {
+.rkInput[readonly]:hover, .rkSelect[disabled]:hover, .rkTextarea[readonly]:hover {
     background: var(--rk-disabled-bg);
 }
 
-input[readonly]:focus, select[disabled]:focus, textarea[readonly]:focus {
+.rkInput[readonly]:focus, .rkSelect[disabled]:focus, .rkTextarea[readonly]:focus {
     background: var(--rk-disabled-bg);
 }
 
-input, select, textarea {
+.rkInput, .rkSelect, .rkTextarea {
     display: inline-block;
     vertical-align: middle;
     box-sizing: border-box;
@@ -33,46 +33,41 @@ input, select, textarea {
     margin: 2px 4px 2px 4px;
 }
 
-input:hover, select:hover, textarea:hover {
+.rkInput:hover, .rkSelect:hover, .rkTextarea:hover {
     border: 1px solid var(--rk-border-strong);
     transition: border 0.3s ease-in-out;
 }
 
-input:focus, select:focus, textarea:focus {
+.rkInput:focus, .rkSelect:focus, .rkTextarea:focus {
     border: 1px solid var(--rk-border-strong);
     transition: border 0.3s ease-in-out;
 }
 
-input, select, textarea {
+.rkInput, .rkSelect, .rkTextarea {
     width: 200px;
     padding: 6px 7px 6px 7px;
     color: inherit;
     height: 32px;
 }
 
-select option {
+.rkSelect option {
     background: var(--rk-bg-surface);
 }
 
-select {
+.rkSelect {
     padding: 6px;
 }
 
-textarea {
+.rkTextarea {
     width: 300px;
     height: 100px;
 }
 
-input[type="date"] {
+.rkInput[type="date"] {
     width: 120px;
 }
 
-input[type="checkbox"], input[type="radio"] {
-    width: auto;
-    height: auto;
-}
-
-input.error, select.error, textarea.error {
+.rkInput.error, .rkSelect.error, .rkTextarea.error {
     border: 1px solid var(--rk-danger);
     background-color: var(--rk-danger-soft);
 }
@@ -106,22 +101,11 @@ button.react-datepicker__navigation--next:hover {
     white-space: nowrap;
 }
 
-/*
-td > .formItem {
-    display: block;
-    width: 100%;
-}
-
-td > .formItem input[type="text"], td > .formItem input[type="search"], td > .formItem select, td > .formItem textarea {
-    width: 100%
-}
-*/
-
-input.wide, select.wide, textArea.wide {
+.rkInput.wide, .rkSelect.wide, .rkTextarea.wide {
     width: 400px;
 }
 
-textarea.wide {
+.rkTextarea.wide {
     height: 200px;
 }
 
@@ -194,20 +178,16 @@ textarea.wide {
         flex-shrink: 0;
     }
 
-    input, select, textarea {
+    .rkInput, .rkSelect, .rkTextarea {
         width: 100% !important;
         box-sizing: border-box;
     }
 
-    input[type="checkbox"], input[type="radio"] {
-        width: auto !important;
-    }
-
-    input.wide, select.wide, textarea.wide {
+    .rkInput.wide, .rkSelect.wide, .rkTextarea.wide {
         width: 100% !important;
     }
 
-    textarea {
+    .rkTextarea {
         width: 100% !important;
     }
 
