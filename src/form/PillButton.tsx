@@ -15,7 +15,7 @@ interface PillButtonProps extends ToolTipSupported {
 }
 
 export const PillButton = forwardRef<HTMLSpanElement, PillButtonProps>(function PillButton(
-    {children, onClick, dotted, active, bold, disabled, intent = "default", className, tooltip, tooltipProps}, ref
+    {children, onClick, dotted, active, bold, disabled, intent = "default", className, title, titleProps}, ref
 ) {
     let cls = "pillBtn";
     if (dotted) cls += " pillDotted";
@@ -33,7 +33,7 @@ export const PillButton = forwardRef<HTMLSpanElement, PillButtonProps>(function 
         borderColor: `var(--rk-${intent}-soft-border)`,
     };
 
-    return wrapToolTip({tooltip, tooltipProps},
+    return wrapToolTip({title, titleProps},
         <span ref={ref} className={cls} style={style}
               aria-disabled={disabled || undefined}
               onClick={disabled ? undefined : onClick}>{children}</span>);

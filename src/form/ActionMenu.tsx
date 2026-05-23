@@ -40,7 +40,7 @@ interface ActionMenuProps extends ToolTipSupported {
  * none of react-kit's global element styling — the menu is styled solely by its
  * own classes and can't be broken by changes to the base button/anchor rules.
  */
-export function ActionMenu({items, align = "right", position = "below", trigger = "⋯", triggerColor, tooltip, tooltipProps}: ActionMenuProps) {
+export function ActionMenu({items, align = "right", position = "below", trigger = "⋯", triggerColor, title, titleProps}: ActionMenuProps) {
     const [open, setOpen] = useState(false);
     const [rect, setRect] = useState<DOMRect | null>(null);
     const [dark, setDark] = useState(false);
@@ -106,14 +106,14 @@ export function ActionMenu({items, align = "right", position = "below", trigger 
             : {left: rect.left}),
     } : {};
 
-    const tipLabel = typeof tooltip === "string" ? tooltip : "Actions";
+    const tipLabel = typeof title === "string" ? title : "Actions";
     const triggerEl = <div ref={triggerRef} className="tv2ActionMenuBtn" role="button" tabIndex={0}
              aria-haspopup="menu" aria-expanded={open} aria-label={tipLabel}
              style={triggerColor ? {color: triggerColor} : undefined}
              onClick={() => open ? close() : openMenu()} onKeyDown={onTriggerKey}>{trigger}</div>;
 
     return <>
-        {wrapToolTip({tooltip: tooltip ?? "Actions", tooltipProps}, triggerEl)}
+        {wrapToolTip({title: title ?? "Actions", titleProps}, triggerEl)}
         {open && rect && createPortal(
             // data-rk-dropdown-portal marks this as a dropdown surface so a host's
             // outside-click handler can treat clicks here as "inside" — otherwise

@@ -16,11 +16,11 @@ export default function ButtonVariants() {
         <AddNewButton onClick={() => RkToast.success('Added a new item')}>Add new item</AddNewButton>
       </div>
 
-      {/* tooltip prop — styled react-kit tooltip, anchored under the control. Accepts rich content. */}
+      {/* title prop — styled react-kit title, anchored under the control. Accepts rich content. */}
       <div className="demoRow">
-        <Button onClick={() => RkToast('Saved')} tooltip="Saves your changes to the server.">Save</Button>
+        <Button onClick={() => RkToast('Saved')} title="Saves your changes to the server.">Save</Button>
         <Button intent="danger" onClick={() => RkToast.danger('Deleted')}
-          tooltip={
+          title={
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <div style={{ fontWeight: 700 }}>Permanent delete</div>
               <div>This cannot be undone.</div>

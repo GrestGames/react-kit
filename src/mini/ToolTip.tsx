@@ -129,13 +129,14 @@ export function ToolTip({
 
 /** Mix into a component's props to give it a styled tooltip with one integration point. */
 export interface ToolTipSupported {
-    tooltip?: MessageType
+    /** Styled tooltip content (mirrors the native `title` attribute; accepts rich content). */
+    title?: MessageType
     /** Anchor/placement/intent/delay overrides. Defaults to anchored (`anchor: "target"`). */
-    tooltipProps?: Omit<ToolTipProps, "message" | "children">
+    titleProps?: Omit<ToolTipProps, "message" | "children">
 }
 
-/** Wrap a component's root element in a ToolTip when `tooltip` is set; otherwise return it untouched. */
+/** Wrap a component's root element in a ToolTip when `title` is set; otherwise return it untouched. */
 export function wrapToolTip(props: ToolTipSupported, element: ReactElement): ReactNode {
-    if (props.tooltip == null) return element;
-    return <ToolTip message={props.tooltip} anchor="target" {...props.tooltipProps}>{element}</ToolTip>;
+    if (props.title == null) return element;
+    return <ToolTip message={props.title} anchor="target" {...props.titleProps}>{element}</ToolTip>;
 }

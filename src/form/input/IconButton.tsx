@@ -14,7 +14,7 @@ interface IconButtonProps extends ToolTipSupported {
     className?: string;
 }
 
-export function IconButton({icon, onClick, tooltip, tooltipProps, size, color, disabled, variant = "button", className}: IconButtonProps) {
+export function IconButton({icon, onClick, title, titleProps, size, color, disabled, variant = "button", className}: IconButtonProps) {
     const [loading, setLoading] = useState(false);
 
     const handleClick = (e: MouseEvent) => {
@@ -36,9 +36,9 @@ export function IconButton({icon, onClick, tooltip, tooltipProps, size, color, d
         className || "",
     ].filter(Boolean).join(" ");
 
-    return wrapToolTip({tooltip, tooltipProps},
+    return wrapToolTip({title, titleProps},
         <button type="button" onClick={handleClick} disabled={disabled}
-                aria-label={typeof tooltip === "string" ? tooltip : undefined}
+                aria-label={typeof title === "string" ? title : undefined}
                 className={cls} style={Object.keys(style).length ? style : undefined}
                 aria-busy={loading || undefined}>
             {loading ? <span className="rkIconButtonSpinner" aria-hidden>⟳</span> : <span className="rkIconButtonIcon">{icon}</span>}
