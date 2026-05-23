@@ -1,4 +1,4 @@
-import { Grid, TextInput, Select, Button, toast } from '@grest-ts/react';
+import { Grid, TextInput, Select, Button, RkToast } from '@grest-ts/react';
 import type { GridField, GridQuery, FormObject } from '@grest-ts/react';
 
 interface Row {
@@ -41,9 +41,9 @@ const fields: GridField<Row>[] = [
   // Buttons inside <Grid> auto-render as outline (pass appearance="gradient" to opt one back out).
   { title: 'Actions', value: (row) => (
     <>
-      <Button onClick={() => toast(`View ${row.name}`)}>View</Button>
-      <Button intent="info" onClick={() => toast(`Edit ${row.name}`)}>Edit</Button>
-      <Button intent="danger" confirmDouble confirmDoubleText={`Delete ${row.name}?`} onClick={() => toast.danger(`Delete ${row.name}`)}>Delete</Button>
+      <Button onClick={() => RkToast(`View ${row.name}`)}>View</Button>
+      <Button intent="info" onClick={() => RkToast(`Edit ${row.name}`)}>Edit</Button>
+      <Button intent="danger" confirmDouble confirmDoubleText={`Delete ${row.name}?`} onClick={() => RkToast.danger(`Delete ${row.name}`)}>Delete</Button>
     </>
   ), width: 200 },
 ];

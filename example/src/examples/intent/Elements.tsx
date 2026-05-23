@@ -1,5 +1,5 @@
 import { Fragment, ReactNode, useState } from 'react';
-import { TipBox, PillButton, Tag, Button, ToolTip, Alert, toast, type Intent } from '@grest-ts/react';
+import { TipBox, PillButton, Tag, Button, ToolTip, Alert, RkToast, type Intent } from '@grest-ts/react';
 
 export const intents: Intent[] = ['neutral', 'info', 'cool', 'success', 'warning', 'critical', 'danger'];
 
@@ -47,7 +47,7 @@ const columns: Column[] = [
   { label: 'Tooltip', render: i => <td className="center"><ToolTip intent={i} message={`${i ?? 'default'} tooltip`}><TipBox intent={i} onClick={() => {}}>tooltip</TipBox></ToolTip></td> },
   { label: 'Button', render: i => <td className="center"><Button intent={i} onClick={() => {}}>{i ?? 'default'}</Button></td> },
   { label: 'Outline', render: i => <td className="center"><Button intent={i} appearance="outline" onClick={() => {}}>{i ?? 'default'}</Button></td> },
-  { label: 'Toast', render: i => <td className="center"><Button intent={i} onClick={() => { i ? toast[i](i) : toast('default'); }}>toast</Button></td> },
+  { label: 'Toast', render: i => <td className="center"><Button intent={i} onClick={() => { i ? RkToast[i](i) : RkToast('default'); }}>RkToast</Button></td> },
   { label: 'Alert', render: i => <td className="center"><AlertCell intent={i} /></td> },
 ];
 

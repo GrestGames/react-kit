@@ -64,6 +64,8 @@ export {usePillPopup, ANIM_DURATION} from "./mini/usePillPopup";
 export * from "./mini/DarkBackground";
 export * from "./mini/Alert";
 export * from "./mini/Toast";
+export * from "./mini/Dialog";
+export * from "./mini/RkOverlayHost";
 export * from "./mini/LoadingPopup";
 export * from "./mini/BatchProgressPopup";
 export * from "./mini/FileViewer";
