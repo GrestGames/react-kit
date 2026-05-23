@@ -1,7 +1,8 @@
 import {CSSProperties, ReactNode} from "react";
 import {Intent} from "../intents";
+import {ToolTipSupported, wrapToolTip} from "./ToolTip";
 
-export interface TagProps {
+export interface TagProps extends ToolTipSupported {
     children: ReactNode | ReactNode[];
     intent?: Intent;
     size?: "micro" | "small" | "normal";
@@ -9,18 +10,17 @@ export interface TagProps {
     className?: string;
     style?: CSSProperties;
     onClick?: () => void;
-    title?: string;
 }
 
-export function Tag({children, intent = "default", size = "micro", bold, className, style, onClick, title}: TagProps) {
+export function Tag({children, intent = "default", size = "micro", bold, className, style, onClick, tooltip, tooltipProps}: TagProps) {
     const intentVars = {
         // Tag draws no border, so default-soft (= surface) is invisible; back the no-status chip with a raised gray.
         "--tag-bg": intent === "default" ? "var(--rk-bg-raised)" : `var(--rk-${intent}-soft)`,
         "--tag-text": `var(--rk-${intent}-soft-text)`,
         "--tag-font-size": `var(--rk-font-size-${size})`,
     } as CSSProperties;
-    return <span className={"tag" + (bold ? " tagBold" : "") + (className ? " " + className : "")}
-                 style={{...intentVars, ...style}}
-                 onClick={onClick}
-                 title={title}>{children}</span>;
+    return wrapToolTip({tooltip, tooltipProps},
+        <span className={"tag" + (bold ? " tagBold" : "") + (className ? " " + className : "")}
+              style={{...intentVars, ...style}}
+              onClick={onClick}>{children}</span>);
 }

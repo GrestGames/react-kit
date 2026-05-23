@@ -6,7 +6,7 @@ import { IconButton } from "./IconButton";
 describe("IconButton", () => {
   it("renders the icon and fires onClick once", async () => {
     const handler = vi.fn();
-    render(<IconButton icon="★" onClick={handler} title="Star" />);
+    render(<IconButton icon="★" onClick={handler} tooltip="Star" />);
     const btn = screen.getByRole("button");
     expect(btn).toHaveTextContent("★");
     await userEvent.click(btn);
@@ -18,7 +18,7 @@ describe("IconButton", () => {
     const pending = new Promise<void>((r) => { resolve = r; });
     const handler = vi.fn(() => pending);
 
-    render(<IconButton icon="★" onClick={handler} title="Star" />);
+    render(<IconButton icon="★" onClick={handler} tooltip="Star" />);
     const btn = screen.getByRole("button");
 
     await userEvent.click(btn);
@@ -36,7 +36,7 @@ describe("IconButton", () => {
 
   it("does not fire when disabled", async () => {
     const handler = vi.fn();
-    render(<IconButton icon="★" onClick={handler} title="Star" disabled />);
+    render(<IconButton icon="★" onClick={handler} tooltip="Star" disabled />);
     const btn = screen.getByRole("button");
     expect(btn).toBeDisabled();
     await userEvent.click(btn);

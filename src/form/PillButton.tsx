@@ -1,8 +1,9 @@
 import {CSSProperties, forwardRef} from "react";
 import {Intent} from "../intents";
+import {ToolTipSupported, wrapToolTip} from "../mini/ToolTip";
 import "./PillButton.css";
 
-interface PillButtonProps {
+interface PillButtonProps extends ToolTipSupported {
     children: React.ReactNode;
     onClick?: () => void;
     dotted?: boolean;
@@ -11,11 +12,10 @@ interface PillButtonProps {
     disabled?: boolean;
     intent?: Intent;
     className?: string;
-    title?: string;
 }
 
 export const PillButton = forwardRef<HTMLSpanElement, PillButtonProps>(function PillButton(
-    {children, onClick, dotted, active, bold, disabled, intent = "default", className, title}, ref
+    {children, onClick, dotted, active, bold, disabled, intent = "default", className, tooltip, tooltipProps}, ref
 ) {
     let cls = "pillBtn";
     if (dotted) cls += " pillDotted";
@@ -33,7 +33,8 @@ export const PillButton = forwardRef<HTMLSpanElement, PillButtonProps>(function 
         borderColor: `var(--rk-${intent}-soft-border)`,
     };
 
-    return <span ref={ref} className={cls} style={style} title={title}
-                 aria-disabled={disabled || undefined}
-                 onClick={disabled ? undefined : onClick}>{children}</span>;
+    return wrapToolTip({tooltip, tooltipProps},
+        <span ref={ref} className={cls} style={style}
+              aria-disabled={disabled || undefined}
+              onClick={disabled ? undefined : onClick}>{children}</span>);
 });

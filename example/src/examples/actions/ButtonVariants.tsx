@@ -16,6 +16,18 @@ export default function ButtonVariants() {
         <AddNewButton onClick={() => RkToast.success('Added a new item')}>Add new item</AddNewButton>
       </div>
 
+      {/* tooltip prop — styled react-kit tooltip, anchored under the control. Accepts rich content. */}
+      <div className="demoRow">
+        <Button onClick={() => RkToast('Saved')} tooltip="Saves your changes to the server.">Save</Button>
+        <Button intent="danger" onClick={() => RkToast.danger('Deleted')}
+          tooltip={
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <div style={{ fontWeight: 700 }}>Permanent delete</div>
+              <div>This cannot be undone.</div>
+            </div>
+          }>Delete</Button>
+      </div>
+
       {/* appearance="outline" — also auto-applied to buttons inside <Grid> */}
       <div className="demoRow">
         <Button appearance="outline" onClick={() => RkToast('Outline')}>Outline</Button>
