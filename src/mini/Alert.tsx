@@ -31,8 +31,8 @@ export function Alert({intent, iconLetter, title, children, buttonTitle, onClick
     } as CSSProperties : undefined;
     const letter = iconLetter ?? (intent ? iconForIntent(intent) : undefined);
     return <AddToBody id="alert">
-        <DarkBackground zIndex={200} onClick={onClick}/>
-        <Panel className={intent ? "panelAlert" : undefined} width={width || "400px"} zIndex={201} style={{marginTop: "180px", ...alertVars}}>
+        <DarkBackground zIndex="var(--rk-z-overlay)" onClick={onClick}/>
+        <Panel className={intent ? "panelAlert" : undefined} width={width || "400px"} zIndex="var(--rk-z-overlay)" style={{marginTop: "180px", ...alertVars}}>
             <div className="alertBody">
                 {intent
                     ? <div className="alertHead"><span className="alertIcon">{letter}</span><span className="alertHeadTitle">{title || "Alert"}</span></div>

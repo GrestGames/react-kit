@@ -9,7 +9,7 @@ export interface Props {
     children: ReactNode | ReactNode[],
     onClose?: () => void;
     onClickTitle?: () => void
-    zIndex?: number,
+    zIndex?: number | string,
     style?: CSSProperties,
     className?: string
 }
