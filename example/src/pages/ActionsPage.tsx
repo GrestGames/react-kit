@@ -3,9 +3,6 @@ import ShowCase from '../showcase/ShowCase';
 import ButtonVariants from '../examples/actions/ButtonVariants';
 import buttonVariantsSource from '../examples/actions/ButtonVariants.tsx?raw';
 
-import ButtonIntents from '../examples/actions/ButtonIntents';
-import buttonIntentsSource from '../examples/actions/ButtonIntents.tsx?raw';
-
 import IconButtonBasic from '../examples/actions/IconButtonBasic';
 import iconButtonBasicSource from '../examples/actions/IconButtonBasic.tsx?raw';
 
@@ -20,12 +17,8 @@ export default function ActionsPage() {
     <>
       <h1 className="pageTitle">Buttons & Actions</h1>
 
-      <ShowCase title="Button" source={buttonVariantsSource}>
+      <ShowCase title="Button — one per intent, plus async, outline, confirm-double" source={buttonVariantsSource}>
         <ButtonVariants />
-      </ShowCase>
-
-      <ShowCase title="Buttons — one per intent" source={buttonIntentsSource}>
-        <ButtonIntents />
       </ShowCase>
 
       <ShowCase title="IconButton (async spinner, glyph variant, size)" source={iconButtonBasicSource}>

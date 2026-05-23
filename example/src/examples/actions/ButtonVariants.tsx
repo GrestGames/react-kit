@@ -1,13 +1,14 @@
-import { Button, DangerButton, WarningButton, SecondaryButton, AddNewButton, RkToast } from '@grest-ts/react';
+import { Button, AddNewButton, RkToast } from '@grest-ts/react';
+
+const intents = ['neutral', 'info', 'cool', 'success', 'warning', 'danger', 'critical'] as const;
 
 export default function ButtonVariants() {
   return (
     <>
       <div className="demoRow">
-        <Button onClick={() => RkToast('Button clicked!')}>Button</Button>
-        <SecondaryButton onClick={() => RkToast.info('Secondary clicked')}>Secondary</SecondaryButton>
-        <WarningButton onClick={() => RkToast.warning('Warning — proceed with care')}>Warning</WarningButton>
-        <DangerButton onClick={() => RkToast.danger('Danger — something went wrong')}>Danger</DangerButton>
+        {intents.map(intent => (
+          <Button key={intent} intent={intent} onClick={() => RkToast(intent)}>{intent}</Button>
+        ))}
       </div>
       <div className="demoRow">
         <Button onClick={() => new Promise(r => setTimeout(r, 1500))}>Async (1.5s)</Button>
