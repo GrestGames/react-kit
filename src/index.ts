@@ -62,6 +62,7 @@ export * from "./mini/Cards";
 export * from "./mini/PopupPanel";
 export {Panel} from "./mini/Panel";
 export {usePillPopup, ANIM_DURATION} from "./mini/usePillPopup";
+export * from "./mini/Popover";
 export * from "./mini/DarkBackground";
 export * from "./mini/Alert";
 export * from "./mini/Toast";

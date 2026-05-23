@@ -31,9 +31,16 @@
 }
 
 .toolTip .text {
-    padding: 3px 8px;
-    text-align: center;
+    padding: 5px 9px;
+    text-align: left;
     border-radius: 4px;
+}
+
+.toolTip.toolTipAnchored {
+    margin: 0;
+    z-index: 10002;
+    font-size: var(--rk-font-size-mini);
+    line-height: 1.45;
 }
 
 .toolTipOff {
