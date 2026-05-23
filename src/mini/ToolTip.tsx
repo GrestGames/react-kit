@@ -1,4 +1,5 @@
-import {CSSProperties, ReactNode, ReactPortal, useEffect, useRef, useState} from "react";
+import {CSSProperties, ReactNode, ReactPortal, RefObject, useEffect, useRef, useState} from "react";
+import {createPortal} from "react-dom";
 import "./ToolTip.css"
 import {AddToBody} from "../helpers/AddToBody";
 import {Intent} from "../intents";
@@ -15,10 +16,41 @@ export type ToolTipTemplate = "normal" | "error";
 
 export type ToolTipAlign = "vertical" | "horizontal";
 
+export interface ToolTipProps {
+    message: MessageType
+    /** @deprecated use intent instead */
+    template?: ToolTipTemplate
+    intent?: Intent
+    children?: ReactNode
+    className?: string
+    style?: CSSProperties
+    /** Cursor-following (default) vs anchored to the wrapped element. */
+    anchor?: "cursor" | "target"
+    /** Cursor mode: which screen axis drives placement. */
+    align?: ToolTipAlign
+    /** Target mode: preferred side; flips toward the side with more room near a viewport edge. */
+    placement?: "above" | "below"
+    /** Target mode: max popup width in px (also the horizontal clamp width). */
+    maxWidth?: number
+    /** Target mode: hover-in / hover-out delays in ms. */
+    openDelayMs?: number
+    closeDelayMs?: number
+    /** Target mode: "block" renders a div wrapper — needed when wrapping a flex/grid row. */
+    display?: "inline" | "block"
+}
+
 export interface ToolTipControls {
     display: (message: MessageType, template?: ToolTipTemplate, align?: ToolTipAlign, intent?: Intent) => void,
     hide: () => void,
     portal: ReactPortal | undefined
+}
+
+function intentVars(intent: Intent | undefined, template: ToolTipTemplate | undefined): CSSProperties | undefined {
+    const effective = intent ?? (template === "error" ? "danger" : undefined);
+    return effective ? {
+        "--tt-border": `var(--rk-${effective})`,
+        color: `var(--rk-${effective})`,
+    } as CSSProperties : undefined;
 }
 
 export function GetToolTipControls(): ToolTipControls {
@@ -120,19 +152,17 @@ export function GetToolTipControls(): ToolTipControls {
             </div>
         }),
         display: (message: MessageType, template: ToolTipTemplate, align: ToolTipAlign, intent?: Intent) => {
-            const effectiveIntent = intent ?? (template === "error" ? "danger" : undefined);
-            const intentVars = effectiveIntent ? {
-                "--tt-border": `var(--rk-${effectiveIntent})`,
-                color: `var(--rk-${effectiveIntent})`,
-            } as CSSProperties : undefined;
-            setBase({message: message, className: template === "error" ? "normal" : (template || "normal"), align: align, intentVars});
+            setBase({message: message, className: template === "error" ? "normal" : (template || "normal"), align: align, intentVars: intentVars(intent, template)});
         },
         hide: () => setBase(undefined)
     }
 }
 
-export function ToolTip({children, message, align, template, intent, style, className}:
-                            { message: MessageType, /** @deprecated use intent instead */ template?: ToolTipTemplate, intent?: Intent, align?: ToolTipAlign, children?: ReactNode, className?: string, style?: CSSProperties }) {
+export function ToolTip(props: ToolTipProps) {
+    return props.anchor === "target" ? <AnchoredToolTip {...props}/> : <CursorToolTip {...props}/>;
+}
+
+function CursorToolTip({children, message, align, template, intent, style, className}: ToolTipProps) {
     const provider = GetToolTipControls();
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
@@ -160,4 +190,77 @@ export function ToolTip({children, message, align, template, intent, style, clas
         {provider.portal}
         <span className={className} style={style} onMouseOver={() => setIsVisible(true)} onMouseOut={() => setIsVisible(false)}>{children}</span>
     </>;
+}
+
+const ANCHOR_MIN_SPACE = 80;
+const ANCHOR_GAP = 4;
+const ANCHOR_MARGIN = 8;
+
+function resolveMessage(message: MessageType): ReactNode {
+    const value = typeof message === "function" ? message() : message;
+    if (typeof value === "string") {
+        return <span dangerouslySetInnerHTML={{__html: value}}/>;
+    }
+    return value;
+}
+
+function AnchoredToolTip({
+    children, message, intent, template, className, style,
+    placement = "below", maxWidth = 320, openDelayMs = 200, closeDelayMs = 100, display = "inline",
+}: ToolTipProps) {
+    const [rect, setRect] = useState<DOMRect | null>(null);
+    const wrapperRef = useRef<HTMLElement>(null);
+    const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const cancelTimers = () => {
+        if (openTimer.current) { clearTimeout(openTimer.current); openTimer.current = null }
+        if (closeTimer.current) { clearTimeout(closeTimer.current); closeTimer.current = null }
+    }
+    useEffect(() => () => cancelTimers(), []);
+
+    const onEnter = () => {
+        cancelTimers();
+        openTimer.current = setTimeout(() => {
+            if (wrapperRef.current) setRect(wrapperRef.current.getBoundingClientRect());
+        }, openDelayMs);
+    };
+    const onLeave = () => {
+        cancelTimers();
+        closeTimer.current = setTimeout(() => setRect(null), closeDelayMs);
+    };
+    const handlers = {onMouseEnter: onEnter, onMouseLeave: onLeave, onFocus: onEnter, onBlur: onLeave};
+
+    const popup = rect && createPortal(
+        <AnchoredPopup rect={rect} placement={placement} maxWidth={maxWidth} vars={intentVars(intent, template)}>
+            {resolveMessage(message)}
+        </AnchoredPopup>,
+        document.body,
+    );
+
+    return <>
+        {display === "block"
+            ? <div ref={wrapperRef as RefObject<HTMLDivElement>} className={className} style={{display: "block", ...style}} {...handlers}>{children}</div>
+            : <span ref={wrapperRef as RefObject<HTMLSpanElement>} className={className} style={{display: "inline-flex", alignItems: "center", ...style}} {...handlers}>{children}</span>}
+        {popup}
+    </>;
+}
+
+function AnchoredPopup({rect, placement, maxWidth, vars, children}: {
+    rect: DOMRect, placement: "above" | "below", maxWidth: number, vars?: CSSProperties, children: ReactNode,
+}) {
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const showAbove = placement === "above"
+        ? spaceAbove >= ANCHOR_MIN_SPACE || spaceBelow < ANCHOR_MIN_SPACE
+        : spaceBelow < ANCHOR_MIN_SPACE && spaceAbove >= ANCHOR_MIN_SPACE;
+
+    const vert: CSSProperties = showAbove
+        ? {bottom: window.innerHeight - rect.top + ANCHOR_GAP}
+        : {top: rect.bottom + ANCHOR_GAP};
+
+    const center = rect.left + rect.width / 2;
+    const left = Math.max(ANCHOR_MARGIN, Math.min(window.innerWidth - ANCHOR_MARGIN - maxWidth, center - maxWidth / 2));
+
+    return <div className="toolTip toolTipAnchored" style={{...vert, left, maxWidth, ...vars}}>{children}</div>;
 }

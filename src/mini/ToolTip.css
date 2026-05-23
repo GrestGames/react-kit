@@ -36,6 +36,14 @@
     border-radius: 4px;
 }
 
+.toolTip.toolTipAnchored {
+    text-align: left;
+    padding: 8px 10px;
+    font-size: var(--rk-font-size-mini);
+    line-height: 1.45;
+    z-index: 10002;
+}
+
 .toolTipOff {
     display: none;
 }
