@@ -43,6 +43,6 @@ export function FileIframe({src, width, height}: Props) {
 
     return <div style={{width: width || "100%", height: height || "100%"}}>
         {error && <TipBox intent="danger" iconLetter="!">{error}</TipBox>}
-        {url && <iframe src={url} style={{width: "100%", height: "100%"}}></iframe>}
+        {url && <iframe src={url} style={{width: "100%", height: "100%", background: "white", colorScheme: "light"}}></iframe>}
     </div>
 }
