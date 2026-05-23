@@ -12,12 +12,21 @@ const plans = [
     subtitle: 'Custom contracts',
     features: ['SSO & SAML', 'Audit logs', 'Dedicated support', '99.9% SLA'],
   },
+  { id: 'hobby', icon: '🎨', title: 'Hobby', subtitle: 'Personal use' },
+  { id: 'pro', icon: '💼', title: 'Pro', subtitle: 'For freelancers' },
+  { id: 'business', icon: '📊', title: 'Business', subtitle: 'Growing teams' },
+  { id: 'edu', icon: '🎓', title: 'Education', subtitle: 'Schools & labs' },
 ];
 
 export default function CardsBasic() {
   const [selected, setSelected] = useState('team');
 
   return (
+    <>
+    <div className="demoLabel" style={{ marginBottom: 12 }}>
+      A responsive auto-fill grid: cards keep at least <code>minCardWidth</code> (160px here) and wrap to the next
+      row as the container narrows. Every card in a row stretches to the tallest one's height.
+    </div>
     <Cards minCardWidth={160}>
       {plans.map(p => (
         <Card key={p.id} selected={selected === p.id} onClick={() => setSelected(p.id)}>
@@ -34,5 +43,6 @@ export default function CardsBasic() {
         <div>New plan</div>
       </Card>
     </Cards>
+    </>
   );
 }
