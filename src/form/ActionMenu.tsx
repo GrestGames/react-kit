@@ -1,6 +1,7 @@
 import {useState, useRef, useEffect, KeyboardEvent, CSSProperties, ReactNode} from "react";
 import {createPortal} from "react-dom";
 import {CONFIRM_DOUBLE_WINDOW_MS, DEFAULT_CONFIRM_DOUBLE_TEXT} from "./confirmDouble";
+import {ToolTipSupported, wrapToolTip} from "../mini/ToolTip";
 import "./ActionMenu.css";
 
 export interface ActionMenuItem {
@@ -23,7 +24,7 @@ export interface ActionMenuItem {
     confirmDoubleText?: string;
 }
 
-interface ActionMenuProps {
+interface ActionMenuProps extends ToolTipSupported {
     items: ActionMenuItem[];
     align?: "left" | "right" | "center";
     position?: "below" | "above";
@@ -32,8 +33,6 @@ interface ActionMenuProps {
     trigger?: ReactNode;
     /** Color of the default trigger. */
     triggerColor?: string;
-    /** title attr on the trigger. */
-    title?: string;
 }
 
 /**
@@ -41,7 +40,7 @@ interface ActionMenuProps {
  * none of react-kit's global element styling — the menu is styled solely by its
  * own classes and can't be broken by changes to the base button/anchor rules.
  */
-export function ActionMenu({items, align = "right", position = "below", trigger = "⋯", triggerColor, title = "Actions"}: ActionMenuProps) {
+export function ActionMenu({items, align = "right", position = "below", trigger = "⋯", triggerColor, tooltip, tooltipProps}: ActionMenuProps) {
     const [open, setOpen] = useState(false);
     const [rect, setRect] = useState<DOMRect | null>(null);
     const [dark, setDark] = useState(false);
@@ -107,11 +106,14 @@ export function ActionMenu({items, align = "right", position = "below", trigger 
             : {left: rect.left}),
     } : {};
 
-    return <>
-        <div ref={triggerRef} className="tv2ActionMenuBtn" role="button" tabIndex={0}
-             aria-haspopup="menu" aria-expanded={open} title={title}
+    const tipLabel = typeof tooltip === "string" ? tooltip : "Actions";
+    const triggerEl = <div ref={triggerRef} className="tv2ActionMenuBtn" role="button" tabIndex={0}
+             aria-haspopup="menu" aria-expanded={open} aria-label={tipLabel}
              style={triggerColor ? {color: triggerColor} : undefined}
-             onClick={() => open ? close() : openMenu()} onKeyDown={onTriggerKey}>{trigger}</div>
+             onClick={() => open ? close() : openMenu()} onKeyDown={onTriggerKey}>{trigger}</div>;
+
+    return <>
+        {wrapToolTip({tooltip: tooltip ?? "Actions", tooltipProps}, triggerEl)}
         {open && rect && createPortal(
             // data-rk-dropdown-portal marks this as a dropdown surface so a host's
             // outside-click handler can treat clicks here as "inside" — otherwise

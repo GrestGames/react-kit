@@ -2,7 +2,7 @@ import "../css/button.css";
 import {CSSProperties, PropsWithChildren, ReactNode, useContext, useEffect, useRef, useState} from "react";
 import {isPromise} from "../../util/isPromise";
 import {Alert} from "../../mini/Alert";
-import {ToolTipV2} from "../../mini/ToolTipV2";
+import {ToolTipSupported, wrapToolTip} from "../../mini/ToolTip";
 import {ApiErrorMessage} from "../../ErrorTracker";
 import {AnyFormElement} from "./StandardFormElementProps";
 import {FormObject} from "../useAsyncForm";
@@ -13,7 +13,7 @@ import {Intent} from "../../intents";
 import {ButtonAppearance, ButtonAppearanceContext} from "./buttonAppearance";
 import {CONFIRM_DOUBLE_WINDOW_MS, DEFAULT_CONFIRM_DOUBLE_TEXT, pickConfirmText} from "../confirmDouble";
 
-export interface ButtonProps extends PropsWithChildren<AnyFormElement> {
+export interface ButtonProps extends PropsWithChildren<AnyFormElement>, ToolTipSupported {
     onClick: () => Promise<any> | void,
     intent?: Intent,
     appearance?: ButtonAppearance,
@@ -22,8 +22,6 @@ export interface ButtonProps extends PropsWithChildren<AnyFormElement> {
     /** Full confirm phrase: the armed tooltip, and the widest rung of the adaptive armed label
      *  (which degrades to "Sure?" / "?" on narrow buttons). Default: "Click again to confirm". */
     confirmDoubleText?: string,
-    /** Hover/focus tooltip (react-kit styled). Accepts rich content. */
-    tooltip?: ReactNode,
 }
 
 /** @deprecated prefer `<Button intent="warning">` */
@@ -198,8 +196,6 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
 
     return <>
         {error && <Alert intent="danger" onClick={() => setError(undefined)}><ApiErrorMessage error={error}/></Alert>}
-        {props.tooltip != null && !armed
-            ? <ToolTipV2 message={props.tooltip} anchor="target">{button}</ToolTipV2>
-            : button}
+        {armed ? button : wrapToolTip(props, button)}
     </>
 }

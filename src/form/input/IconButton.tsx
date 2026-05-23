@@ -1,10 +1,10 @@
 import {useState, type CSSProperties, type MouseEvent, type ReactNode} from "react";
+import {ToolTipSupported, wrapToolTip} from "../../mini/ToolTip";
 import "./IconButton.css";
 
-interface IconButtonProps {
+interface IconButtonProps extends ToolTipSupported {
     icon: ReactNode;
     onClick: (e: MouseEvent) => void | Promise<unknown>;
-    title?: string;
     /** Glyph size in px. Sets --rk-icon-size; defaults to --rk-font-size-large. */
     size?: number;
     color?: string;
@@ -14,7 +14,7 @@ interface IconButtonProps {
     className?: string;
 }
 
-export function IconButton({icon, onClick, title, size, color, disabled, variant = "button", className}: IconButtonProps) {
+export function IconButton({icon, onClick, tooltip, tooltipProps, size, color, disabled, variant = "button", className}: IconButtonProps) {
     const [loading, setLoading] = useState(false);
 
     const handleClick = (e: MouseEvent) => {
@@ -36,9 +36,11 @@ export function IconButton({icon, onClick, title, size, color, disabled, variant
         className || "",
     ].filter(Boolean).join(" ");
 
-    return <button type="button" onClick={handleClick} title={title} disabled={disabled}
-                   className={cls} style={Object.keys(style).length ? style : undefined}
-                   aria-busy={loading || undefined}>
-        {loading ? <span className="rkIconButtonSpinner" aria-hidden>⟳</span> : <span className="rkIconButtonIcon">{icon}</span>}
-    </button>;
+    return wrapToolTip({tooltip, tooltipProps},
+        <button type="button" onClick={handleClick} disabled={disabled}
+                aria-label={typeof tooltip === "string" ? tooltip : undefined}
+                className={cls} style={Object.keys(style).length ? style : undefined}
+                aria-busy={loading || undefined}>
+            {loading ? <span className="rkIconButtonSpinner" aria-hidden>⟳</span> : <span className="rkIconButtonIcon">{icon}</span>}
+        </button>);
 }
