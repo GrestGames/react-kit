@@ -58,6 +58,7 @@ export {Tabs, type Tab} from "./form/tabs/Tabs";
 
 // Mini
 export {Tag} from "./mini/Tag";
+export * from "./mini/Cards";
 export * from "./mini/PopupPanel";
 export {Panel} from "./mini/Panel";
 export {usePillPopup, ANIM_DURATION} from "./mini/usePillPopup";
