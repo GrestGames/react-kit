@@ -4,18 +4,47 @@ const intents: Intent[] = ['neutral', 'info', 'cool', 'success', 'warning', 'dan
 
 export default function ToolTipBasic() {
   return (
-    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-      <ToolTip message="This is a tooltip! It follows your cursor.">
-        <Tag size="small">Hover me</Tag>
-      </ToolTip>
-      <ToolTip message="<b>HTML</b> content works too!<br/>Second line here.">
-        <Tag intent="info" size="small">Hover</Tag>
-      </ToolTip>
-      {intents.map(intent => (
-        <ToolTip key={intent} message={`${intent} intent tooltip`} intent={intent}>
-          <Tag intent={intent} size="small">{intent}</Tag>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+        <ToolTip message="This is a tooltip! It follows your cursor.">
+          <Tag size="small">Hover me (cursor)</Tag>
         </ToolTip>
-      ))}
+        <ToolTip message="<b>HTML</b> content works too!<br/>Second line here.">
+          <Tag intent="info" size="small">Hover</Tag>
+        </ToolTip>
+        {intents.map(intent => (
+          <ToolTip key={intent} message={`${intent} intent tooltip`} intent={intent}>
+            <Tag intent={intent} size="small">{intent}</Tag>
+          </ToolTip>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+        <ToolTip
+          anchor="target"
+          message={
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <div style={{ fontWeight: 700 }}>Anchored to the element</div>
+              <div>Pins below the target with a viewport-flip, open/close delays, and richer left-aligned content — no cursor following.</div>
+            </div>
+          }
+        >
+          <Tag size="small">Hover me (anchored, below)</Tag>
+        </ToolTip>
+        <ToolTip
+          anchor="target"
+          placement="above"
+          maxWidth={220}
+          message={
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <div style={{ fontWeight: 700 }}>Anchored above</div>
+              <div>placement="above" with maxWidth=220.</div>
+            </div>
+          }
+        >
+          <Tag intent="success" size="small">Hover me (anchored, above)</Tag>
+        </ToolTip>
+      </div>
     </div>
   );
 }
