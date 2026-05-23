@@ -18,12 +18,6 @@ import checkboxBasicSource from '../examples/inputs/CheckboxBasic.tsx?raw';
 import ToggleBasic from '../examples/inputs/ToggleBasic';
 import toggleBasicSource from '../examples/inputs/ToggleBasic.tsx?raw';
 
-import ButtonVariants from '../examples/inputs/ButtonVariants';
-import buttonVariantsSource from '../examples/inputs/ButtonVariants.tsx?raw';
-
-import IconButtonBasic from '../examples/inputs/IconButtonBasic';
-import iconButtonBasicSource from '../examples/inputs/IconButtonBasic.tsx?raw';
-
 import FileUploadBasic from '../examples/inputs/FileUploadBasic';
 import fileUploadBasicSource from '../examples/inputs/FileUploadBasic.tsx?raw';
 
@@ -57,14 +51,6 @@ export default function InputsPage() {
 
       <ShowCase title="Toggle, Toggle01" source={toggleBasicSource}>
         <ToggleBasic />
-      </ShowCase>
-
-      <ShowCase title="Button" source={buttonVariantsSource}>
-        <ButtonVariants />
-      </ShowCase>
-
-      <ShowCase title="IconButton (async spinner, glyph variant, size)" source={iconButtonBasicSource}>
-        <IconButtonBasic />
       </ShowCase>
 
       <ShowCase title="FileUpload, FileMultiUpload" source={fileUploadBasicSource}>
