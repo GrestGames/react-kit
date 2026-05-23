@@ -77,6 +77,7 @@ export * from "./mini/MainArea";
 export * from "./mini/MiniTip";
 export * from "./mini/Separator";
 export * from "./mini/ToolTip";
+export * from "./mini/ToolTipV2";
 export * from "./mini/useDropDownPositioning";
 
 // Menu

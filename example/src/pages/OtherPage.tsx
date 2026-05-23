@@ -12,6 +12,9 @@ import buttonIntentsSource from '../examples/other/ButtonIntents.tsx?raw';
 import ToolTipBasic from '../examples/other/ToolTipBasic';
 import toolTipBasicSource from '../examples/other/ToolTipBasic.tsx?raw';
 
+import ToolTipV2Basic from '../examples/other/ToolTipV2Basic';
+import toolTipV2BasicSource from '../examples/other/ToolTipV2Basic.tsx?raw';
+
 import MiniTipBasic from '../examples/other/MiniTipBasic';
 import miniTipBasicSource from '../examples/other/MiniTipBasic.tsx?raw';
 
@@ -64,6 +67,10 @@ export default function OtherPage() {
 
       <ShowCase title="ToolTip" source={toolTipBasicSource}>
         <ToolTipBasic />
+      </ShowCase>
+
+      <ShowCase title="ToolTipV2 (Floating UI) — incl. Button tooltip" source={toolTipV2BasicSource}>
+        <ToolTipV2Basic />
       </ShowCase>
 
       <ShowCase title="Popover" source={popoverBasicSource}>

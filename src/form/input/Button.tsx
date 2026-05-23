@@ -2,6 +2,7 @@ import "../css/button.css";
 import {CSSProperties, PropsWithChildren, ReactNode, useContext, useEffect, useRef, useState} from "react";
 import {isPromise} from "../../util/isPromise";
 import {Alert} from "../../mini/Alert";
+import {ToolTipV2} from "../../mini/ToolTipV2";
 import {ApiErrorMessage} from "../../ErrorTracker";
 import {AnyFormElement} from "./StandardFormElementProps";
 import {FormObject} from "../useAsyncForm";
@@ -21,6 +22,8 @@ export interface ButtonProps extends PropsWithChildren<AnyFormElement> {
     /** Full confirm phrase: the armed tooltip, and the widest rung of the adaptive armed label
      *  (which degrades to "Sure?" / "?" on narrow buttons). Default: "Click again to confirm". */
     confirmDoubleText?: string,
+    /** Hover/focus tooltip (react-kit styled). Accepts rich content. */
+    tooltip?: ReactNode,
 }
 
 /** @deprecated prefer `<Button intent="warning">` */
@@ -181,9 +184,7 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
     const contextAppearance = useContext(ButtonAppearanceContext);
     const appearance = props.appearance ?? contextAppearance ?? "gradient";
 
-    return <>
-        {error && <Alert intent="danger" onClick={() => setError(undefined)}><ApiErrorMessage error={error}/></Alert>}
-        <button type={props.type}
+    const button = <button type={props.type}
                 ref={ref}
                 disabled={props.disabled || props.readOnly || isLoading}
                 title={armed ? (props.confirmDoubleText ?? DEFAULT_CONFIRM_DOUBLE_TEXT) : undefined}
@@ -193,6 +194,12 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
                 onMouseEnter={() => setHadError(false)}>
             {isLoading && <div className={size?.[0] <= 45 ? "smallAnimation" : "defaultAnimation"}/>}
             {!isLoading && (armed ? (confirmText ?? props.children) : props.children)}
-        </button>
+        </button>;
+
+    return <>
+        {error && <Alert intent="danger" onClick={() => setError(undefined)}><ApiErrorMessage error={error}/></Alert>}
+        {props.tooltip != null && !armed
+            ? <ToolTipV2 message={props.tooltip} anchor="target">{button}</ToolTipV2>
+            : button}
     </>
 }
