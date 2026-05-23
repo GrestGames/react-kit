@@ -12,9 +12,6 @@ import miniTipBasicSource from '../examples/overlays/MiniTipBasic.tsx?raw';
 import LoadingPopupBasic from '../examples/overlays/LoadingPopupBasic';
 import loadingPopupBasicSource from '../examples/overlays/LoadingPopupBasic.tsx?raw';
 
-import DialogBasic from '../examples/overlays/DialogBasic';
-import dialogBasicSource from '../examples/overlays/DialogBasic.tsx?raw';
-
 export default function OverlaysPage() {
   return (
     <>
@@ -34,10 +31,6 @@ export default function OverlaysPage() {
 
       <ShowCase title="LoadingPopup, BatchProgressPopup" source={loadingPopupBasicSource}>
         <LoadingPopupBasic />
-      </ShowCase>
-
-      <ShowCase title="RkConfirm / RkAlert — imperative dialogs" source={dialogBasicSource}>
-        <DialogBasic />
       </ShowCase>
     </>
   );

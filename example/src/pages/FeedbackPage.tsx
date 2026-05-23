@@ -3,6 +3,9 @@ import ShowCase from '../showcase/ShowCase';
 import AlertBasic from '../examples/feedback/AlertBasic';
 import alertBasicSource from '../examples/feedback/AlertBasic.tsx?raw';
 
+import DialogBasic from '../examples/feedback/DialogBasic';
+import dialogBasicSource from '../examples/feedback/DialogBasic.tsx?raw';
+
 import ToastBasic from '../examples/feedback/ToastBasic';
 import toastBasicSource from '../examples/feedback/ToastBasic.tsx?raw';
 
@@ -20,15 +23,19 @@ export default function FeedbackPage() {
     <>
       <h1 className="pageTitle">Feedback & Status</h1>
 
-      <ShowCase title="Alert, ErrorAlert" source={alertBasicSource}>
+      <ShowCase title="Alert" source={alertBasicSource}>
         <AlertBasic />
+      </ShowCase>
+
+      <ShowCase title="RkConfirm / RkAlert — imperative dialogs" source={dialogBasicSource}>
+        <DialogBasic />
       </ShowCase>
 
       <ShowCase title="Toast notifications" source={toastBasicSource}>
         <ToastBasic />
       </ShowCase>
 
-      <ShowCase title="TipBox, NeutralTipBox, SuccessBox, ErrorBox, WarningBox" source={tipBoxVariantsSource}>
+      <ShowCase title="TipBox" source={tipBoxVariantsSource}>
         <TipBoxVariants />
       </ShowCase>
 
