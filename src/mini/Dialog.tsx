@@ -121,8 +121,8 @@ export function RkDialogLayer() {
     const letter = current.iconLetter ?? (intent ? iconForIntent(intent) : undefined);
 
     return <AddToBody id="rkDialog">
-        <DarkBackground zIndex={200} onClick={() => resolveCurrent(false)}/>
-        <Panel className={intent ? "panelAlert" : undefined} width="420px" zIndex={201} style={{marginTop: "180px", ...alertVars}}>
+        <DarkBackground zIndex="var(--rk-z-overlay)" onClick={() => resolveCurrent(false)}/>
+        <Panel className={intent ? "panelAlert" : undefined} width="420px" zIndex="var(--rk-z-overlay)" style={{marginTop: "180px", ...alertVars}}>
             <div className="alertBody">
                 {current.title && (intent
                     ? <div className="alertHead"><span className="alertIcon">{letter}</span><span className="alertHeadTitle">{current.title}</span></div>

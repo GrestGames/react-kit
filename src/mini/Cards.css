@@ -1,0 +1,55 @@
+@import "../css/theme.css";
+
+.rkCards {
+    display: grid;
+}
+
+.rkCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 10px;
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+    text-align: center;
+    color: var(--rk-text);
+    background: var(--rk-bg-raised);
+    border: 1px solid var(--rk-border);
+    border-radius: var(--rk-radius-lg);
+}
+
+.rkCard-clickable {
+    cursor: pointer;
+    transition: border-color 0.1s ease, background 0.1s ease;
+}
+
+.rkCard-clickable:not(.rkCard-selected):hover {
+    border-color: var(--rk-accent);
+    background: var(--rk-bg-hover);
+}
+
+.rkCard-selected {
+    border-color: var(--rk-accent);
+    background: color-mix(in srgb, var(--rk-accent) 12%, var(--rk-bg-raised));
+}
+
+.rkCard-add {
+    justify-content: center;
+    background: none;
+    border-style: dashed;
+    border-color: var(--rk-border-strong);
+    color: var(--rk-text-secondary);
+}
+
+.rkCard-add.rkCard-clickable:hover {
+    border-color: var(--rk-accent);
+    color: var(--rk-accent);
+    background: none;
+}
+
+.rkCard-disabled {
+    opacity: 0.85;
+    cursor: default;
+}
