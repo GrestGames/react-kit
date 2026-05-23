@@ -1,4 +1,4 @@
-import {CSSProperties, ReactElement, ReactNode, useRef, useState} from "react";
+import {CSSProperties, cloneElement, isValidElement, ReactElement, ReactNode, Ref, useRef, useState} from "react";
 import {
     arrow, autoUpdate, flip, FloatingPortal, offset, type Placement, safePolygon, shift,
     useClientPoint, useDismiss, useFloating, useFocus, useHover, useInteractions, useRole,
@@ -55,6 +55,14 @@ const sideClass: Record<string, string> = {
     top: "toolTipTop", bottom: "toolTipBottom", left: "toolTipLeft", right: "toolTipRight",
 };
 
+function combineRef<T>(set: (node: T | null) => void, orig: Ref<T> | undefined): (node: T | null) => void {
+    return (node) => {
+        set(node);
+        if (typeof orig === "function") orig(node);
+        else if (orig) (orig as {current: T | null}).current = node;
+    };
+}
+
 export function ToolTip({
     message, children, anchor = "cursor", template, intent, className, style,
     align, placement, maxWidth, openDelayMs, closeDelayMs, display = "inline",
@@ -104,10 +112,23 @@ export function ToolTip({
         ? {left: arrowData?.x != null ? `${arrowData.x}px` : undefined, marginLeft: 0}
         : {top: arrowData?.y != null ? `${arrowData.y}px` : undefined, marginTop: 0};
 
-    return <>
-        {display === "block"
+    // A single host element (button/span/a/…) is cloned so the ref + handlers land
+    // directly on it — no wrapper box, so the caller's layout is untouched. Non-host
+    // or multi children (and display="block") fall back to a wrapping span/div.
+    const hostChild = display !== "block" && isValidElement(children) && typeof children.type === "string"
+        ? children as ReactElement<Record<string, any>>
+        : null;
+    const reference = hostChild
+        ? cloneElement(hostChild, {
+            ...getReferenceProps(hostChild.props),
+            ref: combineRef(refs.setReference, (hostChild.props as {ref?: Ref<any>}).ref),
+        })
+        : display === "block"
             ? <div ref={refs.setReference} className={className} style={wrapperStyle} {...getReferenceProps()}>{children}</div>
-            : <span ref={refs.setReference} className={className} style={wrapperStyle} {...getReferenceProps()}>{children}</span>}
+            : <span ref={refs.setReference} className={className} style={wrapperStyle} {...getReferenceProps()}>{children}</span>;
+
+    return <>
+        {reference}
         {open && <FloatingPortal>
             <div
                 ref={refs.setFloating}
