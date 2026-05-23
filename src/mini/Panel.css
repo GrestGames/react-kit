@@ -1,9 +1,17 @@
 @import "../css/theme.css";
 
 .panel {
-    position: absolute;
-    left: calc(50%);
-    transform: translate(-50%, 0);
+    position: fixed;
+    left: 0;
+    /* Centers the panel within a left-anchored box of width --rk-panel-screen-width (default 100vw,
+       i.e. normal viewport-centering — existing consumers unaffected). An over-wide panel keeps
+       --rk-panel-min-margin on the left and overflows rightward; if it can't fit even then, it
+       re-centers in the viewport. 50% is the panel's own half-width: translate percentages resolve
+       against the element, the only way to reference its width in this calc. */
+    transform: translateX(calc(
+        min(50vw, max(var(--rk-panel-screen-width, 100vw) / 2, 50% + var(--rk-panel-min-margin, 24px)))
+        - 50%
+    ));
     min-width: 400px;
     background-color: var(--rk-bg-surface);
     border-radius: 8px;
