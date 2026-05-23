@@ -1,4 +1,4 @@
-import { TopMenu, toast } from '@grest-ts/react';
+import { TopMenu, RkToast } from '@grest-ts/react';
 import { useState } from 'react';
 
 export default function TopMenuBasic() {
@@ -16,7 +16,7 @@ export default function TopMenuBasic() {
             subItems: [
               { title: 'Active', isActive: active === 'projects/active', onClick: () => setActive('projects/active') },
               { title: 'Archived', isActive: active === 'projects/archived', onClick: () => setActive('projects/archived') },
-              { title: 'New project…', onClick: () => toast.success('Create new project') },
+              { title: 'New project…', onClick: () => RkToast.success('Create new project') },
             ],
           },
           { title: 'Team', isActive: active === 'team', onClick: () => setActive('team') },
@@ -25,9 +25,9 @@ export default function TopMenuBasic() {
           {
             title: '⚙',
             subItems: [
-              { title: 'Profile', onClick: () => toast.info('Profile') },
-              { title: 'Settings', onClick: () => toast.info('Settings') },
-              { title: 'Log out', onClick: () => toast('Logged out') },
+              { title: 'Profile', onClick: () => RkToast.info('Profile') },
+              { title: 'Settings', onClick: () => RkToast.info('Settings') },
+              { title: 'Log out', onClick: () => RkToast('Logged out') },
             ],
           },
         ]}

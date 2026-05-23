@@ -1,4 +1,4 @@
-import { PillButton, toast, type Intent } from '@grest-ts/react';
+import { PillButton, RkToast, type Intent } from '@grest-ts/react';
 import { useState } from 'react';
 
 const intents: Intent[] = ['neutral', 'info', 'cool', 'success', 'warning', 'danger', 'critical'];
@@ -16,9 +16,9 @@ export default function PillButtonBasic() {
             {key.charAt(0).toUpperCase() + key.slice(1)}
           </PillButton>
         ))}
-        <PillButton dotted onClick={() => toast('Dotted pill clicked')}>Dotted</PillButton>
+        <PillButton dotted onClick={() => RkToast('Dotted pill clicked')}>Dotted</PillButton>
         <PillButton bold>Bold</PillButton>
-        <PillButton disabled onClick={() => toast('should not fire')}>Disabled</PillButton>
+        <PillButton disabled onClick={() => RkToast('should not fire')}>Disabled</PillButton>
         <PillButton intent="success" active disabled>Disabled active</PillButton>
       </div>
       <div>

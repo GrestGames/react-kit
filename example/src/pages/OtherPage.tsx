@@ -18,6 +18,9 @@ import miniTipBasicSource from '../examples/other/MiniTipBasic.tsx?raw';
 import ToastBasic from '../examples/other/ToastBasic';
 import toastBasicSource from '../examples/other/ToastBasic.tsx?raw';
 
+import DialogBasic from '../examples/other/DialogBasic';
+import dialogBasicSource from '../examples/other/DialogBasic.tsx?raw';
+
 import PillButtonBasic from '../examples/other/PillButtonBasic';
 import pillButtonBasicSource from '../examples/other/PillButtonBasic.tsx?raw';
 
@@ -50,6 +53,10 @@ export default function OtherPage() {
 
       <ShowCase title="Toast notifications" source={toastBasicSource}>
         <ToastBasic />
+      </ShowCase>
+
+      <ShowCase title="RkConfirm / RkAlert — imperative dialogs" source={dialogBasicSource}>
+        <DialogBasic />
       </ShowCase>
 
       <ShowCase title="ToolTip" source={toolTipBasicSource}>
