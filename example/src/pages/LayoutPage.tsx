@@ -15,6 +15,12 @@ import tabsBasicSource from '../examples/layout/TabsBasic.tsx?raw';
 import LoadingPopupBasic from '../examples/layout/LoadingPopupBasic';
 import loadingPopupBasicSource from '../examples/layout/LoadingPopupBasic.tsx?raw';
 
+import PopoverBasic from '../examples/layout/PopoverBasic';
+import popoverBasicSource from '../examples/layout/PopoverBasic.tsx?raw';
+
+import CardsBasic from '../examples/layout/CardsBasic';
+import cardsBasicSource from '../examples/layout/CardsBasic.tsx?raw';
+
 import ActionMenuBasic from '../examples/other/ActionMenuBasic';
 import actionMenuBasicSource from '../examples/other/ActionMenuBasic.tsx?raw';
 
@@ -45,6 +51,14 @@ export default function LayoutPage() {
 
       <ShowCase title="LoadingPopup, BatchProgressPopup" source={loadingPopupBasicSource}>
         <LoadingPopupBasic />
+      </ShowCase>
+
+      <ShowCase title="Popover" source={popoverBasicSource}>
+        <PopoverBasic />
+      </ShowCase>
+
+      <ShowCase title="Cards, Card" source={cardsBasicSource}>
+        <CardsBasic />
       </ShowCase>
     </>
   );

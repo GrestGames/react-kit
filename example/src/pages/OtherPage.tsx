@@ -21,9 +21,6 @@ import toastBasicSource from '../examples/other/ToastBasic.tsx?raw';
 import DialogBasic from '../examples/other/DialogBasic';
 import dialogBasicSource from '../examples/other/DialogBasic.tsx?raw';
 
-import PopoverBasic from '../examples/other/PopoverBasic';
-import popoverBasicSource from '../examples/other/PopoverBasic.tsx?raw';
-
 import PillButtonBasic from '../examples/other/PillButtonBasic';
 import pillButtonBasicSource from '../examples/other/PillButtonBasic.tsx?raw';
 
@@ -64,10 +61,6 @@ export default function OtherPage() {
 
       <ShowCase title="ToolTip" source={toolTipBasicSource}>
         <ToolTipBasic />
-      </ShowCase>
-
-      <ShowCase title="Popover" source={popoverBasicSource}>
-        <PopoverBasic />
       </ShowCase>
 
       <ShowCase title="MiniTip" source={miniTipBasicSource}>
