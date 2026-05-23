@@ -1,19 +1,23 @@
 import { useState, useEffect } from 'react';
 import { TopMenu } from '@grest-ts/react';
 import InputsPage from './pages/InputsPage';
-import TextPage from './pages/TextPage';
-import LayoutPage from './pages/LayoutPage';
+import ActionsPage from './pages/ActionsPage';
 import FormPage from './pages/FormPage';
-import OtherPage from './pages/OtherPage';
+import LayoutPage from './pages/LayoutPage';
+import OverlaysPage from './pages/OverlaysPage';
+import FeedbackPage from './pages/FeedbackPage';
+import DataDisplayPage from './pages/DataDisplayPage';
 import IntentPage from './pages/IntentPage';
 import UtilsPage from './pages/UtilsPage';
 
 const sections = [
   { key: 'inputs', label: 'Inputs', component: InputsPage },
-  { key: 'text', label: 'Text Display', component: TextPage },
-  { key: 'layout', label: 'Layout', component: LayoutPage },
+  { key: 'actions', label: 'Buttons & Actions', component: ActionsPage },
   { key: 'form', label: 'Form & Grid', component: FormPage },
-  { key: 'other', label: 'Other UI', component: OtherPage },
+  { key: 'layout', label: 'Layout & Nav', component: LayoutPage },
+  { key: 'overlays', label: 'Overlays', component: OverlaysPage },
+  { key: 'feedback', label: 'Feedback', component: FeedbackPage },
+  { key: 'display', label: 'Data Display', component: DataDisplayPage },
   { key: 'intent', label: 'Intent', component: IntentPage },
   { key: 'utils', label: 'Utilities', component: UtilsPage },
 ] as const;
