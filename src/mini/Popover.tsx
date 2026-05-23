@@ -52,8 +52,9 @@ export function Popover({
             if (ref.current?.contains(target)) return;
             const anchorEl = anchor && "current" in anchor ? anchor.current : null;
             if (anchorEl?.contains(target)) return;
-            // Nested popovers portal out — a click in any of them counts as inside.
-            if (target.closest("[data-rk-popover]")) return;
+            // Nested popovers and menus (ActionMenu) portal out — a click in any of
+            // them counts as inside, so opening a menu within a popover won't close it.
+            if (target.closest("[data-rk-popover],[data-rk-dropdown-portal]")) return;
             onClose();
         };
         const onKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
