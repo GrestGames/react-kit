@@ -1,0 +1,12 @@
+@import "../css/theme.css";
+
+.rkPopover {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    background: var(--rk-bg-surface);
+    border: 1px solid var(--rk-border);
+    border-radius: var(--rk-radius-xl);
+    box-shadow: var(--rk-shadow-lg);
+    color: var(--rk-text);
+}
