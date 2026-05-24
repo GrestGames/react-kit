@@ -1,3 +1,5 @@
+import "./css/base.css";
+
 // Root
 export * from "./intents";
 export * from "./ApiError";

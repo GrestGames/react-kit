@@ -37,12 +37,12 @@
     --rk-accent: #12AFCB;
     --rk-accent-hover: #10a4bd;
 
-    --rk-hue-brown: #8b5e3c;
-    --rk-hue-purple: #7c5cbf;
-    --rk-hue-sand: #beb16f;
-    --rk-hue-pink: #d664a0;
-    --rk-hue-teal: #2b9a8f;
-    --rk-hue-lightblue: #add8e6;
+    --rk-brown: #8b5e3c;
+    --rk-sand: #beb16f;
+    --rk-purple: #7c5cbf;
+    --rk-pink: #d664a0;
+    --rk-teal: #2b9a8f;
+    --rk-lightblue: #add8e6;
 
     /* ── Status intents — per family: base hue, bold fill (text on fill = --rk-{family}-fill-text), soft surface (bg + border + readable text) ── */
     
@@ -184,11 +184,11 @@
     --rk-accent: #7aa2f7;
     --rk-accent-hover: #89b4fa;
 
-    --rk-hue-brown: #c89b7a;
-    --rk-hue-purple: #bb9af7;
-    --rk-hue-pink: #e89bc4;
-    --rk-hue-teal: #5fc9bd;
-    --rk-hue-lightblue: #9bd0e0;
+    --rk-brown: #c89b7a;
+    --rk-purple: #bb9af7;
+    --rk-pink: #e89bc4;
+    --rk-teal: #5fc9bd;
+    --rk-lightblue: #9bd0e0;
 
     /* Status intents — only base hues shift in dark. The color-mix softs follow automatically (they
        reference the base + --rk-bg-surface); fills are shared hex across both palettes, so neither is
