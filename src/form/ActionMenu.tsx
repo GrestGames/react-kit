@@ -1,28 +1,10 @@
-import {useState, useRef, useEffect, KeyboardEvent, CSSProperties, ReactNode} from "react";
+import {useState, useRef, KeyboardEvent, CSSProperties, ReactNode} from "react";
 import {createPortal} from "react-dom";
-import {CONFIRM_DOUBLE_WINDOW_MS, DEFAULT_CONFIRM_DOUBLE_TEXT} from "./confirmDouble";
 import {ToolTipSupported, wrapToolTip} from "../mini/ToolTip";
+import {ActionMenuItem, MenuItems} from "../menu/MenuItems";
 import "./ActionMenu.css";
 
-export interface ActionMenuItem {
-    label: string;
-    onClick?: () => void | Promise<void>;
-    danger?: boolean;
-    /** Soft-warning color (orange). No arming on its own — for non-destructive actions that warrant a visual flag. Pair with `confirm` to also require a second click. */
-    warning?: boolean;
-    /** Require a confirming second click ("Click again to confirm"), like `danger` but without the destructive red — the item keeps its own color. */
-    confirm?: boolean;
-    /** Non-interactive label / section header. */
-    info?: boolean;
-    /** A divider line. `label`/`onClick` are ignored. */
-    separator?: boolean;
-    /** Opens in a new tab on activate. */
-    href?: string;
-    /** Keep the menu open after an async onClick resolves (sync onClicks still close immediately). */
-    keepOpen?: boolean;
-    /** Armed-state label for a `danger`/`confirm` item. Default: "Click again to confirm". */
-    confirmDoubleText?: string;
-}
+export type {ActionMenuItem};
 
 interface ActionMenuProps extends ToolTipSupported {
     items: ActionMenuItem[];
@@ -44,12 +26,7 @@ export function ActionMenu({items, align = "right", position = "below", trigger 
     const [open, setOpen] = useState(false);
     const [rect, setRect] = useState<DOMRect | null>(null);
     const [dark, setDark] = useState(false);
-    const [armedIdx, setArmedIdx] = useState<number | null>(null);
-    const [pendingIdxs, setPendingIdxs] = useState<ReadonlySet<number>>(() => new Set());
-    const armTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => () => { if (armTimer.current) clearTimeout(armTimer.current); }, []);
 
     if (items.length === 0) return null;
 
@@ -58,42 +35,12 @@ export function ActionMenu({items, align = "right", position = "below", trigger 
         if (!el) return;
         setRect(el.getBoundingClientRect());
         setDark(el.closest(".rk-dark") !== null);
-        setArmedIdx(null);
         setOpen(true);
     };
-    const close = () => { setOpen(false); setArmedIdx(null); };
-
-    const armDanger = (idx: number) => {
-        setArmedIdx(idx);
-        if (armTimer.current) clearTimeout(armTimer.current);
-        armTimer.current = setTimeout(() => setArmedIdx(prev => (prev === idx ? null : prev)), CONFIRM_DOUBLE_WINDOW_MS);
-    };
-
-    const run = async (idx: number, item: ActionMenuItem) => {
-        const result = item.onClick?.();
-        if (!(result instanceof Promise)) { close(); return; }
-        setPendingIdxs(prev => { const next = new Set(prev); next.add(idx); return next; });
-        try {
-            await result;
-        } finally {
-            setPendingIdxs(prev => { const next = new Set(prev); next.delete(idx); return next; });
-            if (!item.keepOpen) close();
-        }
-    };
-
-    const activate = (idx: number, item: ActionMenuItem) => {
-        if (pendingIdxs.has(idx)) return;
-        if (item.href) { window.open(item.href, "_blank", "noopener,noreferrer"); close(); return; }
-        if ((item.danger || item.confirm) && armedIdx !== idx) { armDanger(idx); return; }
-        run(idx, item);
-    };
+    const close = () => { setOpen(false); };
 
     const onTriggerKey = (e: KeyboardEvent) => {
         if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") { e.preventDefault(); openMenu(); }
-        else if (e.key === "Escape") { close(); }
-    };
-    const onItemKey = (idx: number, item: ActionMenuItem) => (e: KeyboardEvent) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(idx, item); }
         else if (e.key === "Escape") { close(); }
     };
 
@@ -121,23 +68,7 @@ export function ActionMenu({items, align = "right", position = "below", trigger 
             <div data-rk-dropdown-portal className={dark ? "rk-dark" : undefined}>
                 <div className="tv2ActionMenuBackdrop" onClick={close}/>
                 <div className="tv2ActionMenuDropdown" role="menu" style={posStyle}>
-                    {items.map((item, i) => {
-                        if (item.separator) return <div key={i} className="tv2ActionMenuSeparator"/>;
-                        if (item.info) return <div key={i} className="tv2ActionMenuInfo">{item.label}</div>;
-                        const armed = armedIdx === i;
-                        const pending = pendingIdxs.has(i);
-                        const cls = ["tv2ActionMenuItem",
-                            item.danger ? "tv2ActionMenuDanger" : "",
-                            item.warning ? "tv2ActionMenuWarning" : "",
-                            armed ? "tv2ActionMenuArmed" : "",
-                            pending ? "tv2ActionMenuPending" : "",
-                        ].filter(Boolean).join(" ");
-                        return <div key={i} className={cls} role="menuitem" tabIndex={0}
-                                    onClick={() => activate(i, item)} onKeyDown={onItemKey(i, item)}>
-                            <span>{armed ? (item.confirmDoubleText ?? DEFAULT_CONFIRM_DOUBLE_TEXT) : item.label}</span>
-                            {pending && <span className="tv2ActionMenuSpinner" aria-hidden>⟳</span>}
-                        </div>;
-                    })}
+                    <MenuItems items={items} onClose={close}/>
                 </div>
             </div>, document.body)}
     </>;

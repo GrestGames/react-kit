@@ -10,7 +10,7 @@ export function FileUpload(props: AnyInputElement<GGFile>) {
         ...props,
         multiple: false,
         value: data.value ? [data.value] : [],
-        validationError: {msg: undefined, errors: [data.validationError]},
+        validationError: {msg: data.validationError?.msg, errors: [data.validationError]},
         onChange: (files) => {
             data.onChange(files[0]);
         },
@@ -51,7 +51,9 @@ function _FilesUpload(props: AnyInputElementWithValue<GGFile[]> & { multiple?: b
 
     const dropMessageClass = "dropMessage " + (props.multiple ? "dropMessageMultiple" : "");
     const disabled = props.disabled || props.readOnly || props.readOnly;
-    return <div className={"fileUploadDropZone " + (disabled && "disabled") + " " + props.className}
+    return <>
+        {props.validationError?.msg && <div className="validationErrorMsg">{props.validationError.msg}</div>}
+        <div className={"fileUploadDropZone " + (disabled && "disabled") + (props.validationError?.msg ? " error" : "") + " " + props.className}
                 style={props.style}
                 onClick={(e) => {
                     fileInput.current.click()
@@ -96,4 +98,5 @@ function _FilesUpload(props: AnyInputElementWithValue<GGFile[]> & { multiple?: b
             onChange={(e) => addNewFiles(fileInput.current.files)}
         />}
     </div>
+    </>
 }

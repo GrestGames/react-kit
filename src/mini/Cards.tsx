@@ -1,4 +1,4 @@
-import {CSSProperties, ReactNode} from "react";
+import {CSSProperties, MouseEvent, ReactNode} from "react";
 import "./Cards.css";
 
 export interface CardsProps {
@@ -25,6 +25,8 @@ export interface CardProps {
     /** When set, the card is a clickable button. Omit for a static card that
      *  hosts its own interactive controls (e.g. action buttons). */
     onClick?: () => void;
+    /** Right-click handler — pair with `RkContextMenu.open(e, items)` for a menu. */
+    onContextMenu?: (e: MouseEvent) => void;
     /** "add" renders a dashed placeholder tile (e.g. a "+ New" card). */
     variant?: "default" | "add";
     selected?: boolean;
@@ -36,7 +38,7 @@ export interface CardProps {
 
 /** A single tile in a {@link Cards} grid. Centered column layout by default;
  *  put a logo/icon, title and subtitle as children. */
-export function Card({children, onClick, variant = "default", selected, disabled, title, className, style}: CardProps) {
+export function Card({children, onClick, onContextMenu, variant = "default", selected, disabled, title, className, style}: CardProps) {
     const cls = [
         "rkCard",
         variant === "add" ? "rkCard-add" : "",
@@ -47,9 +49,9 @@ export function Card({children, onClick, variant = "default", selected, disabled
     ].filter(Boolean).join(" ");
 
     if (onClick) {
-        return <button type="button" className={cls} title={title} disabled={disabled} onClick={onClick} style={style}>
+        return <button type="button" className={cls} title={title} disabled={disabled} onClick={onClick} onContextMenu={onContextMenu} style={style}>
             {children}
         </button>;
     }
-    return <div className={cls} title={title} style={style}>{children}</div>;
+    return <div className={cls} title={title} onContextMenu={onContextMenu} style={style}>{children}</div>;
 }
