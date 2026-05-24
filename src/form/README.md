@@ -145,8 +145,11 @@ single field. Two clean options:
 Bigger forms compose the same primitives — they don't need a different approach:
 
 - **Multi-section → `Tabs`.** One tab per section (e.g. Settings / Repositories /
-  Archive). Each tab body is a `() => ReactNode`; they all share the single
-  `<Form prop={F}>` context, so `F` and validation work across tabs.
+  Archive). Each tab `body` is a lazy factory `() => ReactNode` (not inline JSX
+  children); they all share the single `<Form prop={F}>` context, so `F` and
+  validation work across tabs. `<Tabs urlKey="…">` persists the active tab in a URL
+  query param. The `tabs` array is plain JS — comment it with `//`, not `{/* */}`
+  (JSX comments are only valid inside a JSX tree).
 - **New vs edit may differ.** Render a *minimal* create form (just the fields
   needed to create), then on create hand off to the full edit view (re-open the
   editor with the new id). The tabbed full form only exists once the entity does.
@@ -164,6 +167,14 @@ Bigger forms compose the same primitives — they don't need a different approac
   `interface`), with validation still in the schema. A read-only **viewer** that
   only needs a `DeleteObjectSection` shouldn't fabricate an edit form with a no-op
   `onSubmit` — host the delete with a minimal form, not a fake entity shape.
+- **Save feedback: `RkToast.success("…")`.** It renders through the app's mounted
+  `RkOverlayHost` — no call-site wiring. On a **create** you typically `onClose()`
+  and hand off to the edit view; on an **update**, toast and *keep the form open*
+  (don't call `onClose()`) so the user can keep editing.
+- **Live/streaming viewer ≠ form `init`.** When a viewer's fields update live from a
+  socket/store, load them with a `useSyncExternalStore`-backed hook, not `init`
+  (which fetches once). The `useAsyncForm` exists only to host
+  `DeleteObjectSection` — same minimal-form idea as the delete-only viewer above.
 - **Custom widgets bind to fields directly** via `F.field.val()` / `F.field.set(v)`
   (a color picker, a live preview). A widget needn't be a react-kit input — it
   just reads/writes the field.
@@ -183,10 +194,11 @@ for discriminated unions. Nested fields chain: `F.secret.text`.
 | Need | Use |
 |---|---|
 | Form wrapper + context | `<Form prop={F}>` |
-| Text / password / number | `TextInput` / `PasswordInput` / `NumberInput` (`className="wide"` for the long variant) |
+| Text / password / number | `TextInput` / `PasswordInput` / `NumberInput` (`className="wide"` = 400px) |
 | File | `FileUpload` (single) / `FileMultiUpload` |
 | Boolean / choice | `Checkbox` / `Select` |
-| Submit | `FormSubmitButton` (auto-disabled until changed) |
+| Submit | `FormSubmitButton` (auto-disabled until changed; fixed 200px — no `wide`, give `style={{width:"100%"}}` to match a `wide` input) |
+| Success feedback | `RkToast.success("…")` — rendered via the mounted `RkOverlayHost`, no call-site wiring |
 | Delete confirm | `DeleteObjectSection` |
 | Multi-section | `Tabs` |
 | Inline note | `TipBox intent="success|warning|danger|neutral"` |

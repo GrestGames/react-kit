@@ -51,6 +51,37 @@ resolve: { dedupe: ['@grest-ts/schema', '@grest-ts/schema-file'] }
 (See kratt's `packages/hub-client/vite.config.ts`.) This is normal consumption —
 no change needed in react-kit.
 
+## Component cheat-sheet & gotchas
+
+Reach for the existing primitive before hand-rolling — most "I'll just build a
+small X" cases are already solved. (Form-specific inputs/lifecycle live in
+[`src/form/README.md`](src/form/README.md); this is everything else.)
+
+- **`Button`** — has built-in `confirmDouble` (arm, then confirm within ~2s, with a
+  label flip): use it instead of a hand-rolled `onDoubleClick`. For a non-accent
+  fill, keep `<Button>` and override `--btn-bg` / `--btn-bg-hover` inline (e.g.
+  `--rk-hue-purple`) rather than dropping to a raw `<button>` — both fall back to
+  `--rk-accent`.
+- **`ToolTip`** — `<ToolTip message={…} anchor="target">{child}</ToolTip>` instead of
+  the native `title` attribute (`anchor="cursor"` is the default, cursor-following).
+- **Overlays** — two idioms, both fine for new primitives: a declarative wrapper
+  (`<ContextMenu>`, `<ToolTip>`) and an imperative singleton mounted once via
+  `RkOverlayHost` (`RkToast`, `RkContextMenu`, `RkConfirm`/`RkAlert`). Build any new
+  positioned component on `@floating-ui/react` (as `ToolTip` and `ContextMenu` do) —
+  don't hand-roll `getBoundingClientRect` math like the older `ActionMenu`.
+- **Overlay z-index** — overlay-tier elements must use `var(--rk-z-overlay)`
+  (`2147483000`, `theme.css`), never a hardcoded value. Apps push popups well past
+  the `10000` range, so `ActionMenu`'s old `10001` renders *behind* them.
+- **`CheckboxGroup`** — `readOnly` / `disabled` are group-wide only; there's no
+  per-option disabling. To disable a single choice, filter it out of the options.
+- **`Cards` / `Card`** — `.rkCards` is a CSS grid (rows stretch by default). A `Card`
+  nested inside a wrapper `<div>` grid item won't inherit that stretch — give the
+  wrapper `display:flex` so the row height passes through to the `Card`.
+- **`table.form` label alignment** — `td:nth-child(odd)` is right-aligned, counting
+  *physical* `<td>`s per row. A `rowSpan` cell shifts the odd/even parity of its
+  sibling rows, so labels there mis-align — set an explicit `textAlign` on the
+  affected cells.
+
 ## Scripts
 
 ```bash
