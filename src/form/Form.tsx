@@ -1,6 +1,5 @@
 import React, {PropsWithChildren, useContext, useEffect, useRef} from "react";
 import {FormObject} from "./useAsyncForm";
-import {VALIDATION_ERROR} from "@grest-ts/schema";
 import {TipBox} from "./other/TipBox";
 import {ApiErrorMessage} from "../ErrorTracker";
 import {FormRoot} from "./FormRoot";
@@ -39,9 +38,7 @@ export function Form<T>(props: PropsWithChildren<{ prop: FormObject<T> }>) {
             }}>
                 <FormContext.Provider value={props.prop}>
                     {f.getSubmitError() && <TipBox intent="danger" iconLetter="!" style={{marginBottom: 16}} onClick={() => f.resetSubmitError()}>
-                        {f.getSubmitError().type === VALIDATION_ERROR.TYPE
-                            ? "Please go over the form, some entered values are not quite correct."
-                            : <ApiErrorMessage error={f.getSubmitError()}/>}
+                        <ApiErrorMessage error={f.getSubmitError()}/>
                     </TipBox>}
                     {props.children}
                 </FormContext.Provider>

@@ -36,8 +36,7 @@ export interface CardProps {
     style?: CSSProperties;
 }
 
-/** A single tile in a {@link Cards} grid. Centered column layout by default;
- *  put a logo/icon, title and subtitle as children. */
+/** A single tile in a {@link Cards} grid. Centered column layout by default; */
 export function Card({children, onClick, onContextMenu, variant = "default", selected, disabled, title, className, style}: CardProps) {
     const cls = [
         "rkCard",

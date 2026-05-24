@@ -127,6 +127,51 @@ secret: IsDiscriminated("via", {
 {F.secret.when("via", "text", s => <PasswordInput prop={s.text}/>)}
 ```
 
+### Cross-field rules & confirm fields
+
+A rule spanning two fields (`password === confirm`, `end >= start`) can't live on a
+single field. Two clean options:
+
+- **Both fields go to the wire:** put the rule in an `IsObject(...).refine(...)` on
+  the parent object — the issue lands at the object path and react-kit surfaces it.
+- **The check is UI-only** (a `confirmPassword` that never reaches the server): this
+  is the *one* place a component-side check is acceptable. Assert it in `onSubmit`,
+  surface it with `F.confirm.setValidationError({msg})` and `return false` — **not**
+  a thrown `Error` (which becomes a generic popup). Keep the confirm field out of
+  the wire schema; don't reshape it into the request.
+
+## Beyond the basics (larger forms)
+
+Bigger forms compose the same primitives — they don't need a different approach:
+
+- **Multi-section → `Tabs`.** One tab per section (e.g. Settings / Repositories /
+  Archive). Each tab body is a `() => ReactNode`; they all share the single
+  `<Form prop={F}>` context, so `F` and validation work across tabs.
+- **New vs edit may differ.** Render a *minimal* create form (just the fields
+  needed to create), then on create hand off to the full edit view (re-open the
+  editor with the new id). The tabbed full form only exists once the entity does.
+- **Seed a new form with `part<T>(partial)`** — cast a partial of the request type
+  for `init` instead of hand-listing every field.
+- **Child collections: prefer the form array.** A list of sub-resources (repos,
+  ids, …) lives in the form array — push/`splice`/`set` on `F.items`, and the
+  parent `save` persists the whole array (per-element schema validation maps to
+  `items[i]`). Reach for dedicated endpoints only for *genuinely independent* or
+  large child resources, and even then prefer a **whole-array replace** mutation
+  over per-item `addX`/`removeX` + `F.getForm().reload()`.
+- **Not every form is an entity editor.** Login, search/filter, and "binding
+  editor" forms (a value that's a list of ids persisted by one mutation) are still
+  `useAsyncForm` — type them from an **exported** request schema (never a local
+  `interface`), with validation still in the schema. A read-only **viewer** that
+  only needs a `DeleteObjectSection` shouldn't fabricate an edit form with a no-op
+  `onSubmit` — host the delete with a minimal form, not a fake entity shape.
+- **Custom widgets bind to fields directly** via `F.field.val()` / `F.field.set(v)`
+  (a color picker, a live preview). A widget needn't be a react-kit input — it
+  just reads/writes the field.
+- **Destructive actions get their own tab** (Delete / Archive) with a confirm
+  (`DeleteObjectSection`, or `RkConfirm` for a one-off) — kept off the main view.
+- **Sub-flows are separate `PopupPanel`s** gated by local state (e.g. a "pick from
+  GitHub" picker), each with its own loading/error handling.
+
 ## Field API (the `F` proxy)
 
 `F.field` exposes: `.val()`, `.set(v)`, `.isChanged()`, `.validationErrors()`,
