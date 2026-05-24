@@ -13,7 +13,7 @@ export type InputProps<T> = AnyInputElement<T> & {
 }
 
 type BasicInputProps2<T> = InputProps<T> & {
-    type: "text" | "date" | "email" | "phone" | "password"
+    type: "text" | "date" | "email" | "tel" | "password"
 }
 
 export function TextArea<T>(props: InputProps<T> & { autoResize?: boolean, rows?: number }) {
@@ -125,11 +125,11 @@ export function TextInput<T extends string>(props: InputProps<T>) {
 }
 
 export function PhoneInput(props: InputProps<string>) {
-    return <InternalTextInput type="email" {...props} />
+    return <InternalTextInput type="tel" {...props} />
 }
 
-export function EmailInput(props: InputProps<string>) {
-    return <InternalTextInput type="phone" {...props} />
+export function EmailInput<T extends string>(props: InputProps<T>) {
+    return <InternalTextInput type="email" {...props} />
 }
 
 export function PasswordInput(props: InputProps<string>) {

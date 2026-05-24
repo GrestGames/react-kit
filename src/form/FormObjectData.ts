@@ -103,7 +103,7 @@ export class FormObjectData<T> {
             }
             if (didChange) {
                 this._onChange?.(this.currentValue, this.initialValue);
-                this.root.forceRender();
+                this.root.resetSubmitError();
             }
         }
     }

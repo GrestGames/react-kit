@@ -81,6 +81,7 @@ export * from "./mini/useDropDownPositioning";
 
 // Menu
 export {TopMenu, type TopMenuItem, type TopMenuSubItem, type TopMenuProps} from "./menu/TopMenu";
+export {ContextMenu, RkContextMenu, type ContextMenuProps} from "./menu/ContextMenu";
 
 // Helpers
 export * from "./helpers/useAsyncState";

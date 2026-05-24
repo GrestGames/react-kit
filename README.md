@@ -4,6 +4,13 @@ A React UI library (forms, grid, inputs, modals, async-state hooks) built on
 grest-ts schemas. Source-distributed: consumers import `.ts`/`.tsx` directly
 and bundle it themselves (`exports` points at `src/`).
 
+## Building forms
+
+Read **[`src/form/README.md`](src/form/README.md)** before writing a create/edit
+form. It covers the schema-driven pattern (`useAsyncForm`), how validation
+surfaces automatically, and the traps that waste time (`orUndefined` vs
+required, `IsUnion` vs `IsDiscriminated`, file uploads).
+
 ## grest-ts is a peer dependency
 
 `@grest-ts/schema` and `@grest-ts/schema-file` are **peer** dependencies — the
