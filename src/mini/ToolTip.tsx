@@ -33,6 +33,8 @@ export interface ToolTipProps {
     closeDelayMs?: number
     /** "block" renders a div wrapper — needed when wrapping a flex/grid row. */
     display?: "inline" | "block"
+    /** Force the tooltip open without hover — useful for onboarding hints. */
+    pinned?: boolean
 }
 
 function intentVars(intent: Intent | undefined, template: ToolTipTemplate | undefined): CSSProperties | undefined {
@@ -65,7 +67,7 @@ function combineRef<T>(set: (node: T | null) => void, orig: Ref<T> | undefined):
 
 export function ToolTip({
     message, children, anchor = "cursor", template, intent, className, style,
-    align, placement, maxWidth, openDelayMs, closeDelayMs, display = "inline",
+    align, placement, maxWidth, openDelayMs, closeDelayMs, display = "inline", pinned,
 }: ToolTipProps) {
     const [open, setOpen] = useState(false);
     const arrowRef = useRef<HTMLDivElement>(null);
@@ -77,9 +79,11 @@ export function ToolTip({
         ? (placement === "above" ? "top" : "bottom")
         : (align === "horizontal" ? "right" : "bottom");
 
+    const isOpen = pinned || open;
+
     const {refs, floatingStyles, context, middlewareData, placement: finalPlacement} = useFloating({
-        open,
-        onOpenChange: setOpen,
+        open: isOpen,
+        onOpenChange: pinned ? undefined : setOpen,
         strategy: "fixed",
         placement: initialPlacement,
         middleware: [
@@ -92,14 +96,15 @@ export function ToolTip({
     });
 
     const hover = useHover(context, {
+        enabled: !pinned,
         move: anchor === "cursor",
         delay: {open: openDelay, close: closeDelay},
         handleClose: anchor === "target" ? safePolygon() : null,
     });
-    const focus = useFocus(context);
-    const dismiss = useDismiss(context);
+    const focus = useFocus(context, {enabled: !pinned});
+    const dismiss = useDismiss(context, {enabled: !pinned});
     const role = useRole(context, {role: "tooltip"});
-    const clientPoint = useClientPoint(context, {enabled: anchor === "cursor"});
+    const clientPoint = useClientPoint(context, {enabled: !pinned && anchor === "cursor"});
     const {getReferenceProps, getFloatingProps} = useInteractions([hover, focus, dismiss, role, clientPoint]);
 
     const wrapperStyle: CSSProperties = display === "block"
@@ -129,7 +134,7 @@ export function ToolTip({
 
     return <>
         {reference}
-        {open && <FloatingPortal>
+        {isOpen && <FloatingPortal>
             <div
                 ref={refs.setFloating}
                 className={["toolTip", anchor === "target" && "toolTipAnchored", sideClass[side]].filter(Boolean).join(" ")}
