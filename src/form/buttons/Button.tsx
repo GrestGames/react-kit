@@ -1,23 +1,14 @@
-import "../css/button.css";
-import {CSSProperties, PropsWithChildren, ReactNode, useContext, useState} from "react";
-import {ToolTipSupported} from "../../mini/ToolTip";
-import {AnyFormElement} from "./StandardFormElementProps";
+import "./button.css";
+import {CSSProperties, ReactNode, useContext, useState} from "react";
 import {FormObject} from "../useAsyncForm";
 import {useForm} from "../Form";
 import {useIsMobile} from "../../responsive/useResponsive";
-import {Intent} from "../../intents";
 import {ButtonAppearance, ButtonAppearanceContext} from "./buttonAppearance";
-import {ButtonPrimitive, ButtonPrimitiveProps} from "./ButtonPrimitive";
+import {ButtonPrimitive, PrimitiveButtonProps} from "./ButtonPrimitive";
 
-export interface ButtonProps extends PropsWithChildren<AnyFormElement>, ToolTipSupported {
-    onClick: () => Promise<any> | void,
-    intent?: Intent,
+export interface ButtonProps extends PrimitiveButtonProps {
+    onClick?: () => Promise<any> | void,
     appearance?: ButtonAppearance,
-    /** First click arms (pulsing ring + confirm label, keeps intent color); a second click within ~2s fires onClick. */
-    confirmDouble?: boolean,
-    /** Full confirm phrase: the armed tooltip, and the widest rung of the adaptive armed label
-     *  (which degrades to "Sure?" / "?" on narrow buttons). Default: "Click again to confirm". */
-    confirmDoubleText?: string,
 }
 
 /** @deprecated prefer `<Button intent="warning">` */
@@ -120,12 +111,14 @@ export function AddNewButton({onClick, children}: {onClick: () => void, children
     });
 }
 
-function AnyButton(props: PropsWithChildren<ButtonProps & {
-    type: "button" | "submit" | "reset",
-}>) {
+function AnyButton({
+    onClick, disabled, active, loading, name, size, confirmDouble, confirmDoubleText,
+    type, className: classNameProp, style, title, titleProps, intent, appearance: appearanceProp,
+    children, ...rest
+}: ButtonProps & { type: "button" | "submit" | "reset" }) {
     const [hadError, setHadError] = useState(false);
 
-    const effectiveIntent = hadError ? "warning" : props.intent;
+    const effectiveIntent = hadError ? "warning" : intent;
     const intentVars = effectiveIntent ? {
         "--btn-bg": `var(--rk-${effectiveIntent}-fill)`,
         "--btn-bg-hover": `var(--rk-${effectiveIntent}-fill-hover)`,
@@ -133,23 +126,30 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
     } as CSSProperties : {};
 
     const contextAppearance = useContext(ButtonAppearanceContext);
-    const appearance = props.appearance ?? contextAppearance ?? "gradient";
+    const appearance = appearanceProp ?? contextAppearance ?? "gradient";
 
-    const className = ["rkBtn", props.className, appearance === "outline" && "rkBtn-outline"].filter(Boolean).join(" ");
+    const className = ["rkBtn", classNameProp, appearance === "outline" && "rkBtn-outline"].filter(Boolean).join(" ");
 
-    const primitiveProps: Omit<ButtonPrimitiveProps, "children"> = {
-        onClick: props.onClick,
-        disabled: props.disabled || props.readOnly,
-        confirmDouble: props.confirmDouble,
-        confirmDoubleText: props.confirmDoubleText,
-        type: props.type,
-        className,
-        style: {...intentVars, ...props.style},
-        title: props.title,
-        titleProps: props.titleProps,
-        onError: () => setHadError(true),
-        onErrorCleared: () => setHadError(false),
-    };
-
-    return <ButtonPrimitive {...primitiveProps}>{props.children}</ButtonPrimitive>;
+    return (
+        <ButtonPrimitive
+            {...rest}
+            onClick={onClick}
+            disabled={disabled}
+            active={active}
+            loading={loading}
+            name={name}
+            size={size ?? "normal"}
+            confirmDouble={confirmDouble}
+            confirmDoubleText={confirmDoubleText}
+            type={type}
+            className={className}
+            style={{...intentVars, ...style}}
+            title={title}
+            titleProps={titleProps}
+            onError={() => setHadError(true)}
+            onErrorCleared={() => setHadError(false)}
+        >
+            {children}
+        </ButtonPrimitive>
+    );
 }

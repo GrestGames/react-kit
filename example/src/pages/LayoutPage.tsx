@@ -12,6 +12,9 @@ import panelBasicSource from '../examples/layout/PanelBasic.tsx?raw';
 import CardsBasic from '../examples/layout/CardsBasic';
 import cardsBasicSource from '../examples/layout/CardsBasic.tsx?raw';
 
+import ActionMenuBasic from '../examples/layout/ActionMenuBasic';
+import actionMenuBasicSource from '../examples/layout/ActionMenuBasic.tsx?raw';
+
 export default function LayoutPage() {
   return (
     <>
@@ -31,6 +34,10 @@ export default function LayoutPage() {
 
       <ShowCase title="Cards, Card" source={cardsBasicSource}>
         <CardsBasic />
+      </ShowCase>
+
+      <ShowCase title="ActionMenu" source={actionMenuBasicSource}>
+        <ActionMenuBasic />
       </ShowCase>
     </>
   );

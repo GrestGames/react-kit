@@ -2,7 +2,7 @@ import {AddToBody} from "../helpers/AddToBody";
 import {DarkBackground} from "./DarkBackground";
 import {Panel} from "./Panel";
 import {ProgressBar} from "../form/other/ProgressBar";
-import {Button} from "../form/input/Button";
+import {Button} from "../form/buttons/Button";
 
 export interface BatchProgressFailure {
     id: string | number;

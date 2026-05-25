@@ -9,7 +9,7 @@ import {VALIDATION_ERROR} from "@grest-ts/schema";
 import {Form} from "../Form";
 import {useIsMobile} from "../../responsive/useResponsive";
 import {MobileSortBar} from "./GridCards";
-import {ButtonAppearanceContext} from "../input/buttonAppearance";
+import {ButtonAppearanceContext} from "../buttons/buttonAppearance";
 
 type FilterState<Q> = Q & GridQuery;
 

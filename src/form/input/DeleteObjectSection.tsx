@@ -5,7 +5,7 @@ import {FormObject} from "../useAsyncForm";
 import {ApiErrors} from "../../ApiError";
 import {ERROR} from "@grest-ts/schema";
 import {Alert} from "../../mini/Alert";
-import {Button} from "./Button";
+import {Button} from "../buttons/Button";
 
 export interface Props<T> {
     prop: FormObject<T>
