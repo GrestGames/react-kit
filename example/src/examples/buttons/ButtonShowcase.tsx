@@ -8,6 +8,7 @@ import {
   FormCancelButton,
   Toggle,
   wrapWithPopup,
+  RkToast,
   type Intent,
   type PrimitiveButtonProps,
 } from '@grest-ts/react';
@@ -118,8 +119,8 @@ function getItems(type: ButtonType): ReactNode[] {
       {wrapWithPopup(
         { content: close => (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 120 }}>
-            <TagButton size="small" intent="info" onClick={() => { alert('Option A'); close(); }}>Option A</TagButton>
-            <TagButton size="small" intent="success" onClick={() => { alert('Option B'); close(); }}>Option B</TagButton>
+            <TagButton size="small" intent="info" onClick={() => { RkToast.info('Option A'); close(); }}>Option A</TagButton>
+            <TagButton size="small" intent="success" onClick={() => { RkToast.success('Option B'); close(); }}>Option B</TagButton>
             <TagButton size="small" intent="danger" onClick={close}>Close</TagButton>
           </div>
         ) },

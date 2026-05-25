@@ -4,6 +4,7 @@ import {
     flip,
     FloatingPortal,
     offset,
+    type Placement,
     shift,
     useClick,
     useDismiss,
@@ -32,6 +33,9 @@ export interface AnchoredPopupConfig {
     deps?: any[];
     onOutsideClick?: () => void;
     excludeIds?: string[];
+    /** Where the popup opens relative to the trigger. "over" (default) overlays it centered
+     *  on the trigger; or any floating-ui placement, e.g. "bottom" / "top". */
+    placement?: Placement | "over";
 }
 
 export interface AnchoredPopupResult {
@@ -47,6 +51,9 @@ export interface AnchoredPopupResult {
 export function useAnchoredPopup(opts?: AnchoredPopupConfig): AnchoredPopupResult {
     const [isOpen, setIsOpen] = useState(false);
 
+    // "over" overlays the popup centered on the trigger (default); pull it back over the
+    // reference by half of each box's height. Any real placement (bottom/top/…) anchors normally.
+    const over = (opts?.placement ?? "over") === "over";
     const {refs, floatingStyles, context} = useFloating({
         open: isOpen,
         onOpenChange: (next) => {
@@ -57,8 +64,10 @@ export function useAnchoredPopup(opts?: AnchoredPopupConfig): AnchoredPopupResul
             }
         },
         strategy: "fixed",
-        placement: "bottom",
-        middleware: [offset(6), flip({padding: 8}), shift({padding: 8})],
+        placement: over ? "bottom" : (opts!.placement as Placement),
+        middleware: over
+            ? [offset(({rects}) => -(rects.reference.height / 2 + rects.floating.height / 2)), shift({padding: 8})]
+            : [offset(6), flip({padding: 8}), shift({padding: 8})],
         whileElementsMounted: autoUpdate,
     });
 
@@ -106,6 +115,7 @@ export function useAnchoredPopup(opts?: AnchoredPopupConfig): AnchoredPopupResul
 export interface WrapWithPopupConfig {
     content: (close: () => void) => ReactNode;
     style?: React.CSSProperties;
+    placement?: Placement | "over";
 }
 
 /** Wrap an element with an anchored popup trigger, ToolTip-style ergonomic helper. */
@@ -114,7 +124,7 @@ export function wrapWithPopup(config: WrapWithPopupConfig, element: React.ReactE
 }
 
 function PopupWrapper({config, children}: {config: WrapWithPopupConfig; children: React.ReactElement<Record<string, any>>}) {
-    const {refs, close, toggle, getReferenceProps, Portal} = useAnchoredPopup();
+    const {refs, close, toggle, getReferenceProps, Portal} = useAnchoredPopup({placement: config.placement});
 
     // Stable merged ref — an inline ref callback re-attaches every render, making floating-ui
     // thrash setReference into an infinite update loop once the popup mounts.
