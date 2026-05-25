@@ -26,10 +26,6 @@ export function useRouter(): RouterContextValue {
     return ctx;
 }
 
-export function useRouterOptional(): RouterContextValue | undefined {
-    return useContext(RouterContext);
-}
-
 export function RouterOutlet() {
     const {elements} = useRouter();
     return <>{elements.map((el, i) =>
