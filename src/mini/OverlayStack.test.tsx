@@ -10,10 +10,11 @@ function StackItem({order, name, band = "panel"}: {order: number; name: string; 
 }
 
 describe("overlayZ", () => {
-    it("anchors z-index to the --rk-z-modal token", () => {
-        expect(overlayZ(0)).toBe("var(--rk-z-modal)");
-        expect(overlayZ(10)).toBe("calc(var(--rk-z-modal) + 10)");
-        expect(overlayZ(-1)).toBe("calc(var(--rk-z-modal) - 1)");
+    it("anchors the panel band to --rk-z-modal and the top band to --rk-z-overlay", () => {
+        expect(overlayZ("panel", 0)).toBe("var(--rk-z-modal)");
+        expect(overlayZ("panel", 10)).toBe("calc(var(--rk-z-modal) + 10)");
+        expect(overlayZ("top", 0)).toBe("var(--rk-z-overlay)");
+        expect(overlayZ("top", 20)).toBe("calc(var(--rk-z-overlay) + 20)");
     });
 });
 
