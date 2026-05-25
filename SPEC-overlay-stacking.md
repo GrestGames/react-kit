@@ -135,29 +135,32 @@ is localStorage-backed rather than URL-encoded because the desktop is too comple
 
 A new `OverlayStackProvider` (composed into / alongside `RkOverlayHost`) that:
 
-- Maintains an **ordered registry** of open modal overlays. Order source = the Router context
-  (`routeArgs` order). Non-Router consumers fall back to render/registration order.
-- Assigns each entry `z-index = var(--rk-z-modal) + index * step`.
-- Renders **one** shared backdrop at `(top entry z-index) − 1`.
-- **Backdrop click dispatches to the topmost entry's declared behavior** (each modal declares
-  it on register). All three behaviors that exist today must survive (verified in the repo):
-  - **close-topmost** (default) — `Alert`, `Dialog` (resolves false).
-  - **guarded-close** — `PopupPanel` runs its `CloseGuardContext` guards before closing; a
-    `Form` with unsaved changes (`form/Form.tsx:18`) registers one → "lose changes?" confirm.
-    **Load-bearing — must not be dropped.**
-  - **blocking / non-dismissible** — `LoadingPopup`, `BatchProgressPopup` pass no `onClick`
-    today; their scrim must stay inert while topmost.
+- Maintains an **ordered registry** of open modal overlays and assigns each
+  `z-index = overlayZ(index * STEP)` (anchored to `--rk-z-modal`), exposing `offsetOf(id)` + `isTop(id)`.
+- **Order is pushed in, never pulled.** Order source = `OverlayOrderContext`, which `RouterOutlet`
+  sets per routed view to its URL position; absent a router it falls back to registration order.
+  PopupPanel reads a plain number — it does **not** import the router.
 
-`PopupPanel` change:
+**As built — `PopupPanel` rebuilt on `@floating-ui/react`** (already a dependency) rather than
+hand-rolled, so we inherit real overlay mechanics instead of reinventing them:
 
-- Stops rendering its own `DarkBackground` and its hardcoded `100`. It **registers** with the
-  stack (keyed by its route key when under a `RouterProvider`) and reads its assigned z-index;
-  it still `createPortal`s to `<body>`.
-- The close-guard confirm becomes a stack entry too, so it lands above its parent panel by the
-  same mechanism (replacing the special-cased `400`).
-- **Back-compat gate:** with no `OverlayStackProvider` present, `PopupPanel` falls back to
-  today's behavior (own backdrop, `z-index:100`). New behavior activates only under the
-  provider. This is what protects realestate on a react-kit bump (see Risks).
+- **Routes stay out of the panel.** It reads its order from `OverlayOrderContext`, registers
+  `{order}` with the stack, and renders at `overlayZ(offset)`. Reopening moves the key to the end
+  of the URL → new order → the panel raises (and focus follows). No router import.
+- **Only the topmost panel is live.** `FloatingFocusManager` (focus trap + restore + `aria`/inert
+  on everything else) and `useDismiss` (Escape + outside-press) are gated by `isTop`; lower panels
+  go inert. `FloatingOverlay lockScroll`, rendered only by the top, is the **single shared backdrop**
+  — so dimming never stacks and scroll locks once.
+- **Close-guard preserved:** dismiss/close runs the `CloseGuardContext` guards; a dirty `Form`
+  (`form/Form.tsx:18`) shows the "lose changes?" confirm instead of closing.
+- **Back-compat gate:** with no `OverlayStackProvider` above, PopupPanel falls back to today's
+  behavior (own backdrop, `z-index:100`) — protecting realestate on a react-kit bump (see Risks).
+- Untouched: `LoadingPopup` / `BatchProgressPopup` keep their own (intentionally inert) scrims;
+  `Alert` / `Dialog` stay in the always-on-top `--rk-z-overlay` band.
+
+Verified in `example/` (**Overlays → "PopupPanel stacking"**): open A → open B from A → raise A
+from B shows the z-index 2000↔2010 swap, focus moving to the raised panel, and exactly one
+backdrop throughout.
 
 **Why this fixes reopen (#2):** z-index now comes from the Router's `routeArgs` index. `add()`
 moves a reopened key to the end → its index rises → its z-index rises → it comes to the top,

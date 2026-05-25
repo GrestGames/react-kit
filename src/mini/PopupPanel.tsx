@@ -1,9 +1,15 @@
-import {DarkBackground} from "./DarkBackground";
 import {Panel} from "./Panel";
-import {overlayZ, useOverlayStack} from "./OverlayStack";
-import {useRouteKey, useRouterOptional} from "../router";
+import {overlayZ, useOverlayOrder, useOverlayStack} from "./OverlayStack";
 import {createContext, CSSProperties, ReactNode, useCallback, useEffect, useId, useRef, useState} from "react";
-import {createPortal} from "react-dom";
+import {
+    FloatingFocusManager,
+    FloatingOverlay,
+    FloatingPortal,
+    useDismiss,
+    useFloating,
+    useInteractions,
+    useRole,
+} from "@floating-ui/react";
 
 type CloseGuardFn = () => boolean;
 
@@ -33,11 +39,10 @@ export function PopupPanel({title, subTitle, width, onClickTitle, onClose, style
         return () => { guardsRef.current.delete(fn); };
     }, []);
 
-    const tryClose = useCallback((e?: React.MouseEvent) => {
-        const pos = e ? {x: e.clientX, y: e.clientY} : {x: window.innerWidth / 2, y: window.innerHeight / 2};
+    const tryClose = useCallback((pos?: {x: number, y: number}) => {
         for (const guard of guardsRef.current) {
             if (guard()) {
-                setClickPos(pos);
+                setClickPos(pos ?? {x: window.innerWidth / 2, y: window.innerHeight / 2});
                 setShowConfirm(true);
                 return;
             }
@@ -45,57 +50,53 @@ export function PopupPanel({title, subTitle, width, onClickTitle, onClose, style
         onClose();
     }, [onClose]);
 
-    // Stacking position comes from the router's URL order (last key = topmost), so reopening
-    // an already-open panel raises it. Outside a RouterProvider it sorts after routed panels
-    // by registration order; outside an OverlayStackProvider it falls back to legacy behavior.
+    // Stacking order is handed down (RouterOutlet supplies URL position); the panel never reads
+    // the router. The OverlayStackProvider turns registrations into z offsets + a single top flag.
     const stack = useOverlayStack();
-    const routeKey = useRouteKey();
-    const router = useRouterOptional();
+    const order = useOverlayOrder();
     const id = useId();
-    const idx = router && routeKey ? router.openKeys.indexOf(routeKey) : -1;
-    const order = idx < 0 ? Number.MAX_SAFE_INTEGER : idx;
-
     const register = stack?.register;
     const unregister = stack?.unregister;
     useEffect(() => {
         if (!register || !unregister) return;
-        register(id, order);
+        register(id, order ?? Number.MAX_SAFE_INTEGER);
         return () => unregister(id);
     }, [register, unregister, id, order]);
 
-    const panel = (zIndex?: number | string) => (
-        <CloseGuardContext.Provider value={{register: registerGuard}}>
-            <Panel title={title} subTitle={subTitle} style={style} width={width} zIndex={zIndex} onClickTitle={onClickTitle} onClose={tryClose}>
-                {children}
-            </Panel>
-        </CloseGuardContext.Provider>
-    );
+    const offset = stack ? stack.offsetOf(id) : 0;
+    const isTop = stack ? stack.isTop(id) : true;
 
-    const confirm = (scrimZ?: number | string, dialogZ?: number | string) => showConfirm && (<>
-        <DarkBackground zIndex={scrimZ ?? 400} onClick={() => setShowConfirm(false)}/>
-        <div className="confirmDialog" style={dialogZ ? {...confirmPosition(clickPos), zIndex: dialogZ} : confirmPosition(clickPos)}>
-            <button className="confirmDialogBtn confirmDialogCancel" onClick={() => setShowConfirm(false)}>Keep editing</button>
-            <button className="confirmDialogBtn confirmDialogClose" onClick={onClose}>Close and lose changes</button>
-        </div>
-    </>);
+    const {refs, context} = useFloating({
+        open: true,
+        onOpenChange: (open) => { if (!open) tryClose(); },
+    });
+    // Only the topmost panel reacts to Escape / outside-press and traps focus; lower panels go inert.
+    const dismiss = useDismiss(context, {enabled: isTop, outsidePress: true, escapeKey: true});
+    const role = useRole(context, {role: "dialog"});
+    const {getFloatingProps} = useInteractions([dismiss, role]);
 
-    // Portal to <body>: the panel is a fixed-position, viewport-level overlay, so it must
-    // escape any ancestor that establishes a containing block for fixed positioning. Dark mode
-    // and theme tokens still apply, and React context is preserved across the portal.
-    if (stack) {
-        const offset = stack.offsetOf(id);
-        return createPortal(<>
-            {stack.isTop(id) && <DarkBackground zIndex={overlayZ(offset - 1)} onClick={tryClose}/>}
-            {panel(overlayZ(offset))}
-            {confirm(overlayZ(offset + 1), overlayZ(offset + 2))}
-        </>, document.body);
-    }
+    return <FloatingPortal>
+        {isTop && <FloatingOverlay lockScroll style={{zIndex: overlayZ(offset - 1), background: "var(--rk-scrim)"}}/>}
+        <FloatingFocusManager context={context} modal disabled={!isTop}>
+            {/* position:relative (not fixed/transformed) so it sets the panel's stacking level without
+                becoming the containing block for the fixed, self-centering .panel inside it. */}
+            <div ref={refs.setFloating} {...getFloatingProps()} style={{position: "relative", zIndex: overlayZ(offset)}}>
+                <CloseGuardContext.Provider value={{register: registerGuard}}>
+                    <Panel title={title} subTitle={subTitle} style={style} width={width} onClickTitle={onClickTitle} onClose={() => tryClose()}>
+                        {children}
+                    </Panel>
+                </CloseGuardContext.Provider>
 
-    return createPortal(<>
-        <DarkBackground onClick={tryClose}/>
-        {panel()}
-        {confirm()}
-    </>, document.body);
+                {showConfirm && <>
+                    <div className="darkBackground" style={{zIndex: 200}} onClick={() => setShowConfirm(false)}/>
+                    <div className="confirmDialog" style={{...confirmPosition(clickPos), zIndex: 201}}>
+                        <button className="confirmDialogBtn confirmDialogCancel" onClick={() => setShowConfirm(false)}>Keep editing</button>
+                        <button className="confirmDialogBtn confirmDialogClose" onClick={onClose}>Close and lose changes</button>
+                    </div>
+                </>}
+            </div>
+        </FloatingFocusManager>
+    </FloatingPortal>;
 }
 
 function confirmPosition(pos: {x: number, y: number}): CSSProperties {

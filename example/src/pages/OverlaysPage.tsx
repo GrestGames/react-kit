@@ -12,6 +12,9 @@ import miniTipBasicSource from '../examples/overlays/MiniTipBasic.tsx?raw';
 import LoadingPopupBasic from '../examples/overlays/LoadingPopupBasic';
 import loadingPopupBasicSource from '../examples/overlays/LoadingPopupBasic.tsx?raw';
 
+import OverlayStackDemo from '../examples/overlays/OverlayStackDemo';
+import overlayStackDemoSource from '../examples/overlays/OverlayStackDemo.tsx?raw';
+
 export default function OverlaysPage() {
   return (
     <>
@@ -31,6 +34,10 @@ export default function OverlaysPage() {
 
       <ShowCase title="LoadingPopup, BatchProgressPopup" source={loadingPopupBasicSource}>
         <LoadingPopupBasic />
+      </ShowCase>
+
+      <ShowCase title="PopupPanel stacking (URL-ordered, focus switches on raise)" source={overlayStackDemoSource}>
+        <OverlayStackDemo />
       </ShowCase>
     </>
   );

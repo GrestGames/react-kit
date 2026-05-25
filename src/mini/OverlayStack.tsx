@@ -73,3 +73,13 @@ export function OverlayStackProvider({children}: {children: ReactNode}) {
 export function useOverlayStack(): OverlayStackValue | undefined {
     return useContext(OverlayStackContext);
 }
+
+/** Explicit stacking order for an overlay, supplied by an outer layer — the router's
+ *  `RouterOutlet` provides each routed view its position, so URL order drives the stack
+ *  (and reopening an open panel raises it) without the overlay knowing about routing.
+ *  Absent → the stack falls back to registration order. */
+export const OverlayOrderContext = createContext<number | undefined>(undefined);
+
+export function useOverlayOrder(): number | undefined {
+    return useContext(OverlayOrderContext);
+}

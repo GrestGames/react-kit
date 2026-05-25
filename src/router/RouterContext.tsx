@@ -1,5 +1,6 @@
-import {ReactNode, createContext, useContext, useEffect, useState} from "react";
+import {ReactElement, ReactNode, createContext, useContext, useEffect, useState} from "react";
 import {Router} from "./Router";
+import {OverlayOrderContext} from "../mini/OverlayStack";
 
 interface RouterContextValue {
     router: Router;
@@ -35,7 +36,15 @@ export function useRouterOptional(): RouterContextValue | undefined {
     return useContext(RouterContext);
 }
 
-/** Renders the currently-matched routed views. Each is scoped to its `RouteKeyContext`. */
+/** Renders the currently-matched routed views in URL order. Each view is tagged with its
+ *  position via `OverlayOrderContext`, so any `PopupPanel` inside stacks by URL order (and a
+ *  reopened panel — moved to the end of the URL — raises) without the panel knowing about routing.
+ *  The wrapper key is the element's stable route key, so reordering preserves instances. */
 export function RouterOutlet() {
-    return <>{useRouter().elements}</>;
+    const {elements} = useRouter();
+    return <>{elements.map((el, i) =>
+        <OverlayOrderContext.Provider key={(el as ReactElement).key ?? i} value={i}>
+            {el}
+        </OverlayOrderContext.Provider>,
+    )}</>;
 }
