@@ -5,10 +5,11 @@ import {ApiErrorMessage} from "../ErrorTracker";
 import {FormRoot} from "./FormRoot";
 import {AddToBody} from "../helpers/AddToBody";
 import {CloseGuardContext} from "../mini/PopupPanel";
+import {VALIDATION_ERROR} from "@grest-ts/schema";
 
 const FormContext = React.createContext<any>(undefined);
 
-export function Form<T>(props: PropsWithChildren<{ prop: FormObject<T> }>) {
+export function Form<T>(props: PropsWithChildren<{ prop: FormObject<T>, hideValidationTip?: boolean }>) {
     const f = props.prop.getForm();
     const ref = useRef<HTMLDivElement>(null);
     const closeGuard = useContext(CloseGuardContext);
@@ -37,7 +38,7 @@ export function Form<T>(props: PropsWithChildren<{ prop: FormObject<T> }>) {
                 e.preventDefault();
             }}>
                 <FormContext.Provider value={props.prop}>
-                    {f.getSubmitError() && <TipBox intent="danger" iconLetter="!" style={{marginBottom: 16}} onClick={() => f.resetSubmitError()}>
+                    {f.getSubmitError() && !(props.hideValidationTip && f.getSubmitError()?.type === VALIDATION_ERROR.TYPE) && <TipBox intent="danger" iconLetter="!" style={{marginBottom: 16}} onClick={() => f.resetSubmitError()}>
                         <ApiErrorMessage error={f.getSubmitError()}/>
                     </TipBox>}
                     {props.children}

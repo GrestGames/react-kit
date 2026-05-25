@@ -1,6 +1,7 @@
 import {DarkBackground} from "./DarkBackground";
 import {Panel} from "./Panel";
 import {createContext, CSSProperties, ReactNode, useCallback, useRef, useState} from "react";
+import {createPortal} from "react-dom";
 
 type CloseGuardFn = () => boolean;
 
@@ -42,7 +43,12 @@ export function PopupPanel<T>({title, subTitle, width, onClickTitle, onClose, st
         onClose();
     }, [onClose]);
 
-    return <>
+    // Portal to <body>: the panel is a fixed-position, viewport-level overlay, so
+    // it must escape any ancestor that establishes a containing block for fixed
+    // positioning (a transform/filter/contain — e.g. an animated slide), which
+    // would otherwise trap it inside that box. Dark mode (rk-dark on <html>) and
+    // theme tokens (:root) still apply, and React context is preserved across portals.
+    return createPortal(<>
         <DarkBackground onClick={tryClose}/>
         <CloseGuardContext.Provider value={{register}}>
             <Panel title={title} subTitle={subTitle} style={style} width={width} onClickTitle={onClickTitle} onClose={tryClose}>
@@ -57,7 +63,7 @@ export function PopupPanel<T>({title, subTitle, width, onClickTitle, onClose, st
                 <button className="confirmDialogBtn confirmDialogClose" onClick={onClose}>Close and lose changes</button>
             </div>
         </>}
-    </>
+    </>, document.body)
 }
 
 function confirmPosition(pos: {x: number, y: number}): CSSProperties {
