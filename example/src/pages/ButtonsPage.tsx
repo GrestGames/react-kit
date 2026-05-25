@@ -5,10 +5,10 @@ import buttonShowcaseSource from '../examples/buttons/ButtonShowcase.tsx?raw';
 export default function ButtonsPage() {
   return (
     <>
-      <h1 className="pageTitle">Buttons V2</h1>
+      <h1 className="pageTitle">Buttons</h1>
 
       <ShowCase
-        title="Tag · Pill · Button — V2 restructure: playground-first, side-by-side table, custom sections"
+        title="Tag · Pill · Button — playground, side-by-side comparison table, custom sections"
         source={buttonShowcaseSource}
       >
         <ButtonShowcase />

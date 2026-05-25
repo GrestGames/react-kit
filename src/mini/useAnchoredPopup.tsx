@@ -1,4 +1,4 @@
-import React, {ReactNode, useCallback, useState} from "react";
+import React, {ReactNode, useCallback, useRef, useState} from "react";
 import {
     autoUpdate,
     flip,
@@ -9,12 +9,24 @@ import {
     useDismiss,
     useFloating,
     useInteractions,
+    useMergeRefs,
     useRole,
     useTransitionStyles,
 } from "@floating-ui/react";
 import "./useAnchoredPopup.css";
 
 export const ANIM_DURATION = 150;
+
+const POPUP_PANEL_STYLE: React.CSSProperties = {
+    background: "var(--rk-bg-surface)",
+    border: "1px solid var(--rk-border)",
+    borderRadius: 8,
+    boxShadow: "var(--rk-shadow)",
+    padding: 8,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+};
 
 export interface AnchoredPopupConfig {
     deps?: any[];
@@ -50,7 +62,7 @@ export function useAnchoredPopup(opts?: AnchoredPopupConfig): AnchoredPopupResul
         whileElementsMounted: autoUpdate,
     });
 
-    const click = useClick(context);
+    const click = useClick(context, {keyboardHandlers: false});
     const dismiss = useDismiss(context);
     const role = useRole(context, {role: "dialog"});
 
@@ -65,34 +77,28 @@ export function useAnchoredPopup(opts?: AnchoredPopupConfig): AnchoredPopupResul
     const close = useCallback(() => setIsOpen(false), []);
     const toggle = useCallback(() => setIsOpen(v => !v), []);
 
-    const popupBaseStyle: React.CSSProperties = {
-        position: "fixed",
-        zIndex: 10000,
-        background: "var(--rk-bg-surface)",
-        border: "1px solid var(--rk-border)",
-        borderRadius: 8,
-        boxShadow: "var(--rk-shadow)",
-        padding: 8,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-    };
+    // A stable Portal identity is critical: floatingStyles/transitionStyles change every render
+    // (autoUpdate), so a deps-driven useCallback would give <Portal> a new identity each render →
+    // remount → setFloating(null) → infinite update loop. Keep deps empty; read live values from a ref.
+    const live = useRef({isMounted, setFloating: refs.setFloating, floatingStyles, transitionStyles, getFloatingProps});
+    live.current = {isMounted, setFloating: refs.setFloating, floatingStyles, transitionStyles, getFloatingProps};
 
     const Portal = useCallback(({children, style}: {children: ReactNode; style?: React.CSSProperties}) => {
-        if (!isMounted) return null;
+        const l = live.current;
+        if (!l.isMounted) return null;
         return (
             <FloatingPortal>
-                <div
-                    ref={refs.setFloating}
-                    style={{...popupBaseStyle, ...floatingStyles, ...style, ...transitionStyles}}
-                    className="rkAnchoredPopup"
-                    {...getFloatingProps()}
-                >
-                    {children}
+                {/* Outer div carries floating-ui's positioning (transform=translate); inner div
+                    carries the panel look + the enter/exit transform=scale — separated so the two
+                    transforms don't clash (a single element can't both translate and scale here). */}
+                <div ref={l.setFloating} style={{...l.floatingStyles, zIndex: 10000}} {...l.getFloatingProps()}>
+                    <div className="rkAnchoredPopup" style={{...POPUP_PANEL_STYLE, ...l.transitionStyles, ...style}}>
+                        {children}
+                    </div>
                 </div>
             </FloatingPortal>
         );
-    }, [isMounted, refs.setFloating, floatingStyles, getFloatingProps, transitionStyles]);
+    }, []);
 
     return {refs, isOpen, open, close, toggle, getReferenceProps, Portal};
 }
@@ -108,18 +114,20 @@ export function wrapWithPopup(config: WrapWithPopupConfig, element: React.ReactE
 }
 
 function PopupWrapper({config, children}: {config: WrapWithPopupConfig; children: React.ReactElement<Record<string, any>>}) {
-    const {refs, close, getReferenceProps, Portal} = useAnchoredPopup();
+    const {refs, close, toggle, getReferenceProps, Portal} = useAnchoredPopup();
 
-    const refCallback = (node: HTMLElement | null) => {
-        refs.setReference(node);
-        const origRef = (children.props as any).ref;
-        if (typeof origRef === "function") origRef(node);
-        else if (origRef) origRef.current = node;
-    };
+    // Stable merged ref — an inline ref callback re-attaches every render, making floating-ui
+    // thrash setReference into an infinite update loop once the popup mounts.
+    const ref = useMergeRefs([refs.setReference, (children.props as any).ref]);
 
+    // The button family calls onClick with no event, but floating-ui's reference onClick needs
+    // one — so drive open/close with the event-less `toggle` (still running the trigger's own
+    // onClick if it had one). getReferenceProps still supplies the aria/role wiring.
+    const origOnClick = (children.props as any).onClick as (() => void) | undefined;
     const child = React.cloneElement(children, {
         ...getReferenceProps(children.props),
-        ref: refCallback,
+        onClick: () => { origOnClick?.(); toggle(); },
+        ref,
     });
 
     return <>
