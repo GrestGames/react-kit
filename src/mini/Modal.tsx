@@ -1,4 +1,4 @@
-import {ReactNode, useEffect, useId} from "react";
+import {ReactNode, useId} from "react";
 import {
     FloatingFocusManager,
     FloatingOverlay,
@@ -8,7 +8,7 @@ import {
     useInteractions,
     useRole,
 } from "@floating-ui/react";
-import {OverlayBand, overlayZ, useOverlayStack} from "./OverlayStack";
+import {OverlayBand, overlayZ, useOverlaySlot} from "./OverlayStack";
 
 interface ModalProps {
     band: OverlayBand;
@@ -16,23 +16,13 @@ interface ModalProps {
     onDismiss?: () => void;
     lockScroll?: boolean;
     focusTrap?: boolean;
-    fallbackZ: number | string;
     children: ReactNode;
 }
 
-export function Modal({band, order, onDismiss, lockScroll = true, focusTrap = true, fallbackZ, children}: ModalProps) {
-    const stack = useOverlayStack();
+export function Modal({band, order, onDismiss, lockScroll = true, focusTrap = true, children}: ModalProps) {
     const id = useId();
-    const register = stack?.register;
-    const unregister = stack?.unregister;
-    useEffect(() => {
-        if (!register || !unregister) return;
-        register(id, band, order ?? 0);
-        return () => unregister(id);
-    }, [register, unregister, id, band, order]);
-
-    const z = stack ? overlayZ(stack.offsetOf(id)) : fallbackZ;
-    const isTop = stack ? stack.isTop(id) : true;
+    const {offset, isTop} = useOverlaySlot(id, band, order ?? 0);
+    const z = overlayZ(offset);
 
     const {refs, context} = useFloating({open: true, onOpenChange: (open) => { if (!open) onDismiss?.(); }});
     const dismiss = useDismiss(context, {enabled: isTop && !!onDismiss, outsidePress: !!onDismiss, escapeKey: !!onDismiss});

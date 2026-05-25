@@ -44,7 +44,7 @@ export function PopupPanel({title, subTitle, width, onClickTitle, onClose, style
 
     const order = useOverlayOrder();
 
-    return <Modal band="panel" order={order} onDismiss={tryClose} fallbackZ={100}>
+    return <Modal band="panel" order={order} onDismiss={tryClose}>
         <CloseGuardContext.Provider value={{register: registerGuard}}>
             <Panel title={title} subTitle={subTitle} style={style} width={width} onClickTitle={onClickTitle} onClose={tryClose}>
                 {children}

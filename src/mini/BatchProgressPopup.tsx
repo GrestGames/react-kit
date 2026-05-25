@@ -18,7 +18,7 @@ export interface BatchProgress {
 
 export function BatchProgressPopup({title, progress, onDone}: { title?: string, progress: BatchProgress, onDone: () => void }) {
     const isDone = progress.handled === progress.total;
-    return <Modal band="top" fallbackZ={200}>
+    return <Modal band="top">
         <Panel width={400} style={{marginTop: "200px"}}>
             {title && <div style={{marginBottom: 10}}><b>{title}</b></div>}
             {!isDone && <ProgressBar total={progress.total} current={progress.handled}/>}

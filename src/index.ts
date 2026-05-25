@@ -65,7 +65,7 @@ export {Tag} from "./mini/Tag";
 export * from "./mini/Cards";
 export * from "./mini/PopupPanel";
 export {Modal} from "./mini/Modal";
-export {OverlayStackProvider, useOverlayStack, overlayZ, type OverlayBand} from "./mini/OverlayStack";
+export {overlayZ, type OverlayBand} from "./mini/OverlayStack";
 export {Panel} from "./mini/Panel";
 export {usePillPopup, ANIM_DURATION} from "./mini/usePillPopup";
 export {useAnchoredPopup, wrapWithPopup, type AnchoredPopupConfig, type WrapWithPopupConfig} from "./mini/useAnchoredPopup";

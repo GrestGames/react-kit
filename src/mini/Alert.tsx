@@ -29,7 +29,7 @@ export function Alert({intent, iconLetter, title, children, buttonTitle, onClick
         "--btn-bg-hover": `var(--rk-${intent}-fill-hover)`,
     } as CSSProperties : undefined;
     const letter = iconLetter ?? (intent ? iconForIntent(intent) : undefined);
-    return <Modal band="top" onDismiss={onClick} fallbackZ="var(--rk-z-overlay)">
+    return <Modal band="top" onDismiss={onClick}>
         <Panel className={intent ? "panelAlert" : undefined} width={width || "400px"} style={{marginTop: "180px", ...alertVars}}>
             <div className="alertBody">
                 {intent

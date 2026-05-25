@@ -1,4 +1,4 @@
-import {ReactNode, createContext, useCallback, useContext, useMemo, useRef, useState} from "react";
+import {createContext, useContext, useLayoutEffect, useSyncExternalStore} from "react";
 
 const STEP = 10;
 
@@ -19,49 +19,55 @@ interface Entry {
     seq: number;
 }
 
-interface OverlayStackValue {
-    register: (id: string, band: OverlayBand, order: number) => void;
-    unregister: (id: string) => void;
-    offsetOf: (id: string) => number;
-    isTop: (id: string) => boolean;
+const entries: Entry[] = [];
+let seq = 0;
+let version = 0;
+const listeners = new Set<() => void>();
+
+function emit() {
+    version++;
+    listeners.forEach((l) => l());
 }
 
-const OverlayStackContext = createContext<OverlayStackValue | undefined>(undefined);
-
-export function OverlayStackProvider({children}: {children: ReactNode}) {
-    const [entries, setEntries] = useState<Entry[]>([]);
-    const seq = useRef(0);
-
-    const register = useCallback((id: string, band: OverlayBand, order: number) => {
-        setEntries((prev) => {
-            const found = prev.find((e) => e.id === id);
-            if (found) return found.band === band && found.order === order ? prev : prev.map((e) => (e.id === id ? {...e, band, order} : e));
-            return [...prev, {id, band, order, seq: seq.current++}];
-        });
-    }, []);
-
-    const unregister = useCallback((id: string) => {
-        setEntries((prev) => prev.filter((e) => e.id !== id));
-    }, []);
-
-    const value = useMemo<OverlayStackValue>(() => {
-        const sorted = [...entries].sort((a, b) =>
-            (BAND_RANK[a.band] - BAND_RANK[b.band]) || (a.order - b.order) || (a.seq - b.seq));
-        const pos = new Map(sorted.map((e, i) => [e.id, i] as const));
-        const topId = sorted.length ? sorted[sorted.length - 1].id : undefined;
-        return {
-            register,
-            unregister,
-            offsetOf: (id) => (pos.get(id) ?? 0) * STEP,
-            isTop: (id) => id === topId,
-        };
-    }, [entries, register, unregister]);
-
-    return <OverlayStackContext.Provider value={value}>{children}</OverlayStackContext.Provider>;
+function register(id: string, band: OverlayBand, order: number) {
+    const found = entries.find((e) => e.id === id);
+    if (found) {
+        if (found.band !== band || found.order !== order) { found.band = band; found.order = order; emit(); }
+        return;
+    }
+    entries.push({id, band, order, seq: seq++});
+    emit();
 }
 
-export function useOverlayStack(): OverlayStackValue | undefined {
-    return useContext(OverlayStackContext);
+function unregister(id: string) {
+    const i = entries.findIndex((e) => e.id === id);
+    if (i >= 0) { entries.splice(i, 1); emit(); }
+}
+
+function sorted(): Entry[] {
+    return [...entries].sort((a, b) =>
+        (BAND_RANK[a.band] - BAND_RANK[b.band]) || (a.order - b.order) || (a.seq - b.seq));
+}
+
+function subscribe(cb: () => void) {
+    listeners.add(cb);
+    return () => { listeners.delete(cb); };
+}
+function getVersion() { return version; }
+
+export function useOverlaySlot(id: string, band: OverlayBand, order: number): {offset: number; isTop: boolean} {
+    useSyncExternalStore(subscribe, getVersion, getVersion);
+    useLayoutEffect(() => {
+        register(id, band, order);
+        return () => unregister(id);
+    }, [id, band, order]);
+
+    const list = sorted();
+    const i = list.findIndex((e) => e.id === id);
+    return {
+        offset: (i < 0 ? list.length : i) * STEP,
+        isTop: list.length === 0 || list[list.length - 1].id === id,
+    };
 }
 
 export const OverlayOrderContext = createContext<number | undefined>(undefined);

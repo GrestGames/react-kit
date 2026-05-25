@@ -118,7 +118,7 @@ export function RkDialogLayer() {
     } as CSSProperties : undefined;
     const letter = current.iconLetter ?? (intent ? iconForIntent(intent) : undefined);
 
-    return <Modal band="top" onDismiss={() => resolveCurrent(false)} fallbackZ="var(--rk-z-overlay)">
+    return <Modal band="top" onDismiss={() => resolveCurrent(false)}>
         <Panel className={intent ? "panelAlert" : undefined} width="420px" style={{marginTop: "180px", ...alertVars}}>
             <div className="alertBody">
                 {current.title && (intent
