@@ -8,7 +8,7 @@ function StackItem({order, name}: {order: number; name: string}) {
     const id = useId();
     const {register, unregister} = stack;
     useEffect(() => {
-        register(id, order);
+        register(id, "panel", order);
         return () => unregister(id);
     }, [register, unregister, id, order]);
     return <div data-testid={name} data-offset={stack.offsetOf(id)} data-top={stack.isTop(id) ? "1" : "0"} />;

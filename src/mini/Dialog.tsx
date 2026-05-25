@@ -1,7 +1,6 @@
 import {CSSProperties, ReactNode, useEffect, useSyncExternalStore} from "react";
 import {Intent} from "../intents";
-import {AddToBody} from "../helpers/AddToBody";
-import {DarkBackground} from "./DarkBackground";
+import {Modal} from "./Modal";
 import {Panel} from "./Panel";
 import "./Alert.css";
 
@@ -99,8 +98,7 @@ export function RkDialogLayer() {
     useEffect(() => {
         if (!current) return undefined;
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === "Escape") { e.stopPropagation(); resolveCurrent(false); }
-            else if (e.key === "Enter") { e.stopPropagation(); resolveCurrent(true); }
+            if (e.key === "Enter") { e.stopPropagation(); resolveCurrent(true); }
         };
         window.addEventListener("keydown", onKey, true);
         return () => window.removeEventListener("keydown", onKey, true);
@@ -120,9 +118,8 @@ export function RkDialogLayer() {
     } as CSSProperties : undefined;
     const letter = current.iconLetter ?? (intent ? iconForIntent(intent) : undefined);
 
-    return <AddToBody id="rkDialog">
-        <DarkBackground zIndex="var(--rk-z-overlay)" onClick={() => resolveCurrent(false)}/>
-        <Panel className={intent ? "panelAlert" : undefined} width="420px" zIndex="var(--rk-z-overlay)" style={{marginTop: "180px", ...alertVars}}>
+    return <Modal band="top" onDismiss={() => resolveCurrent(false)} fallbackZ="var(--rk-z-overlay)">
+        <Panel className={intent ? "panelAlert" : undefined} width="420px" style={{marginTop: "180px", ...alertVars}}>
             <div className="alertBody">
                 {current.title && (intent
                     ? <div className="alertHead"><span className="alertIcon">{letter}</span><span className="alertHeadTitle">{current.title}</span></div>
@@ -137,5 +134,5 @@ export function RkDialogLayer() {
                 </div>
             </div>
         </Panel>
-    </AddToBody>;
+    </Modal>;
 }

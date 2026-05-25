@@ -1,7 +1,6 @@
 import {CSSProperties, PropsWithChildren} from 'react'
 import {Intent} from "../intents";
-import {AddToBody} from "../helpers/AddToBody";
-import {DarkBackground} from "./DarkBackground";
+import {Modal} from "./Modal";
 import {Panel} from "./Panel";
 import "./Alert.css";
 
@@ -30,9 +29,8 @@ export function Alert({intent, iconLetter, title, children, buttonTitle, onClick
         "--btn-bg-hover": `var(--rk-${intent}-fill-hover)`,
     } as CSSProperties : undefined;
     const letter = iconLetter ?? (intent ? iconForIntent(intent) : undefined);
-    return <AddToBody id="alert">
-        <DarkBackground zIndex="var(--rk-z-overlay)" onClick={onClick}/>
-        <Panel className={intent ? "panelAlert" : undefined} width={width || "400px"} zIndex="var(--rk-z-overlay)" style={{marginTop: "180px", ...alertVars}}>
+    return <Modal band="top" onDismiss={onClick} fallbackZ="var(--rk-z-overlay)">
+        <Panel className={intent ? "panelAlert" : undefined} width={width || "400px"} style={{marginTop: "180px", ...alertVars}}>
             <div className="alertBody">
                 {intent
                     ? <div className="alertHead"><span className="alertIcon">{letter}</span><span className="alertHeadTitle">{title || "Alert"}</span></div>
@@ -43,7 +41,7 @@ export function Alert({intent, iconLetter, title, children, buttonTitle, onClick
                 </div>
             </div>
         </Panel>
-    </AddToBody>
+    </Modal>
 }
 
 /** @deprecated prefer `<Alert intent="info">` */

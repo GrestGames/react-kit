@@ -13,9 +13,6 @@ interface ParsedRoute {
     display: (...args: any[]) => ReactNode;
 }
 
-/** The route key that produced the surrounding routed subtree. Overlays read this to find
- *  their position in the open-route stack (`useRouter().openKeys.indexOf(useRouteKey())`).
- *  `undefined` outside a routed element. */
 export const RouteKeyContext = createContext<string | undefined>(undefined);
 export const useRouteKey = () => useContext(RouteKeyContext);
 
@@ -73,7 +70,6 @@ export class Router {
         this.updateRoutes(initial);
     }
 
-    /** Detach all global listeners. Call when tearing down the app (and in tests). */
     destroy() {
         window.removeEventListener("popstate", this.onPopState);
         document.body.removeEventListener("keydown", this.onKeyDown);
@@ -84,7 +80,6 @@ export class Router {
     }
 
     getElements(): ReactNode[] { return this.elements; }
-    /** Open route keys in URL order — last is topmost. The overlay stack derives z-index from this. */
     getOpenKeys(): string[] { return this.openKeys; }
     setCallback(callback?: RouterCallback) { this._callback = callback; }
 
@@ -126,7 +121,6 @@ export class Router {
 
         this.elements = [];
         this.openKeys = [];
-        // Walk routeArgs in insertion (URL) order so element/stack order follows the URL.
         for (const k in this.routeArgs) {
             for (let i = 0; i < this.routes.length; i++) {
                 const route = this.routes[i];
@@ -143,7 +137,6 @@ export class Router {
         }
 
         this._callback?.(this.elements, this.openKeys);
-        // Deprecated: consumers should subscribe via RouterProvider context instead.
         window.dispatchEvent(new Event("urlChanged"));
     }
 

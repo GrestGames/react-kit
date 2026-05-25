@@ -1,5 +1,4 @@
-import {AddToBody} from "../helpers/AddToBody";
-import {DarkBackground} from "./DarkBackground";
+import {Modal} from "./Modal";
 import {Panel} from "./Panel";
 import {ProgressBar} from "../form/other/ProgressBar";
 import {Button} from "../form/buttons/Button";
@@ -19,9 +18,8 @@ export interface BatchProgress {
 
 export function BatchProgressPopup({title, progress, onDone}: { title?: string, progress: BatchProgress, onDone: () => void }) {
     const isDone = progress.handled === progress.total;
-    return <AddToBody id="batchProgress">
-        <DarkBackground zIndex={200}/>
-        <Panel zIndex={201} width={400} style={{marginTop: "200px"}}>
+    return <Modal band="top" fallbackZ={200}>
+        <Panel width={400} style={{marginTop: "200px"}}>
             {title && <div style={{marginBottom: 10}}><b>{title}</b></div>}
             {!isDone && <ProgressBar total={progress.total} current={progress.handled}/>}
             {isDone && <div>
@@ -39,5 +37,5 @@ export function BatchProgressPopup({title, progress, onDone}: { title?: string, 
                 </div>
             </div>}
         </Panel>
-    </AddToBody>
+    </Modal>
 }

@@ -1,23 +1,25 @@
-import { useEffect, useMemo } from 'react';
-import { PopupPanel, OverlayStackProvider, Button } from '@grest-ts/react';
+import { useEffect, useMemo, useState } from 'react';
+import { PopupPanel, Button, LoadingPopup, RkConfirm, RkAlert } from '@grest-ts/react';
 import { Router, RouterProvider, RouterOutlet, useRouter } from '@grest-ts/react/router';
 
-// Each panel is route-driven and route-agnostic: it just renders a PopupPanel. The app drives
-// which panels are open (and their order) via the URL — opening an already-open panel re-adds
-// its key, moving it to the end of the URL, which raises it to the top (and moves focus to it).
 function DemoPanel({ id }: { id: 'a' | 'b' }) {
   const { router } = useRouter();
+  const [loading, setLoading] = useState(false);
   const other = id === 'a' ? 'b' : 'a';
   const label = id.toUpperCase();
   return (
-    <PopupPanel title={`Panel ${label}`} width="420px" onClose={() => router.remove(id)}>
+    <PopupPanel title={`Panel ${label}`} width="440px" onClose={() => router.remove(id)}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 8 }}>
         <p>Panel {label}. While it's on top, focus is trapped here — press Tab to check.</p>
         <input data-testid={`input-${id}`} placeholder={`Type in panel ${label}…`} />
-        <Button onClick={() => router.add({ [other]: '1' })}>
-          Open / raise panel {other.toUpperCase()}
-        </Button>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <Button onClick={() => router.add({ [other]: '1' })}>Open / raise panel {other.toUpperCase()}</Button>
+          <Button onClick={() => RkConfirm({ title: `From panel ${label}`, message: 'Confirm something?' })}>Confirm</Button>
+          <Button onClick={() => RkAlert({ title: `From panel ${label}`, message: 'Just so you know.' })}>Alert</Button>
+          <Button onClick={() => { setLoading(true); setTimeout(() => setLoading(false), 1500); }}>Loader (1.5s)</Button>
+        </div>
       </div>
+      {loading && <LoadingPopup title={`Loading from ${label}…`} />}
     </PopupPanel>
   );
 }
@@ -33,13 +35,11 @@ export default function OverlayStackDemo() {
 
   return (
     <RouterProvider router={router}>
-      <OverlayStackProvider>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Button onClick={() => router.add({ a: '1' })}>Open panel A</Button>
-          <Button onClick={() => router.add({ b: '1' })}>Open panel B</Button>
-        </div>
-        <RouterOutlet />
-      </OverlayStackProvider>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <Button onClick={() => router.add({ a: '1' })}>Open panel A</Button>
+        <Button onClick={() => router.add({ b: '1' })}>Open panel B</Button>
+      </div>
+      <RouterOutlet />
     </RouterProvider>
   );
 }

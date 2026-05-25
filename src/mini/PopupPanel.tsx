@@ -1,15 +1,7 @@
 import {Panel} from "./Panel";
-import {overlayZ, useOverlayOrder, useOverlayStack} from "./OverlayStack";
-import {createContext, CSSProperties, ReactNode, useCallback, useEffect, useId, useRef, useState} from "react";
-import {
-    FloatingFocusManager,
-    FloatingOverlay,
-    FloatingPortal,
-    useDismiss,
-    useFloating,
-    useInteractions,
-    useRole,
-} from "@floating-ui/react";
+import {Modal} from "./Modal";
+import {useOverlayOrder} from "./OverlayStack";
+import {createContext, CSSProperties, ReactNode, useCallback, useRef, useState} from "react";
 
 type CloseGuardFn = () => boolean;
 
@@ -39,10 +31,10 @@ export function PopupPanel({title, subTitle, width, onClickTitle, onClose, style
         return () => { guardsRef.current.delete(fn); };
     }, []);
 
-    const tryClose = useCallback((pos?: {x: number, y: number}) => {
+    const tryClose = useCallback(() => {
         for (const guard of guardsRef.current) {
             if (guard()) {
-                setClickPos(pos ?? {x: window.innerWidth / 2, y: window.innerHeight / 2});
+                setClickPos({x: window.innerWidth / 2, y: window.innerHeight / 2});
                 setShowConfirm(true);
                 return;
             }
@@ -50,53 +42,23 @@ export function PopupPanel({title, subTitle, width, onClickTitle, onClose, style
         onClose();
     }, [onClose]);
 
-    // Stacking order is handed down (RouterOutlet supplies URL position); the panel never reads
-    // the router. The OverlayStackProvider turns registrations into z offsets + a single top flag.
-    const stack = useOverlayStack();
     const order = useOverlayOrder();
-    const id = useId();
-    const register = stack?.register;
-    const unregister = stack?.unregister;
-    useEffect(() => {
-        if (!register || !unregister) return;
-        register(id, order ?? Number.MAX_SAFE_INTEGER);
-        return () => unregister(id);
-    }, [register, unregister, id, order]);
 
-    const offset = stack ? stack.offsetOf(id) : 0;
-    const isTop = stack ? stack.isTop(id) : true;
+    return <Modal band="panel" order={order} onDismiss={tryClose} fallbackZ={100}>
+        <CloseGuardContext.Provider value={{register: registerGuard}}>
+            <Panel title={title} subTitle={subTitle} style={style} width={width} onClickTitle={onClickTitle} onClose={tryClose}>
+                {children}
+            </Panel>
+        </CloseGuardContext.Provider>
 
-    const {refs, context} = useFloating({
-        open: true,
-        onOpenChange: (open) => { if (!open) tryClose(); },
-    });
-    // Only the topmost panel reacts to Escape / outside-press and traps focus; lower panels go inert.
-    const dismiss = useDismiss(context, {enabled: isTop, outsidePress: true, escapeKey: true});
-    const role = useRole(context, {role: "dialog"});
-    const {getFloatingProps} = useInteractions([dismiss, role]);
-
-    return <FloatingPortal>
-        {isTop && <FloatingOverlay lockScroll style={{zIndex: overlayZ(offset - 1), background: "var(--rk-scrim)"}}/>}
-        <FloatingFocusManager context={context} modal disabled={!isTop}>
-            {/* position:relative (not fixed/transformed) so it sets the panel's stacking level without
-                becoming the containing block for the fixed, self-centering .panel inside it. */}
-            <div ref={refs.setFloating} {...getFloatingProps()} style={{position: "relative", zIndex: overlayZ(offset)}}>
-                <CloseGuardContext.Provider value={{register: registerGuard}}>
-                    <Panel title={title} subTitle={subTitle} style={style} width={width} onClickTitle={onClickTitle} onClose={() => tryClose()}>
-                        {children}
-                    </Panel>
-                </CloseGuardContext.Provider>
-
-                {showConfirm && <>
-                    <div className="darkBackground" style={{zIndex: 200}} onClick={() => setShowConfirm(false)}/>
-                    <div className="confirmDialog" style={{...confirmPosition(clickPos), zIndex: 201}}>
-                        <button className="confirmDialogBtn confirmDialogCancel" onClick={() => setShowConfirm(false)}>Keep editing</button>
-                        <button className="confirmDialogBtn confirmDialogClose" onClick={onClose}>Close and lose changes</button>
-                    </div>
-                </>}
+        {showConfirm && <>
+            <div className="darkBackground" style={{zIndex: 200}} onClick={() => setShowConfirm(false)}/>
+            <div className="confirmDialog" style={{...confirmPosition(clickPos), zIndex: 201}}>
+                <button className="confirmDialogBtn confirmDialogCancel" onClick={() => setShowConfirm(false)}>Keep editing</button>
+                <button className="confirmDialogBtn confirmDialogClose" onClick={onClose}>Close and lose changes</button>
             </div>
-        </FloatingFocusManager>
-    </FloatingPortal>;
+        </>}
+    </Modal>;
 }
 
 function confirmPosition(pos: {x: number, y: number}): CSSProperties {

@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ErrorTrackerProvider, RkOverlayHost } from '@grest-ts/react';
+import { ErrorTrackerProvider, OverlayStackProvider, RkOverlayHost } from '@grest-ts/react';
 import '@grest-ts/react/css/base.css';
 import App from './App';
 import './App.css';
@@ -8,8 +8,10 @@ import './App.css';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorTrackerProvider>
-      <App />
-      <RkOverlayHost position="top-right" />
+      <OverlayStackProvider>
+        <App />
+        <RkOverlayHost position="top-right" />
+      </OverlayStackProvider>
     </ErrorTrackerProvider>
   </StrictMode>,
 );
