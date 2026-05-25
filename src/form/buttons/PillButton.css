@@ -1,0 +1,91 @@
+@import "../../css/theme.css";
+
+.pillBtn {
+    display: inline-block;
+    padding: 3px 10px;
+    margin: 2px;
+    border-radius: 12px;
+    border: 1px solid var(--rk-border);
+    background: var(--rk-bg-surface);
+    color: var(--rk-text-secondary);
+    font: inherit;
+    font-size: var(--rk-font-size-normal);
+    font-weight: 400;
+    cursor: pointer;
+    white-space: nowrap;
+    line-height: 1.4;
+    user-select: none;
+    position: relative;
+}
+
+/* micro = compact pill */
+.pillBtn.rkBtn-size-micro { font-size: var(--rk-font-size-micro); padding: 1px 6px; }
+/* small */
+.pillBtn.rkBtn-size-small { font-size: var(--rk-font-size-small); padding: 2px 8px; }
+/* normal = default PillButton look (13px, 3px 10px) */
+.pillBtn.rkBtn-size-normal { font-size: var(--rk-font-size-normal); padding: 3px 10px; }
+
+.pillBtn:not([disabled]):hover {
+    box-shadow: inset 0 0 0 100px var(--rk-hover-overlay);
+}
+
+.pillBtn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pillBtn:not([disabled]):active {
+    transform: translateY(1px);
+}
+
+.pillBtn.pillDotted {
+    border-style: dashed;
+}
+
+.pillBtn.pillBold {
+    font-weight: 600;
+}
+
+/* active = solid fill */
+.pillBtn.active {
+    background: var(--pillBtn-fill, var(--rk-default-fill));
+    color: var(--rk-text-on-accent);
+    border-color: var(--pillBtn-fill, var(--rk-default-fill));
+}
+
+/* armed (confirmDouble primed): outline ring in the fill color */
+.pillBtn.rkBtn-armed {
+    outline: 2px solid var(--pillBtn-fill, var(--rk-default-fill));
+    outline-offset: 1px;
+}
+
+/* loading: small ring spinner (override the button.css defaultAnimation inside chips) */
+.pillBtn.loading {
+    cursor: progress;
+}
+
+.pillBtn.loading > div.defaultAnimation,
+.pillBtn.loading > div.smallAnimation {
+    margin: 0 auto;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    animation: pillChipSpin 0.7s linear infinite;
+    opacity: 0.75;
+    /* reset the mask/background from button.css defaultAnimation */
+    -webkit-mask: none;
+    mask: none;
+    background: none;
+}
+
+@keyframes pillChipSpin {
+    to { transform: rotate(360deg); }
+}
+
+.pillPopupGrid {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}

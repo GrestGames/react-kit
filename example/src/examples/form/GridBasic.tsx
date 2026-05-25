@@ -41,9 +41,9 @@ const fields: GridField<Row>[] = [
   // Buttons inside <Grid> auto-render as outline (pass appearance="gradient" to opt one back out).
   { title: 'Actions', value: (row) => (
     <>
-      <Button onClick={() => RkToast(`View ${row.name}`)}>View</Button>
-      <Button intent="info" onClick={() => RkToast(`Edit ${row.name}`)}>Edit</Button>
-      <Button intent="danger" confirmDouble confirmDoubleText={`Delete ${row.name}?`} onClick={() => RkToast.danger(`Delete ${row.name}`)}>Delete</Button>
+      <Button onClick={() => { RkToast(`View ${row.name}`); }}>View</Button>
+      <Button intent="info" onClick={() => { RkToast(`Edit ${row.name}`); }}>Edit</Button>
+      <Button intent="danger" confirmDouble confirmDoubleText={`Delete ${row.name}?`} onClick={() => { RkToast.danger(`Delete ${row.name}`); }}>Delete</Button>
     </>
   ), width: 200 },
 ];

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TagButton, PillButton, type Intent } from '@grest-ts/react';
+import { TagButton, PillButton, wrapWithPopup, type Intent } from '@grest-ts/react';
 
 const intents: Intent[] = ['default', 'neutral', 'info', 'cool', 'success', 'warning', 'danger', 'critical'];
 const sizes = ['micro', 'small', 'normal'] as const;
@@ -104,6 +104,33 @@ export default function TagButtonVariants() {
               </PillButton>
             )}
           />
+        </div>
+      </div>
+
+      <div>
+        <div style={{ fontSize: 11, color: '#888', marginBottom: 4 }}>Popup — wrapWithPopup (click a chip to open a floating menu)</div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {wrapWithPopup(
+            { content: close => (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 120 }}>
+                <TagButton intent="info" size="small" onClick={close}>Option A</TagButton>
+                <TagButton intent="success" size="small" onClick={close}>Option B</TagButton>
+                <TagButton intent="danger" size="small" onClick={close}>Dismiss</TagButton>
+              </div>
+            )},
+            <TagButton intent="cool" size="small">Open menu ▾</TagButton>
+          )}
+          {wrapWithPopup(
+            { content: close => (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 140 }}>
+                <span style={{ fontSize: 11, color: '#888', marginBottom: 2 }}>Choose status</span>
+                {(['active', 'archived', 'pending'] as const).map(s => (
+                  <PillButton key={s} intent="neutral" onClick={close}>{s}</PillButton>
+                ))}
+              </div>
+            )},
+            <PillButton intent="cool" dotted>Status ▾</PillButton>
+          )}
         </div>
       </div>
 

@@ -62,7 +62,7 @@ named exports still exist.
 | Alert | `mini/Alert.tsx` | `AlertBase` + `variant` prop + thin presets | **KEEP — exemplar** |
 | Toast | `mini/Toast.tsx` | `toast(msg, {type})` + `toast.info/.success/.warning/.error` over typed `ToastType` | **KEEP** — function form of the pattern |
 | ToolTip | `mini/ToolTip.tsx` | single `ToolTip` with `template: "normal" \| "error"` prop | **KEEP** — already prop-driven |
-| Tag | `css/base.css` | CSS classes only (`.tag-success` …), no components | **KEEP** — lightest correct form |
+| Tag | `mini/Tag.tsx` | `<span>` label component; purely presentational (no click handler / keyboard semantics). CSS classes only for styling. | **KEEP** — `Tag` is a static label; `TagButton` + `PillButton` cover the interactive chip cases. `ChipPrimitive` was retired — both chips now delegate to `ButtonPrimitive`. |
 
 ## Clear targets (detail)
 

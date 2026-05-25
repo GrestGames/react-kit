@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { TopMenu } from '@grest-ts/react';
 import InputsPage from './pages/InputsPage';
-import ActionsPage from './pages/ActionsPage';
 import FormPage from './pages/FormPage';
 import LayoutPage from './pages/LayoutPage';
 import OverlaysPage from './pages/OverlaysPage';
@@ -9,10 +8,11 @@ import FeedbackPage from './pages/FeedbackPage';
 import DataDisplayPage from './pages/DataDisplayPage';
 import IntentPage from './pages/IntentPage';
 import UtilsPage from './pages/UtilsPage';
+import ButtonsPage from './pages/ButtonsPage';
 
 const sections = [
   { key: 'inputs', label: 'Inputs', component: InputsPage },
-  { key: 'actions', label: 'Buttons & Actions', component: ActionsPage },
+  { key: 'buttons', label: 'Buttons', component: ButtonsPage },
   { key: 'form', label: 'Form & Grid', component: FormPage },
   { key: 'layout', label: 'Layout & Nav', component: LayoutPage },
   { key: 'overlays', label: 'Overlays', component: OverlaysPage },

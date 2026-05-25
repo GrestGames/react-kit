@@ -4,6 +4,41 @@ A React UI library (forms, grid, inputs, modals, async-state hooks) built on
 grest-ts schemas. Source-distributed: consumers import `.ts`/`.tsx` directly
 and bundle it themselves (`exports` points at `src/`).
 
+## Capabilities — what's in the box
+
+Batteries-included UI + form toolkit; reach for these before hand-rolling. Everything draws from
+the `--rk-*` design-token palette (`src/css/theme.css`) and a shared `Intent` vocabulary
+(`default · neutral · info · cool · success · warning · danger · critical`). The `example/` app is a
+live gallery of all of it (`cd example && npm run dev`).
+
+- **Schema-driven forms** — `useAsyncForm` + `FormRoot`/`Form` bind a grest-ts schema and surface
+  validation automatically (see [`src/form/README.md`](src/form/README.md)); `DeleteObjectSection`
+  for delete flows.
+- **Form inputs** — `TextInput` (+ TextArea/Email/Phone/Password), `NumberInput`
+  (Integer/Decimal/Positive/`InputRange`), `DateInput`/`YearMonthSelect`, `Select`/`RadioSelect`,
+  `AutoComplete` (sync + async), `Checkbox`/`Checkbox01`/`CheckboxGroup`, `Toggle`/`Toggle01`,
+  `FileUpload`/`FileMultiUpload`, inline edit (`InlineEditWrap`/`useInlineEdit`). Each works in a
+  `value`+`onChange` mode or bound to a form `prop`.
+- **Buttons** — one shared `ButtonPrimitive` behind the family: `Button` (intents,
+  `gradient`/`outline` appearance, async-`onClick` spinner, `confirmDouble` arm-to-confirm, form
+  presets `SubmitButton`/`SecondaryButton`/…), `PillButton`, `TagButton`, `IconButton`, and the
+  static `Tag` label. Shared props: `intent`, `size` (`micro`/`small`/`normal`), `loading`,
+  `active`, `disabled`, `confirmDouble`, tooltip.
+- **Overlays** — `ToolTip` (hover / anchored), `ContextMenu` (right-click) + `ActionMenu`,
+  `useAnchoredPopup`/`wrapWithPopup` (click popups; `placement` incl. `"over"` the trigger),
+  `Popover`, `PopupPanel`, `Panel`, `Dialog`, and imperative singletons mounted once via
+  `RkOverlayHost`: `RkToast`, `RkContextMenu`, `RkConfirm`/`RkAlert`. All positioned UI uses
+  `@floating-ui/react`.
+- **Feedback** — `TipBox` (+ `SuccessBox`/`WarningBox`/`ErrorBox`/`NeutralTipBox`), `Alert`,
+  `Toast`, `ProgressBar`, `LoadingPopup`, `BatchProgressPopup`.
+- **Layout & nav** — `Cards`/`Card`, `Tabs`, `TopMenu`, `MainArea`, `Separator`, `MiniTip`.
+- **Data display** — `Grid` (server-driven sort / page / query), `GridCards`,
+  `FileGrid`/`FileGridMini`, `LazyDataSet`, `FileViewer`/`FileIframe`. Formatted text: `Currency`,
+  `Percent`, `Sq`, `FileSize`, `RelativeDate`, `DatePast`.
+- **Hooks & utils** — async state (`useAsyncState`, `useAsyncEffect`, `useOnlyLatestResult`),
+  positioning (`useDropDownPositioning`, `useOutsideClick`), and utilities (`ArrayUtils`,
+  `DateUtils`, `StringUtils`, `EnumHelper`, `deepClone`, `download`, `isPromise`, `Decimal2`).
+
 ## Building forms
 
 Read **[`src/form/README.md`](src/form/README.md)** before writing a create/edit

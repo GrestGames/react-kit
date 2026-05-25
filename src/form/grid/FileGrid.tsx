@@ -1,7 +1,7 @@
 import "./FileGrid.css";
 import {useState} from "react";
 import {FileIcon} from "../other/FileIcon";
-import {Button} from "../input/Button";
+import {Button} from "../buttons/Button";
 import {FileViewer} from "../../mini/FileViewer";
 
 export interface Props {
