@@ -6,7 +6,7 @@
     left: 0;
     top: 0;
     pointer-events: none;
-    z-index: 500;
+    z-index: 13000;
     border: 1px solid var(--tt-border);
     background-color: var(--rk-bg-surface);
     color: var(--rk-text);
@@ -38,7 +38,7 @@
 
 .toolTip.toolTipAnchored {
     margin: 0;
-    z-index: 10002;
+    z-index: 13000;
     font-size: var(--rk-font-size-mini);
     line-height: 1.45;
 }

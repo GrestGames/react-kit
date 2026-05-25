@@ -1,4 +1,5 @@
 import {CSSProperties, MouseEvent, ReactNode} from "react";
+import {wrapToolTip, type ToolTipSupported} from "./ToolTip";
 import "./Cards.css";
 
 export interface CardsProps {
@@ -20,7 +21,7 @@ export function Cards({children, minCardWidth = 150, gap = 12, className, style}
     </div>;
 }
 
-export interface CardProps {
+export interface CardProps extends ToolTipSupported {
     children: ReactNode;
     /** When set, the card is a clickable button. Omit for a static card that
      *  hosts its own interactive controls (e.g. action buttons). */
@@ -31,13 +32,12 @@ export interface CardProps {
     variant?: "default" | "add";
     selected?: boolean;
     disabled?: boolean;
-    title?: string;
     className?: string;
     style?: CSSProperties;
 }
 
 /** A single tile in a {@link Cards} grid. Centered column layout by default; */
-export function Card({children, onClick, onContextMenu, variant = "default", selected, disabled, title, className, style}: CardProps) {
+export function Card({children, onClick, onContextMenu, variant = "default", selected, disabled, title, titleProps, className, style}: CardProps) {
     const cls = [
         "rkCard",
         variant === "add" ? "rkCard-add" : "",
@@ -48,9 +48,9 @@ export function Card({children, onClick, onContextMenu, variant = "default", sel
     ].filter(Boolean).join(" ");
 
     if (onClick) {
-        return <button type="button" className={cls} title={title} disabled={disabled} onClick={onClick} onContextMenu={onContextMenu} style={style}>
+        return wrapToolTip({title, titleProps}, <button type="button" className={cls} disabled={disabled} onClick={onClick} onContextMenu={onContextMenu} style={style}>
             {children}
-        </button>;
+        </button>);
     }
-    return <div className={cls} title={title} onContextMenu={onContextMenu} style={style}>{children}</div>;
+    return wrapToolTip({title, titleProps}, <div className={cls} onContextMenu={onContextMenu} style={style}>{children}</div>);
 }
