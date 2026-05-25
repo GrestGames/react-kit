@@ -12,12 +12,16 @@ export default function StepBarCustomColor() {
         <StepBar steps={STEPS} current={step} onStepClick={setStep} />
       </div>
       <div>
-        <div style={{ fontSize: 12, color: 'var(--rk-text-muted)', marginBottom: 8 }}>color="var(--rk-purple)"</div>
-        <StepBar steps={STEPS} current={step} onStepClick={setStep} color="var(--rk-purple)" />
+        <div style={{ fontSize: 12, color: 'var(--rk-text-muted)', marginBottom: 8 }}>intent="cool"</div>
+        <StepBar steps={STEPS} current={step} onStepClick={setStep} intent="cool" />
       </div>
       <div>
-        <div style={{ fontSize: 12, color: 'var(--rk-text-muted)', marginBottom: 8 }}>color="var(--rk-success)"</div>
-        <StepBar steps={STEPS} current={step} onStepClick={setStep} color="var(--rk-success)" />
+        <div style={{ fontSize: 12, color: 'var(--rk-text-muted)', marginBottom: 8 }}>intent="success"</div>
+        <StepBar steps={STEPS} current={step} onStepClick={setStep} intent="success" />
+      </div>
+      <div>
+        <div style={{ fontSize: 12, color: 'var(--rk-text-muted)', marginBottom: 8 }}>hue="purple"</div>
+        <StepBar steps={STEPS} current={step} onStepClick={setStep} hue="purple" />
       </div>
     </div>
   );

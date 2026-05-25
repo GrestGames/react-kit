@@ -1,4 +1,5 @@
 import React from "react"
+import {type Intent, resolveColorVar} from "../intents"
 
 interface StepBarProps {
     steps: readonly string[]
@@ -8,14 +9,18 @@ interface StepBarProps {
     /** Which steps are clickable. Default: any earlier step (`i < current`) —
      *  going back is free, forward jumps must use the flow's own Next control. */
     canNavigate?: (index: number) => boolean
-    /** Active/done highlight color. Defaults to `var(--rk-accent)`. */
-    color?: string
+    /** Active/done color via intent token (e.g. "cool", "success"). */
+    intent?: Intent
+    /** Active/done color via hue token — resolves to `var(--rk-<hue>)`.
+     *  No-ops silently if the token is not defined. */
+    hue?: string
 }
 
 /** Numbered progress bar that doubles as a back-navigation controller. Purely
  *  presentational + a click callback — it owns no step state, so it can drive a
  *  SlideDeck (or anything) the parent wires up, or stand alone as an indicator. */
-export function StepBar({steps, current, onStepClick, canNavigate, color = "var(--rk-accent)"}: StepBarProps) {
+export function StepBar({steps, current, onStepClick, canNavigate, intent, hue}: StepBarProps) {
+    const color = resolveColorVar(intent, hue)
     const clickableAt = (i: number) =>
         i !== current && !!onStepClick && (canNavigate ? canNavigate(i) : i < current)
 
