@@ -33,9 +33,6 @@ const DEFAULT_VIEWPORT_MARGIN = 8;
 const VERTICAL_GAP = 4;
 const HORIZONTAL_GAP = 8;
 const HORIZONTAL_LIFT_PX = 30;
-// Below ActionMenu's portal (10000-10001) so menus nested inside a Popover
-// still render above it. Override via `style.zIndex` when needed.
-const Z_INDEX = 9001;
 
 export function Popover({
     anchor, children, width, onClose,
@@ -88,7 +85,7 @@ export function Popover({
             ref={ref}
             data-rk-popover
             className={["rkPopover", className].filter(Boolean).join(" ")}
-            style={{zIndex: Z_INDEX, ...pos, ...style}}
+            style={{zIndex: "var(--rk-z-popover)", ...pos, ...style}}
         >{children}</div>,
         document.body,
     );

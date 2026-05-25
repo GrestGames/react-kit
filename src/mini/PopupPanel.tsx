@@ -1,6 +1,8 @@
 import {DarkBackground} from "./DarkBackground";
 import {Panel} from "./Panel";
-import {createContext, CSSProperties, ReactNode, useCallback, useRef, useState} from "react";
+import {overlayZ, useOverlayStack} from "./OverlayStack";
+import {useRouteKey, useRouterOptional} from "../router";
+import {createContext, CSSProperties, ReactNode, useCallback, useEffect, useId, useRef, useState} from "react";
 import {createPortal} from "react-dom";
 
 type CloseGuardFn = () => boolean;
@@ -21,12 +23,12 @@ export interface Props2 {
     style?: CSSProperties;
 }
 
-export function PopupPanel<T>({title, subTitle, width, onClickTitle, onClose, style, children}: Props2) {
+export function PopupPanel({title, subTitle, width, onClickTitle, onClose, style, children}: Props2) {
     const guardsRef = useRef<Set<CloseGuardFn>>(new Set());
     const [showConfirm, setShowConfirm] = useState(false);
     const [clickPos, setClickPos] = useState<{x: number, y: number}>({x: 0, y: 0});
 
-    const register = useCallback((fn: CloseGuardFn) => {
+    const registerGuard = useCallback((fn: CloseGuardFn) => {
         guardsRef.current.add(fn);
         return () => { guardsRef.current.delete(fn); };
     }, []);
@@ -43,27 +45,57 @@ export function PopupPanel<T>({title, subTitle, width, onClickTitle, onClose, st
         onClose();
     }, [onClose]);
 
-    // Portal to <body>: the panel is a fixed-position, viewport-level overlay, so
-    // it must escape any ancestor that establishes a containing block for fixed
-    // positioning (a transform/filter/contain — e.g. an animated slide), which
-    // would otherwise trap it inside that box. Dark mode (rk-dark on <html>) and
-    // theme tokens (:root) still apply, and React context is preserved across portals.
-    return createPortal(<>
-        <DarkBackground onClick={tryClose}/>
-        <CloseGuardContext.Provider value={{register}}>
-            <Panel title={title} subTitle={subTitle} style={style} width={width} onClickTitle={onClickTitle} onClose={tryClose}>
+    // Stacking position comes from the router's URL order (last key = topmost), so reopening
+    // an already-open panel raises it. Outside a RouterProvider it sorts after routed panels
+    // by registration order; outside an OverlayStackProvider it falls back to legacy behavior.
+    const stack = useOverlayStack();
+    const routeKey = useRouteKey();
+    const router = useRouterOptional();
+    const id = useId();
+    const idx = router && routeKey ? router.openKeys.indexOf(routeKey) : -1;
+    const order = idx < 0 ? Number.MAX_SAFE_INTEGER : idx;
+
+    const register = stack?.register;
+    const unregister = stack?.unregister;
+    useEffect(() => {
+        if (!register || !unregister) return;
+        register(id, order);
+        return () => unregister(id);
+    }, [register, unregister, id, order]);
+
+    const panel = (zIndex?: number | string) => (
+        <CloseGuardContext.Provider value={{register: registerGuard}}>
+            <Panel title={title} subTitle={subTitle} style={style} width={width} zIndex={zIndex} onClickTitle={onClickTitle} onClose={tryClose}>
                 {children}
             </Panel>
         </CloseGuardContext.Provider>
+    );
 
-        {showConfirm && <>
-            <DarkBackground zIndex={400} onClick={() => setShowConfirm(false)}/>
-            <div className="confirmDialog" style={confirmPosition(clickPos)}>
-                <button className="confirmDialogBtn confirmDialogCancel" onClick={() => setShowConfirm(false)}>Keep editing</button>
-                <button className="confirmDialogBtn confirmDialogClose" onClick={onClose}>Close and lose changes</button>
-            </div>
-        </>}
-    </>, document.body)
+    const confirm = (scrimZ?: number | string, dialogZ?: number | string) => showConfirm && (<>
+        <DarkBackground zIndex={scrimZ ?? 400} onClick={() => setShowConfirm(false)}/>
+        <div className="confirmDialog" style={dialogZ ? {...confirmPosition(clickPos), zIndex: dialogZ} : confirmPosition(clickPos)}>
+            <button className="confirmDialogBtn confirmDialogCancel" onClick={() => setShowConfirm(false)}>Keep editing</button>
+            <button className="confirmDialogBtn confirmDialogClose" onClick={onClose}>Close and lose changes</button>
+        </div>
+    </>);
+
+    // Portal to <body>: the panel is a fixed-position, viewport-level overlay, so it must
+    // escape any ancestor that establishes a containing block for fixed positioning. Dark mode
+    // and theme tokens still apply, and React context is preserved across the portal.
+    if (stack) {
+        const offset = stack.offsetOf(id);
+        return createPortal(<>
+            {stack.isTop(id) && <DarkBackground zIndex={overlayZ(offset - 1)} onClick={tryClose}/>}
+            {panel(overlayZ(offset))}
+            {confirm(overlayZ(offset + 1), overlayZ(offset + 2))}
+        </>, document.body);
+    }
+
+    return createPortal(<>
+        <DarkBackground onClick={tryClose}/>
+        {panel()}
+        {confirm()}
+    </>, document.body);
 }
 
 function confirmPosition(pos: {x: number, y: number}): CSSProperties {

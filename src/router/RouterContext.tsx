@@ -29,6 +29,12 @@ export function useRouter(): RouterContextValue {
     return ctx;
 }
 
+/** Like `useRouter` but returns `undefined` when there's no `RouterProvider` above —
+ *  for primitives (e.g. PopupPanel) that work both inside and outside a router. */
+export function useRouterOptional(): RouterContextValue | undefined {
+    return useContext(RouterContext);
+}
+
 /** Renders the currently-matched routed views. Each is scoped to its `RouteKeyContext`. */
 export function RouterOutlet() {
     return <>{useRouter().elements}</>;

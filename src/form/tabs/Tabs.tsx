@@ -1,4 +1,5 @@
 import {ReactNode, useEffect, useState} from "react";
+import {useRouterOptional} from "../../router";
 import "./Tabs.css"
 
 export interface Props {
@@ -19,6 +20,9 @@ let clearUrl: any = undefined;
 export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
     const [selectedTab, setSelectedTab] = useState(undefined);
     const [ready, setReady] = useState(false);
+    // Under a RouterProvider, route history writes through the router so it stays the single
+    // history writer (the router still emits urlChanged, so the listener below keeps working).
+    const routerCtx = useRouterOptional();
 
     const tabsMap = new Map();
     tabs.forEach((tab) => {
@@ -58,6 +62,10 @@ export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
         }
         return () => {
             clearUrl = setTimeout(() => {
+                if (routerCtx) {
+                    routerCtx.router.remove(urlKey);
+                    return;
+                }
                 const url = new URL(window.location.href);
                 url.searchParams.delete(urlKey);
                 window.history.replaceState({path: url.toString()}, '', url.toString());
@@ -71,6 +79,11 @@ export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
         }
         setReady(false);
         setSelectedTab(key);
+        if (routerCtx) {
+            if (key) routerCtx.router.add({[urlKey]: key});
+            else routerCtx.router.remove(urlKey);
+            return;
+        }
         const url = new URL(window.location.href);
         if (key) {
             url.searchParams.set(urlKey, key)

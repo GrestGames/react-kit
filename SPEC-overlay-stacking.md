@@ -168,25 +168,28 @@ with **no remount required**. Mount order stops mattering.
 Replace the ad-hoc constants with one ordered scale in `theme.css`, and migrate every overlay
 to it:
 
+As built (theme.css):
+
 ```
---rk-z-base       0
---rk-z-dropdown   ~1000     Select / AutoComplete menus
---rk-z-modal      ~2000     Tier-2 stack base (room for N stacked panels above this)
---rk-z-popover    ~6000     Popover / ActionMenu / useAnchoredPopup (above any modal)
---rk-z-toast      ~7000
---rk-z-tooltip    ~8000
---rk-z-overlay    ~9000     Dialog / ContextMenu always-on-top trio (was 2147483000)
---rk-z-shield     ~9999     drag/resize capture shields (was 2147483647)
+--rk-z-modal      2000          OverlayStack base (panel z = --rk-z-modal + index*STEP)
+--rk-z-popover    9001          Popover
+--rk-z-menu       10000         ActionMenu / useAnchoredPopup (above Popover)
+--rk-z-tooltip    13000         ToolTip
+--rk-z-overlay    2147483000    always-on-top: Toast / Alert / RkConfirm/RkAlert / ContextMenu
+--rk-z-shield     2147483647    drag/resize capture shields (int-max)
 ```
 
 **Only `--rk-z-modal` is a base that gets incremented** — the OverlayStack assigns
-`--rk-z-modal + index` per stacked panel (`+1` each, no per-panel tokens). Every other token is
-a single fixed level. The only thing to size is the **gap between bands**: it must exceed any
-realistic stack depth so a tall modal stack can never climb into the popover band (gaps of
-`~1000` make collision require 1000 stacked panels — impossible). So this is essentially "fix
-one start and increment," exactly as expected; the ladder above just needs breathing room. The
-`2147483000` / `2147483647` "max" values disappear — they were "I gave up on ordering"
-sentinels.
+`--rk-z-modal + index*STEP` per stacked panel (STEP=10 leaves room for a panel's own
+close-guard scrim/confirm at +1/+2). Every other token is a single fixed level.
+
+**Deviation from the original plan:** we kept the always-on-top trio (`--rk-z-overlay`) and
+shields (`--rk-z-shield`) at their astronomical values rather than collapsing them to ~9000.
+react-kit is a git dependency with no tag pin, and apps deliberately push chrome past 10000
+(kratt's taskbar-reposition overlay is `9999`); lowering the trio would risk regressing that
+chrome on a react-kit bump. So Phase 2 only *named* the existing values (popover 9001 / menu
+10000 / tooltip 13000 kept as-is) and added the new `--rk-z-modal` band — behavior-preserving,
+no renumbering. The "sentinel" critique stands in spirit, but cross-app safety wins here.
 
 ### D. kratt integration
 
