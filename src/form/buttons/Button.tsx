@@ -1,27 +1,14 @@
-import "../css/button.css";
-import {CSSProperties, PropsWithChildren, ReactNode, useContext, useEffect, useRef, useState} from "react";
-import {isPromise} from "../../util/isPromise";
-import {Alert} from "../../mini/Alert";
-import {ToolTipSupported, wrapToolTip} from "../../mini/ToolTip";
-import {ApiErrorMessage} from "../../ErrorTracker";
-import {AnyFormElement} from "./StandardFormElementProps";
+import "./button.css";
+import {CSSProperties, ReactNode, useContext, useState} from "react";
 import {FormObject} from "../useAsyncForm";
 import {useForm} from "../Form";
-import {ERROR} from "@grest-ts/schema";
 import {useIsMobile} from "../../responsive/useResponsive";
-import {Intent} from "../../intents";
 import {ButtonAppearance, ButtonAppearanceContext} from "./buttonAppearance";
-import {CONFIRM_DOUBLE_WINDOW_MS, DEFAULT_CONFIRM_DOUBLE_TEXT, pickConfirmText} from "../confirmDouble";
+import {ButtonPrimitive, PrimitiveButtonProps} from "./ButtonPrimitive";
 
-export interface ButtonProps extends PropsWithChildren<AnyFormElement>, ToolTipSupported {
-    onClick: () => Promise<any> | void,
-    intent?: Intent,
+export interface ButtonProps extends PrimitiveButtonProps {
+    onClick?: () => Promise<any> | void,
     appearance?: ButtonAppearance,
-    /** First click arms (pulsing ring + confirm label, keeps intent color); a second click within ~2s fires onClick. */
-    confirmDouble?: boolean,
-    /** Full confirm phrase: the armed tooltip, and the widest rung of the adaptive armed label
-     *  (which degrades to "Sure?" / "?" on narrow buttons). Default: "Click again to confirm". */
-    confirmDoubleText?: string,
 }
 
 /** @deprecated prefer `<Button intent="warning">` */
@@ -124,55 +111,14 @@ export function AddNewButton({onClick, children}: {onClick: () => void, children
     });
 }
 
-function AnyButton(props: PropsWithChildren<ButtonProps & {
-    type: "button" | "submit" | "reset",
-}>) {
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<ERROR<string, any>>();
+function AnyButton({
+    onClick, disabled, active, loading, name, size, confirmDouble, confirmDoubleText,
+    type, className: classNameProp, style, title, titleProps, intent, appearance: appearanceProp,
+    children, ...rest
+}: ButtonProps & { type: "button" | "submit" | "reset" }) {
     const [hadError, setHadError] = useState(false);
-    const [armed, setArmed] = useState(false);
-    const [confirmText, setConfirmText] = useState<string>();
-    const [size, setSize] = useState<[number, number]>(undefined)
-    const ref = useRef<HTMLButtonElement>(null);
-    const armTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    useEffect(() => {
-        setSize([ref.current.offsetWidth, ref.current.offsetHeight])
-        if (props.confirmDouble) setConfirmText(pickConfirmText(ref.current, props.confirmDoubleText ?? DEFAULT_CONFIRM_DOUBLE_TEXT))
-    }, [ref.current]);
-
-    useEffect(() => () => { if (armTimer.current) clearTimeout(armTimer.current); }, []);
-
-    const run = () => {
-        const res = props.onClick();
-        if (isPromise(res)) {
-            setIsLoading(true);
-            res.then(() => {
-                setIsLoading(false);
-            }).catch((err) => {
-                setIsLoading(false);
-                setError(ERROR.fromUnknown(err))
-                setHadError(true)
-            })
-        }
-    }
-
-    const click = () => {
-        if (isLoading) {
-            return;
-        }
-        if (props.confirmDouble && !armed) {
-            setArmed(true);
-            if (armTimer.current) clearTimeout(armTimer.current);
-            armTimer.current = setTimeout(() => setArmed(false), CONFIRM_DOUBLE_WINDOW_MS);
-            return;
-        }
-        if (armTimer.current) clearTimeout(armTimer.current);
-        setArmed(false);
-        run();
-    }
-
-    const effectiveIntent = hadError ? "warning" : props.intent;
+    const effectiveIntent = hadError ? "warning" : intent;
     const intentVars = effectiveIntent ? {
         "--btn-bg": `var(--rk-${effectiveIntent}-fill)`,
         "--btn-bg-hover": `var(--rk-${effectiveIntent}-fill-hover)`,
@@ -180,22 +126,30 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
     } as CSSProperties : {};
 
     const contextAppearance = useContext(ButtonAppearanceContext);
-    const appearance = props.appearance ?? contextAppearance ?? "gradient";
+    const appearance = appearanceProp ?? contextAppearance ?? "gradient";
 
-    const button = <button type={props.type}
-                ref={ref}
-                disabled={props.disabled || props.readOnly || isLoading}
-                title={armed ? (props.confirmDoubleText ?? DEFAULT_CONFIRM_DOUBLE_TEXT) : undefined}
-                style={{width: size?.[0], height: size?.[1], ...intentVars, ...props.style}}
-                className={["rkBtn", props.className, appearance === "outline" && "rkBtn-outline", armed && "rkBtn-armed", isLoading && "loading"].filter(Boolean).join(" ")}
-                onClick={click}
-                onMouseEnter={() => setHadError(false)}>
-            {isLoading && <div className={size?.[0] <= 45 ? "smallAnimation" : "defaultAnimation"}/>}
-            {!isLoading && (armed ? (confirmText ?? props.children) : props.children)}
-        </button>;
+    const className = ["rkBtn", classNameProp, appearance === "outline" && "rkBtn-outline"].filter(Boolean).join(" ");
 
-    return <>
-        {error && <Alert intent="danger" onClick={() => setError(undefined)}><ApiErrorMessage error={error}/></Alert>}
-        {armed ? button : wrapToolTip(props, button)}
-    </>
+    return (
+        <ButtonPrimitive
+            {...rest}
+            onClick={onClick}
+            disabled={disabled}
+            active={active}
+            loading={loading}
+            name={name}
+            size={size ?? "normal"}
+            confirmDouble={confirmDouble}
+            confirmDoubleText={confirmDoubleText}
+            type={type}
+            className={className}
+            style={{...intentVars, ...style}}
+            title={title}
+            titleProps={titleProps}
+            onError={() => setHadError(true)}
+            onErrorCleared={() => setHadError(false)}
+        >
+            {children}
+        </ButtonPrimitive>
+    );
 }

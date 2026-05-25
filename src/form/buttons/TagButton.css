@@ -1,0 +1,76 @@
+@import "../../css/theme.css";
+
+.tagBtn {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: var(--rk-radius-sm);
+    border: none;
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    line-height: 1.4;
+    user-select: none;
+    font-size: var(--rk-font-size-micro);
+    position: relative;
+}
+
+/* micro = default TagButton look (10px, 1px 6px) */
+.tagBtn.rkBtn-size-micro { font-size: var(--rk-font-size-micro); padding: 1px 6px; }
+/* small scales up modestly */
+.tagBtn.rkBtn-size-small { font-size: var(--rk-font-size-small); padding: 2px 8px; }
+/* normal matches the body text size */
+.tagBtn.rkBtn-size-normal { font-size: var(--rk-font-size-normal); padding: 3px 10px; }
+
+.tagBtn:not([disabled]):hover {
+    box-shadow: inset 0 0 0 100px var(--rk-hover-overlay);
+}
+
+.tagBtn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tagBtn:not([disabled]):active {
+    transform: translateY(1px);
+}
+
+.tagBtn.tagBtnBold {
+    font-weight: 700;
+}
+
+/* active = solid fill */
+.tagBtn.active {
+    background: var(--tagBtn-fill) !important;
+    color: var(--rk-text-on-accent) !important;
+}
+
+/* armed (confirmDouble primed): outline ring in the fill color */
+.tagBtn.rkBtn-armed {
+    outline: 2px solid var(--tagBtn-fill);
+    outline-offset: 1px;
+}
+
+/* loading: small ring spinner */
+.tagBtn.loading {
+    cursor: progress;
+}
+
+.tagBtn.loading > div.defaultAnimation,
+.tagBtn.loading > div.smallAnimation {
+    margin: 0 auto;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    animation: tagChipSpin 0.7s linear infinite;
+    opacity: 0.75;
+    -webkit-mask: none;
+    mask: none;
+    background: none;
+}
+
+@keyframes tagChipSpin {
+    to { transform: rotate(360deg); }
+}

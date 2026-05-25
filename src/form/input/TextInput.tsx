@@ -1,6 +1,6 @@
 import "../css/form.css";
 import "../css/input.css";
-import "../css/button.css";
+import "../buttons/button.css";
 import "../css/loader.css";
 import {AnyInputElement, useInputData} from "./StandardFormElementProps";
 import 'react-datepicker/dist/react-datepicker.css'

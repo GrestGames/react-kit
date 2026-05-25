@@ -1,5 +1,5 @@
 import { Fragment, ReactNode, useState } from 'react';
-import { TipBox, PillButton, Tag, Button, ToolTip, Alert, RkToast, type Intent } from '@grest-ts/react';
+import { TipBox, PillButton, Tag, TagButton, Button, ToolTip, Alert, RkToast, type Intent } from '@grest-ts/react';
 
 export const intents: Intent[] = ['neutral', 'info', 'cool', 'success', 'warning', 'critical', 'danger'];
 
@@ -41,6 +41,14 @@ const columns: Column[] = [
         <td className="center"><Tag intent={i} className="micro">{i ?? 'default'}</Tag></td>
         <td className="center"><Tag intent={i} className="small">{i ?? 'default'}</Tag></td>
         <td className="center"><Tag intent={i} className="normal">{i ?? 'default'}</Tag></td>
+      </>
+    ),
+  },
+  {
+    label: 'TagButton', colSpan: 2, render: i => (
+      <>
+        <td className="center"><TagButton intent={i} onClick={() => {}}>{i ?? 'default'}</TagButton></td>
+        <td className="center"><TagButton intent={i} active onClick={() => {}}>active</TagButton></td>
       </>
     ),
   },

@@ -1,103 +1,33 @@
-import React, {useState, useRef, useEffect, useLayoutEffect, useCallback} from "react";
-import {createPortal} from "react-dom";
-import {useOutsideClick} from "../helpers/useOutsideClick";
+import {useAnchoredPopup, ANIM_DURATION as _ANIM_DURATION} from "./useAnchoredPopup";
+import React, {useRef} from "react";
 
-export const ANIM_DURATION = 150;
+/** @deprecated Use `useAnchoredPopup` instead. */
+export const ANIM_DURATION = _ANIM_DURATION;
 
-const popupStyle: React.CSSProperties = {
-    position: "fixed",
-    zIndex: 10000,
-    background: "var(--rk-bg-surface)",
-    border: "1px solid var(--rk-border)",
-    borderRadius: 8,
-    boxShadow: "var(--rk-shadow)",
-    padding: 8,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-};
-
+/** @deprecated Use `useAnchoredPopup` instead. The `btnRef` is now an `HTMLButtonElement` ref
+ *  (chips are real `<button>`s). Attach it via `ref` on the trigger element, or switch to
+ *  `useAnchoredPopup` for full floating-ui control. */
 export function usePillPopup(opts?: { deps?: any[], onOutsideClick?: () => void, excludeIds?: string[] }) {
-    const btnRef = useRef<HTMLSpanElement>(null);
+    const {refs, isOpen, open, close, toggle, getReferenceProps, Portal} = useAnchoredPopup(opts);
+
+    // Provide a ref-object shim that tracks the reference element for callers
+    // that still read btnRef.current. The real anchor is via refs.setReference.
+    const btnRef = useRef<HTMLButtonElement>(null);
     const popupRef = useRef<HTMLDivElement>(null);
-    const [isOpen, setIsOpen] = useState(false);
-    const [visible, setVisible] = useState(false);
-    const [animState, setAnimState] = useState<"entering" | "open" | "leaving">("open");
-    const [pos, setPos] = useState<{top: number, left: number}>({top: -9999, left: -9999});
-    const onOutsideClickRef = useRef(opts?.onOutsideClick);
-    onOutsideClickRef.current = opts?.onOutsideClick;
-    const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const open = useCallback(() => {
-        if (closeTimerRef.current) { clearTimeout(closeTimerRef.current); closeTimerRef.current = null; }
-        setPos({top: -9999, left: -9999});
-        setIsOpen(true);
-        setVisible(true);
-        setAnimState("entering");
-        requestAnimationFrame(() => requestAnimationFrame(() => setAnimState("open")));
-    }, []);
-
-    const close = useCallback(() => {
-        setAnimState("leaving");
-        closeTimerRef.current = setTimeout(() => {
-            setIsOpen(false);
-            setVisible(false);
-            setAnimState("open");
-            closeTimerRef.current = null;
-        }, ANIM_DURATION);
-    }, []);
-
-    const toggle = useCallback(() => {
-        if (isOpen) close(); else open();
-    }, [isOpen, open, close]);
-
-    // Cleanup timer on unmount
-    useEffect(() => () => { if (closeTimerRef.current) clearTimeout(closeTimerRef.current); }, []);
-
-    // Close on outside click
-    useOutsideClick([popupRef, btnRef], () => {
-        if (onOutsideClickRef.current) {
-            onOutsideClickRef.current();
-        } else {
-            close();
-        }
-    }, {active: visible, excludeIds: opts?.excludeIds});
-
-    // Position popup centered on button
-    useLayoutEffect(() => {
-        if (!visible || !popupRef.current || !btnRef.current) return;
-        const btn = btnRef.current.getBoundingClientRect();
-        const el = popupRef.current;
-        const pw = el.offsetWidth;
-        const ph = el.offsetHeight;
-        const margin = 8;
-        let left = btn.left + btn.width / 2 - pw / 2;
-        let top = btn.top + btn.height / 2 - ph / 2;
-        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
-        top = Math.max(46, Math.min(top, window.innerHeight - ph - margin));
-        setPos({top, left});
-    }, [visible, ...(opts?.deps || [])]);
-
-    const transform =
-        animState === "entering" ? "scale(0.3)" :
-        animState === "leaving" ? "scale(0.3)" :
-        "scale(1)";
-
-    const computedStyle: React.CSSProperties = {
-        ...popupStyle,
-        top: pos.top,
-        left: pos.left,
-        transform,
-        opacity: animState === "open" ? 1 : 0,
-        transition: `transform ${ANIM_DURATION}ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity ${ANIM_DURATION}ms ease`,
+    const combinedSetReference = (node: HTMLButtonElement | null) => {
+        (btnRef as React.RefObject<HTMLButtonElement | null>).current = node;
+        refs.setReference(node);
     };
 
-    const Portal = useCallback(({children, style}: {children: React.ReactNode, style?: React.CSSProperties}) => {
-        return createPortal(
-            React.createElement("div", {ref: popupRef, style: style ? {...computedStyle, ...style} : computedStyle}, children),
-            document.body
-        );
-    }, [computedStyle]);
-
-    return {btnRef, popupRef, isOpen: visible, open, close, toggle, Portal};
+    return {
+        btnRef: {current: btnRef.current, setReference: combinedSetReference} as any,
+        popupRef,
+        isOpen,
+        open,
+        close,
+        toggle,
+        Portal,
+        getReferenceProps,
+    };
 }

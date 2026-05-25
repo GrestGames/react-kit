@@ -22,13 +22,29 @@ describe("ActionMenu", () => {
     expect(trigger.style.color).toBe("rgb(255, 0, 0)");
   });
 
-  it("positions above and centers when asked", async () => {
+  it("anchors above and centered with @floating-ui when asked", async () => {
     render(<ActionMenu items={[{ label: "X" }]} position="above" align="center" />);
     await userEvent.click(screen.getByRole("button"));
     const menu = screen.getByRole("menu");
-    expect(menu.style.bottom).not.toBe("");
-    expect(menu.style.top).toBe("");
-    expect(menu.style.transform).toContain("translateX(-50%)");
+    // fixed strategy + a transform = positioned by floating-ui, not hand-rolled top/left.
+    expect(menu.style.position).toBe("fixed");
+    expect(menu.style.transform).not.toBe("");
+    // above + center -> "top" (no -start/-end alignment suffix).
+    expect(menu.dataset.placement).toBe("top");
+  });
+
+  it("maps below + right to a bottom-end placement", async () => {
+    render(<ActionMenu items={[{ label: "X" }]} position="below" align="right" />);
+    await userEvent.click(screen.getByRole("button"));
+    expect(screen.getByRole("menu").dataset.placement).toBe("bottom-end");
+  });
+
+  it("caps the menu height and lets it scroll so items stay reachable", async () => {
+    render(<ActionMenu items={[{ label: "X" }]} />);
+    await userEvent.click(screen.getByRole("button"));
+    const menu = screen.getByRole("menu");
+    expect(menu.style.overflowY).toBe("auto");
+    expect(menu.style.maxHeight).not.toBe("");
   });
 
   it("marks its portal so a host's outside-click handler can treat it as inside", async () => {
