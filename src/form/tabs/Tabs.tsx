@@ -15,14 +15,11 @@ export interface Tab {
     body: () => ReactNode | ReactNode[];
 }
 
-let clearUrl: any = undefined;
-
 export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
-    const [selectedTab, setSelectedTab] = useState(undefined);
-    const [ready, setReady] = useState(false);
     const {router} = useRouter();
+    const [ready, setReady] = useState(false);
 
-    const tabsMap = new Map();
+    const tabsMap = new Map<string, Tab>();
     tabs.forEach((tab) => {
         if (tab) {
             if (tab.isVisible === undefined) {
@@ -32,45 +29,17 @@ export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
         }
     })
 
-    const checkTab = () => {
-        const url = new URL(window.location.href);
-        const selectedTab = url.searchParams.get(urlKey);
-        if (selectedTab) {
-            setSelectedTab(selectedTab)
-        } else {
-            setSelectedTab(defaultTab)
-        }
-    }
+    const selectedTab = (router.get(urlKey) as string) || defaultTab;
 
-    useEffect(() => {
-        window.addEventListener("urlChanged", checkTab)
-        return () => {
-            window.removeEventListener("urlChanged", checkTab);
-        }
-    })
     useEffect(() => {
         setReady(true)
     }, [selectedTab]);
-
-    useEffect(() => {
-        checkTab();
-        if (clearUrl) {
-            clearTimeout(clearUrl);
-            clearUrl = undefined;
-        }
-        return () => {
-            clearUrl = setTimeout(() => {
-                router.remove(urlKey);
-            }, 1)
-        }
-    }, [])
 
     const selectTab = (key: string) => {
         if (selectedTab === key) {
             return;
         }
         setReady(false);
-        setSelectedTab(key);
         if (key) router.add({[urlKey]: key});
         else router.remove(urlKey);
     }
@@ -104,4 +73,3 @@ export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
     </div>
 
 }
-

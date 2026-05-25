@@ -25,7 +25,7 @@ export function Modal({band, order, onDismiss, lockScroll = true, focusTrap = tr
     const z = overlayZ(offset);
 
     const {refs, context} = useFloating({open: true, onOpenChange: (open) => { if (!open) onDismiss?.(); }});
-    const dismiss = useDismiss(context, {enabled: isTop && !!onDismiss, outsidePress: !!onDismiss, escapeKey: !!onDismiss});
+    const dismiss = useDismiss(context, {enabled: isTop && !!onDismiss});
     const role = useRole(context, {role: "dialog"});
     const {getFloatingProps} = useInteractions([dismiss, role]);
 

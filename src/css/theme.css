@@ -154,19 +154,12 @@
     --rk-shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.12);
     --rk-shadow-focus: 0 8px 32px rgba(0, 0, 0, 0.15);
 
-    /* Overlay z-index ladder — single source of truth for cross-overlay ordering.
-     * Each band is a fixed level EXCEPT --rk-z-modal, which is a base the overlay
-     * stack increments from (--rk-z-modal + index per stacked panel). Gaps are wide
-     * so a deep modal stack can never climb into the popover band.
-     *   modal < popover < menu < tooltip < overlay < shield
-     * --rk-z-overlay/-shield stay astronomical on purpose: the always-on-top trio and
-     * drag shields must clear arbitrary app chrome (apps push popups past 10000). */
-    --rk-z-modal: 2000;          /* PopupPanel modal stack base (OverlayStack assigns +index) */
-    --rk-z-popover: 9001;        /* Popover */
-    --rk-z-menu: 10000;          /* ActionMenu, anchored popups — above Popover */
-    --rk-z-tooltip: 13000;       /* ToolTip */
-    --rk-z-overlay: 2147483000;  /* always-on-top: Toast, Alert, RkConfirm/RkAlert, ContextMenu */
-    --rk-z-shield: 2147483647;   /* drag/resize capture shields (int-max) */
+    --rk-z-modal: 2000;
+    --rk-z-popover: 9001;
+    --rk-z-menu: 10000;
+    --rk-z-tooltip: 13000;
+    --rk-z-overlay: 2147483000;
+    --rk-z-shield: 2147483647;
 }
 
 .rk-dark {

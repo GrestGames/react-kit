@@ -22,10 +22,12 @@ interface Entry {
 const entries: Entry[] = [];
 let seq = 0;
 let version = 0;
+let sortedCache: Entry[] | null = null;
 const listeners = new Set<() => void>();
 
 function emit() {
     version++;
+    sortedCache = null;
     listeners.forEach((l) => l());
 }
 
@@ -45,8 +47,11 @@ function unregister(id: string) {
 }
 
 function sorted(): Entry[] {
-    return [...entries].sort((a, b) =>
-        (BAND_RANK[a.band] - BAND_RANK[b.band]) || (a.order - b.order) || (a.seq - b.seq));
+    if (!sortedCache) {
+        sortedCache = [...entries].sort((a, b) =>
+            (BAND_RANK[a.band] - BAND_RANK[b.band]) || (a.order - b.order) || (a.seq - b.seq));
+    }
+    return sortedCache;
 }
 
 function subscribe(cb: () => void) {
