@@ -1,7 +1,7 @@
-import {CSSProperties, forwardRef} from "react";
+import {forwardRef} from "react";
 import {Intent} from "../intents";
-import {ToolTipSupported, wrapToolTip} from "../mini/ToolTip";
-import "./PillButton.css";
+import {ToolTipSupported} from "../mini/ToolTip";
+import {ChipPrimitive} from "./ChipPrimitive";
 
 interface PillButtonProps extends ToolTipSupported {
     children: React.ReactNode;
@@ -10,31 +10,34 @@ interface PillButtonProps extends ToolTipSupported {
     active?: boolean;
     bold?: boolean;
     disabled?: boolean;
+    loading?: boolean;
     intent?: Intent;
     className?: string;
 }
 
 export const PillButton = forwardRef<HTMLSpanElement, PillButtonProps>(function PillButton(
-    {children, onClick, dotted, active, bold, disabled, intent = "default", className, title, titleProps}, ref
+    {children, onClick, dotted, active, bold, disabled, loading, intent = "default", className, title, titleProps},
+    ref,
 ) {
-    let cls = "pillBtn";
-    if (dotted) cls += " pillDotted";
-    if (bold) cls += " pillBold";
-    if (disabled) cls += " pillDisabled";
-    if (className) cls += " " + className;
+    let extraCls = "";
+    if (dotted) extraCls += " pillDotted";
+    if (bold) extraCls += " pillBold";
+    const cls = extraCls.trim() || undefined;
 
-    const style: CSSProperties = active ? {
-        background: `var(--rk-${intent}-fill)`,
-        color: "var(--rk-text-on-accent)",
-        borderColor: `var(--rk-${intent}-fill)`,
-    } : {
-        background: `var(--rk-${intent}-soft)`,
-        color: `var(--rk-${intent}-soft-text)`,
-        borderColor: `var(--rk-${intent}-soft-border)`,
-    };
-
-    return wrapToolTip({title, titleProps},
-        <span ref={ref} className={cls} style={style}
-              aria-disabled={disabled || undefined}
-              onClick={disabled ? undefined : onClick}>{children}</span>);
+    return (
+        <ChipPrimitive
+            ref={ref}
+            variant="pill"
+            intent={intent}
+            active={active}
+            disabled={disabled}
+            loading={loading}
+            onClick={onClick}
+            className={cls ? (className ? cls + " " + className : cls) : className}
+            title={title}
+            titleProps={titleProps}
+        >
+            {children}
+        </ChipPrimitive>
+    );
 });

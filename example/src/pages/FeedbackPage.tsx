@@ -18,6 +18,9 @@ import progressBarBasicSource from '../examples/feedback/ProgressBarBasic.tsx?ra
 import TagVariants from '../examples/feedback/TagVariants';
 import tagVariantsSource from '../examples/feedback/TagVariants.tsx?raw';
 
+import TagButtonVariants from '../examples/feedback/TagButtonVariants';
+import tagButtonVariantsSource from '../examples/feedback/TagButtonVariants.tsx?raw';
+
 export default function FeedbackPage() {
   return (
     <>
@@ -45,6 +48,10 @@ export default function FeedbackPage() {
 
       <ShowCase title="Tag — intents × sizes (micro, small, normal per row)" source={tagVariantsSource}>
         <TagVariants />
+      </ShowCase>
+
+      <ShowCase title="TagButton — interactive flat chip (all intents, sizes, states, loading)" source={tagButtonVariantsSource}>
+        <TagButtonVariants />
       </ShowCase>
     </>
   );

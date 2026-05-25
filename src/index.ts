@@ -17,6 +17,7 @@ export * from "./form/FormObjectProxyHandler";
 export * from "./form/Form";
 export * from "./form/ActionMenu";
 export * from "./form/PillButton";
+export * from "./form/TagButton";
 
 // Form inputs
 export * from "./form/input/StandardFormElementProps";
