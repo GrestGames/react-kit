@@ -59,7 +59,7 @@ export function FormSubmitButton(props: Omit<ButtonProps, "onClick"> & {alwaysEn
     return AnyButton({
         ...props,
         type: form ? "button" : "submit",
-        intent: "danger",
+        intent: props.intent ?? "danger",
         children: props.children || "Save",
         className: "formSubmit " + props.className,
         disabled: props.disabled || (form && !props.alwaysEnabled ? !form.isChanged() : false),
