@@ -40,7 +40,7 @@ export function Modal({band, order, onDismiss, lockScroll = true, focusTrap = tr
     const {getFloatingProps} = useInteractions([dismiss, role]);
 
     return <FloatingPortal>
-        {isTop && <FloatingOverlay lockScroll={lockScroll} style={{zIndex: z, background: "var(--rk-scrim)"}}/>}
+        <FloatingOverlay lockScroll={lockScroll && isTop} style={{zIndex: z, background: "var(--rk-scrim)"}}/>
         <FloatingFocusManager context={context} modal disabled={!isTop || !focusTrap}>
             <div ref={refs.setFloating} {...getFloatingProps()} style={{position: "relative", zIndex: z}}>
                 {children}

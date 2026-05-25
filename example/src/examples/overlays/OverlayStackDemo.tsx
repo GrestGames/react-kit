@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { PopupPanel, Button, LoadingPopup, RkConfirm, RkAlert } from '@grest-ts/react';
 import { Router, RouterProvider, RouterOutlet, useRouter } from '@grest-ts/react/router';
 
@@ -7,9 +7,10 @@ function DemoPanel({ id }: { id: 'a' | 'b' }) {
   const [loading, setLoading] = useState(false);
   const other = id === 'a' ? 'b' : 'a';
   const label = id.toUpperCase();
+  const isA = id === 'a';
   return (
-    <PopupPanel title={`Panel ${label}`} width="440px" onClose={() => router.remove(id)}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 8 }}>
+    <PopupPanel title={`Panel ${label}`} width={isA ? '760px' : '420px'} onClose={() => router.remove(id)}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 8, minHeight: isA ? 480 : undefined }}>
         <p>Panel {label}. While it's on top, focus is trapped here — press Tab to check.</p>
         <input data-testid={`input-${id}`} placeholder={`Type in panel ${label}…`} />
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -31,7 +32,6 @@ const routes = {
 
 export default function OverlayStackDemo() {
   const router = useMemo(() => new Router(routes, ''), []);
-  useEffect(() => () => { router.reset(); }, [router]);
 
   return (
     <RouterProvider router={router}>
