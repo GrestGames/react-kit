@@ -181,7 +181,7 @@ hr {
 .tag {
     display: inline-block;
     font-size: var(--tag-font-size, var(--rk-font-size-micro));
-    padding: 1px 6px;
+    padding: 3px 6px 1px 6px;
     border-radius: var(--rk-radius-sm);
     font-weight: 500;
     background: var(--tag-bg);

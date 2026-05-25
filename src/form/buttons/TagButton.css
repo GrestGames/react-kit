@@ -2,7 +2,6 @@
 
 .tagBtn {
     display: inline-block;
-    padding: 1px 6px;
     border-radius: var(--rk-radius-sm);
     border: none;
     font: inherit;
@@ -16,11 +15,11 @@
 }
 
 /* micro = default TagButton look (10px, 1px 6px) */
-.tagBtn.rkBtn-size-micro { font-size: var(--rk-font-size-micro); padding: 1px 6px; }
+.tagBtn.rkBtn-size-micro { font-size: var(--rk-font-size-micro); padding: 3px 6px 1px; }
 /* small scales up modestly */
-.tagBtn.rkBtn-size-small { font-size: var(--rk-font-size-small); padding: 2px 8px; }
+.tagBtn.rkBtn-size-small { font-size: var(--rk-font-size-small); padding: 4px 8px 2px; }
 /* normal matches the body text size */
-.tagBtn.rkBtn-size-normal { font-size: var(--rk-font-size-normal); padding: 3px 10px; }
+.tagBtn.rkBtn-size-normal { font-size: var(--rk-font-size-normal); padding: 5px 10px 3px; }
 
 .tagBtn:not([disabled]):hover {
     box-shadow: inset 0 0 0 100px var(--rk-hover-overlay);
