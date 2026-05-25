@@ -1,0 +1,29 @@
+.rk-slidedeck {
+    overflow: hidden;
+}
+
+.rk-slidedeck-slide {
+    animation-duration: 0.28s;
+    animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+    /* backwards (not both): apply the start frame before the run, but DON'T retain
+       the end transform — a lingering transform creates a containing block that
+       would trap position:fixed popups inside the card. */
+    animation-fill-mode: backwards;
+}
+
+.rk-slidedeck-fwd  { animation-name: rk-slide-in-right; }
+.rk-slidedeck-back { animation-name: rk-slide-in-left; }
+
+@keyframes rk-slide-in-right {
+    from { transform: translateX(32px);  opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes rk-slide-in-left {
+    from { transform: translateX(-32px); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rk-slidedeck-slide { animation: none; }
+}

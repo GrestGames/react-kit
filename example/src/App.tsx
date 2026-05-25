@@ -9,6 +9,7 @@ import FeedbackPage from './pages/FeedbackPage';
 import DataDisplayPage from './pages/DataDisplayPage';
 import IntentPage from './pages/IntentPage';
 import UtilsPage from './pages/UtilsPage';
+import WizardPage from './pages/WizardPage';
 
 const sections = [
   { key: 'inputs', label: 'Inputs', component: InputsPage },
@@ -20,6 +21,7 @@ const sections = [
   { key: 'display', label: 'Data Display', component: DataDisplayPage },
   { key: 'intent', label: 'Intent', component: IntentPage },
   { key: 'utils', label: 'Utilities', component: UtilsPage },
+  { key: 'wizard', label: 'Wizard / Stepper', component: WizardPage },
 ] as const;
 
 export default function App() {
