@@ -1,7 +1,7 @@
-import {DarkBackground} from "./DarkBackground";
 import {Panel} from "./Panel";
+import {Modal} from "./Modal";
+import {useOverlayOrder} from "./OverlayStack";
 import {createContext, CSSProperties, ReactNode, useCallback, useRef, useState} from "react";
-import {createPortal} from "react-dom";
 
 type CloseGuardFn = () => boolean;
 
@@ -21,21 +21,20 @@ export interface Props2 {
     style?: CSSProperties;
 }
 
-export function PopupPanel<T>({title, subTitle, width, onClickTitle, onClose, style, children}: Props2) {
+export function PopupPanel({title, subTitle, width, onClickTitle, onClose, style, children}: Props2) {
     const guardsRef = useRef<Set<CloseGuardFn>>(new Set());
     const [showConfirm, setShowConfirm] = useState(false);
     const [clickPos, setClickPos] = useState<{x: number, y: number}>({x: 0, y: 0});
 
-    const register = useCallback((fn: CloseGuardFn) => {
+    const registerGuard = useCallback((fn: CloseGuardFn) => {
         guardsRef.current.add(fn);
         return () => { guardsRef.current.delete(fn); };
     }, []);
 
-    const tryClose = useCallback((e?: React.MouseEvent) => {
-        const pos = e ? {x: e.clientX, y: e.clientY} : {x: window.innerWidth / 2, y: window.innerHeight / 2};
+    const tryClose = useCallback(() => {
         for (const guard of guardsRef.current) {
             if (guard()) {
-                setClickPos(pos);
+                setClickPos({x: window.innerWidth / 2, y: window.innerHeight / 2});
                 setShowConfirm(true);
                 return;
             }
@@ -43,27 +42,23 @@ export function PopupPanel<T>({title, subTitle, width, onClickTitle, onClose, st
         onClose();
     }, [onClose]);
 
-    // Portal to <body>: the panel is a fixed-position, viewport-level overlay, so
-    // it must escape any ancestor that establishes a containing block for fixed
-    // positioning (a transform/filter/contain — e.g. an animated slide), which
-    // would otherwise trap it inside that box. Dark mode (rk-dark on <html>) and
-    // theme tokens (:root) still apply, and React context is preserved across portals.
-    return createPortal(<>
-        <DarkBackground onClick={tryClose}/>
-        <CloseGuardContext.Provider value={{register}}>
+    const order = useOverlayOrder();
+
+    return <Modal band="panel" order={order} onDismiss={tryClose}>
+        <CloseGuardContext.Provider value={{register: registerGuard}}>
             <Panel title={title} subTitle={subTitle} style={style} width={width} onClickTitle={onClickTitle} onClose={tryClose}>
                 {children}
             </Panel>
         </CloseGuardContext.Provider>
 
         {showConfirm && <>
-            <DarkBackground zIndex={400} onClick={() => setShowConfirm(false)}/>
-            <div className="confirmDialog" style={confirmPosition(clickPos)}>
+            <div className="darkBackground" style={{zIndex: 200}} onClick={() => setShowConfirm(false)}/>
+            <div className="confirmDialog" style={{...confirmPosition(clickPos), zIndex: 201}}>
                 <button className="confirmDialogBtn confirmDialogCancel" onClick={() => setShowConfirm(false)}>Keep editing</button>
                 <button className="confirmDialogBtn confirmDialogClose" onClick={onClose}>Close and lose changes</button>
             </div>
         </>}
-    </>, document.body)
+    </Modal>;
 }
 
 function confirmPosition(pos: {x: number, y: number}): CSSProperties {

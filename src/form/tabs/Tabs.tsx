@@ -1,4 +1,5 @@
 import {ReactNode, useEffect, useState} from "react";
+import {useRouter} from "../../router";
 import "./Tabs.css"
 
 export interface Props {
@@ -14,13 +15,11 @@ export interface Tab {
     body: () => ReactNode | ReactNode[];
 }
 
-let clearUrl: any = undefined;
-
 export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
-    const [selectedTab, setSelectedTab] = useState(undefined);
+    const {router} = useRouter();
     const [ready, setReady] = useState(false);
 
-    const tabsMap = new Map();
+    const tabsMap = new Map<string, Tab>();
     tabs.forEach((tab) => {
         if (tab) {
             if (tab.isVisible === undefined) {
@@ -30,54 +29,19 @@ export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
         }
     })
 
-    const checkTab = () => {
-        const url = new URL(window.location.href);
-        const selectedTab = url.searchParams.get(urlKey);
-        if (selectedTab) {
-            setSelectedTab(selectedTab)
-        } else {
-            setSelectedTab(defaultTab)
-        }
-    }
+    const selectedTab = (router.get(urlKey) as string) || defaultTab;
 
-    useEffect(() => {
-        window.addEventListener("urlChanged", checkTab)
-        return () => {
-            window.removeEventListener("urlChanged", checkTab);
-        }
-    })
     useEffect(() => {
         setReady(true)
     }, [selectedTab]);
-
-    useEffect(() => {
-        checkTab();
-        if (clearUrl) {
-            clearTimeout(clearUrl);
-            clearUrl = undefined;
-        }
-        return () => {
-            clearUrl = setTimeout(() => {
-                const url = new URL(window.location.href);
-                url.searchParams.delete(urlKey);
-                window.history.replaceState({path: url.toString()}, '', url.toString());
-            }, 1)
-        }
-    }, [])
 
     const selectTab = (key: string) => {
         if (selectedTab === key) {
             return;
         }
         setReady(false);
-        setSelectedTab(key);
-        const url = new URL(window.location.href);
-        if (key) {
-            url.searchParams.set(urlKey, key)
-        } else {
-            url.searchParams.delete(urlKey);
-        }
-        window.history.pushState({path: url.toString()}, '', url.toString());
+        if (key) router.add({[urlKey]: key});
+        else router.remove(urlKey);
     }
 
     function getTabBody() {
@@ -109,4 +73,3 @@ export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
     </div>
 
 }
-

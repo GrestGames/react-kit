@@ -31,12 +31,12 @@
 .tv2ActionMenuBackdrop {
     position: fixed;
     inset: 0;
-    z-index: 10000;
+    z-index: var(--rk-z-menu);
 }
 
 .tv2ActionMenuDropdown {
     position: fixed;
-    z-index: 10001;
+    z-index: calc(var(--rk-z-menu) + 1);
     min-width: 200px;
     display: flex;
     flex-direction: column;

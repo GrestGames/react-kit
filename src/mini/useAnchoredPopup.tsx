@@ -100,7 +100,7 @@ export function useAnchoredPopup(opts?: AnchoredPopupConfig): AnchoredPopupResul
                 {/* Outer div carries floating-ui's positioning (transform=translate); inner div
                     carries the panel look + the enter/exit transform=scale — separated so the two
                     transforms don't clash (a single element can't both translate and scale here). */}
-                <div ref={l.setFloating} style={{...l.floatingStyles, zIndex: 10000}} {...l.getFloatingProps()}>
+                <div ref={l.setFloating} style={{...l.floatingStyles, zIndex: "var(--rk-z-menu)"}} {...l.getFloatingProps()}>
                     <div className="rkAnchoredPopup" style={{...POPUP_PANEL_STYLE, ...l.transitionStyles, ...style}}>
                         {children}
                     </div>

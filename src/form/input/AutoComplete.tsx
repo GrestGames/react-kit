@@ -2,9 +2,8 @@ import {DependencyList, useEffect, useRef, useState} from "react";
 import "./AutoComplete.css";
 import {AsyncState, useAsyncState} from "../../helpers/useAsyncState";
 import {AnyInputElement, useInputData} from "./StandardFormElementProps";
-import {AddToBody} from "../../helpers/AddToBody";
-import {DropDownPos, useDropDownPositioning} from "../../mini/useDropDownPositioning";
 import {isPromise} from "../../util/isPromise";
+import {autoUpdate, flip, FloatingPortal, offset, size, useFloating, useMergeRefs} from "@floating-ui/react";
 
 import {ValueType} from "./Select";
 
@@ -23,10 +22,33 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
     const [matches, setMatches] = useState<ValueType<K>[]>([]);
 
     const [isFocused, setIsFocused] = useState(false);
+    const [isMouseOver, setIsMouseOver] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(0);
 
     const inputRef = useRef<HTMLInputElement>(null)
-    const dropDownPos = useDropDownPositioning(inputRef);
     const data = useInputData(props);
+
+    const isOpen = isFocused || isMouseOver;
+
+    const {refs, floatingStyles} = useFloating<HTMLInputElement>({
+        open: isOpen,
+        placement: "bottom-start",
+        whileElementsMounted: autoUpdate,
+        middleware: [
+            offset(2),
+            flip({padding: 8}),
+            size({
+                padding: 8,
+                apply({rects, elements, availableHeight}) {
+                    Object.assign(elements.floating.style, {
+                        width: `${rects.reference.width}px`,
+                        maxHeight: `${Math.max(80, Math.min(availableHeight, 320))}px`,
+                    });
+                },
+            }),
+        ],
+    });
+    const setInputRef = useMergeRefs([inputRef, refs.setReference]);
 
     useEffect(() => {
         setOptions(async () => {
@@ -58,158 +80,70 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
     }, [options, searchString])
 
     useEffect(() => {
-        if (isFocused && inputRef.current) {
-            const el = inputRef.current;
-            const observer = new IntersectionObserver((entries) => {
-                if (!entries[0].isIntersecting) {
-                    el.blur();
-                }
-            }, {root: null, rootMargin: '0px', threshold: 1.0});
-            observer.observe(el);
-            return () => observer.unobserve(el);
-        }
-        return undefined;
-    }, [isFocused, inputRef.current]);
+        setActiveIndex(0);
+    }, [matches, isOpen])
+
+    const select = (id: K, name: string) => {
+        setSearchString(name)
+        setIsFocused(false);
+        setIsMouseOver(false);
+        inputRef.current?.blur();
+        data.onChange?.(id)
+    }
+
+    useEffect(() => {
+        if (!isOpen) return undefined;
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "ArrowDown") { e.preventDefault(); setActiveIndex((i) => Math.min(matches.length - 1, i + 1)); }
+            else if (e.key === "ArrowUp") { e.preventDefault(); setActiveIndex((i) => Math.max(0, i - 1)); }
+            else if (e.key === "Enter") { e.preventDefault(); const m = matches[activeIndex]; if (m) select(m.id, m.name); }
+            else if (e.key === "Escape") { inputRef.current?.blur(); }
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [isOpen, matches, activeIndex])
 
     const inlineClass = props.inlineEdit ? " inlineEditSelect" + (!data.value ? " inlineEditEmpty" : "") : "";
 
-    return <>
-        <div className="formItem">
-            {data.validationError ? <div className="validationErrorMsg">{data.validationError.msg}</div> : ""}
-            {(setOptionsState.state === AsyncState.LOADING || setOptionsState.state === AsyncState.INIT) &&
-                <input type="search" value="Loading..." disabled={true} style={props.style} className={"rkInput " + props.className + inlineClass}/>}
-            {setOptionsState.state === AsyncState.ERROR && <input type="search" value="Failed to load options!" disabled={true} style={props.style} className={"rkInput error " + props.className + inlineClass}/>}
-            {setOptionsState.state === AsyncState.OK && <>
-                <input type="search" ref={inputRef}
-                       autoComplete="off"
-                       style={props.style}
-                       name={data.name}
-                       className={"rkInput " + props.className + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + inlineClass}
-                       readOnly={props.readOnly || data.readOnly}
-                       disabled={props.disabled}
-                       value={searchString}
-                       onFocus={() => {
-                           if (!props.readOnly && !data.readOnly) {
-                               setIsFocused(true)
-                           }
-                       }}
-                       onBlur={() => {
-                           if (!props.readOnly && !data.readOnly) {
-                               setIsFocused(false)
-                           }
-                       }}
-                       onChange={(e) => {
-                           if (!props.readOnly && !data.readOnly) {
-                               setSearchString(e.target.value)
-                               data.onChange?.(undefined)
-                           }
-                       }}/>
-                {dropDownPos && <AutoCompleteOptionsDropDown
-                    isFocused={isFocused}
-                    options={matches}
-                    dropDownPos={dropDownPos}
-                    onSelect={(id, name) => {
-                        setSearchString(name)
-                        setIsFocused(false);
-                        inputRef.current?.blur();
-                        data.onChange?.(id)
-                    }}/>}
-            </>}
-        </div>
-    </>
-}
-
-function AutoCompleteOptionsDropDown<K>({options, dropDownPos, isFocused, onSelect}: {
-    options: ValueType<K>[],
-    dropDownPos: DropDownPos,
-    isFocused: boolean,
-    onSelect: (id: K, name: string) => void
-}) {
-
-    const [isMouseOverOptions, setIsMouseOverOptions] = useState(false);
-    const [mousePos, setMousePos] = useState(0)
-    const [isOpen, setIsOpen] = useState(false);
-    const [top, setTop] = useState(0);
-    const ref = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        setIsOpen(isFocused || isMouseOverOptions)
-    }, [isFocused, isMouseOverOptions])
-
-    useEffect(() => {
-        setMousePos(0);
-        const keyUp = (e: KeyboardEvent) => {
-            if (isOpen) {
-                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                    setMousePos((v) => {
-                        let pos = v;
-                        if (e.key === "ArrowUp") {
-                            pos -= 1
-                        } else if (e.key === "ArrowDown") {
-                            pos += 1;
-                        }
-                        return Math.min(options.length - 1, Math.max(0, pos));
-                    });
-                } else if (e.key === "Enter") {
-                    setMousePos((mousePos) => {
-                        const item = options[mousePos];
-                        if (item) {
-                            selectItem(item.id, item.name);
-                        }
-                        e.preventDefault();
-                        return 0;
-                    })
-                }
-            }
-        }
-        const keyDown = (e: KeyboardEvent) => {
-            if (isOpen && e.key === "Enter") {
-                e.preventDefault();
-            }
-        }
-        window.addEventListener("keyup", keyUp)
-        window.addEventListener("keydown", keyDown)
-        return () => {
-            window.removeEventListener("keyup", keyUp);
-            window.removeEventListener("keydown", keyDown);
-        }
-    }, [options, isOpen])
-
-    useEffect(() => {
-        if (isFocused) {
-            const t = setTimeout(() => {
-                setTop(dropDownPos.getTop(ref.current.offsetHeight))
-            }, 0)
-            return () => clearTimeout(t);
-        } else {
-            return undefined;
-        }
-    }, [isFocused, ref.current, dropDownPos, options])
-
-    const selectItem = (id: K, name: string) => {
-        onSelect(id, name)
-        setIsOpen(false);
-        setIsMouseOverOptions(false);
-    }
-
-    return isOpen && <AddToBody id="autoCompleteDropDown">
-        <div className="autocompleteSearch" ref={ref}
-             style={{visibility: top === undefined ? "hidden" : "visible", top: top, left: dropDownPos.left}}
-             onMouseEnter={() => setIsMouseOverOptions(true)}
-             onMouseLeave={() => setIsMouseOverOptions(false)}>
-            <div style={{maxHeight: dropDownPos.maxHeight - 2}}>
-                {options.length === 0 && <div>No matches</div>}
-                {options.map((e, index) => {
-                    return <div key={e.id === undefined ? "____" : String(e.id)}
-                                className={index === mousePos ? "selected" : ""}
-                                onMouseEnter={() => setMousePos(index)}
-                                onClick={() => selectItem(e.id, e.name)}>
-                        {e.name}
-                    </div>
-                })}
-            </div>
-        </div>
-    </AddToBody>
+    return <div className="formItem">
+        {data.validationError ? <div className="validationErrorMsg">{data.validationError.msg}</div> : ""}
+        {(setOptionsState.state === AsyncState.LOADING || setOptionsState.state === AsyncState.INIT) &&
+            <input type="search" value="Loading..." disabled={true} style={props.style} className={"rkInput " + props.className + inlineClass}/>}
+        {setOptionsState.state === AsyncState.ERROR && <input type="search" value="Failed to load options!" disabled={true} style={props.style} className={"rkInput error " + props.className + inlineClass}/>}
+        {setOptionsState.state === AsyncState.OK && <>
+            <input type="search" ref={setInputRef}
+                   autoComplete="off"
+                   style={props.style}
+                   name={data.name}
+                   className={"rkInput " + props.className + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + inlineClass}
+                   readOnly={props.readOnly || data.readOnly}
+                   disabled={props.disabled}
+                   value={searchString}
+                   onFocus={() => { if (!props.readOnly && !data.readOnly) setIsFocused(true) }}
+                   onBlur={() => { if (!props.readOnly && !data.readOnly) setIsFocused(false) }}
+                   onChange={(e) => {
+                       if (!props.readOnly && !data.readOnly) {
+                           setSearchString(e.target.value)
+                           data.onChange?.(undefined)
+                       }
+                   }}/>
+            {isOpen && <FloatingPortal>
+                <div ref={refs.setFloating} className="autocompleteSearch"
+                     style={{...floatingStyles, zIndex: "var(--rk-z-menu)"}}
+                     onMouseEnter={() => setIsMouseOver(true)}
+                     onMouseLeave={() => setIsMouseOver(false)}>
+                    {matches.length === 0 && <div className="autocompleteEmpty">No matches</div>}
+                    {matches.map((e, index) =>
+                        <div key={e.id === undefined ? "____" : String(e.id)}
+                             className={index === activeIndex ? "selected" : ""}
+                             onMouseEnter={() => setActiveIndex(index)}
+                             onClick={() => select(e.id, e.name)}>
+                            {e.name}
+                        </div>)}
+                </div>
+            </FloatingPortal>}
+        </>}
+    </div>
 }
 
 function searchOptions<K>(values: ValueType<K>[], searchString: string) {
