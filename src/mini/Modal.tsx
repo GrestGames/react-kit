@@ -22,7 +22,7 @@ interface ModalProps {
 export function Modal({band, order, onDismiss, lockScroll = true, focusTrap = true, children}: ModalProps) {
     const id = useId();
     const {offset, isTop} = useOverlaySlot(id, band, order ?? 0);
-    const z = overlayZ(offset);
+    const z = overlayZ(band, offset);
 
     const {refs, context} = useFloating({open: true, onOpenChange: (open) => { if (!open) onDismiss?.(); }});
     const dismiss = useDismiss(context, {enabled: isTop && !!onDismiss});

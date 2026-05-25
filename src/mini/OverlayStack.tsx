@@ -2,15 +2,13 @@ import {createContext, useContext, useLayoutEffect, useSyncExternalStore} from "
 
 const STEP = 10;
 
-export function overlayZ(offset: number): string {
-    if (offset === 0) return "var(--rk-z-modal)";
-    return offset > 0
-        ? `calc(var(--rk-z-modal) + ${offset})`
-        : `calc(var(--rk-z-modal) - ${-offset})`;
-}
-
 export type OverlayBand = "panel" | "top";
 const BAND_RANK: Record<OverlayBand, number> = {panel: 0, top: 1};
+
+export function overlayZ(band: OverlayBand, offset: number): string {
+    const base = band === "top" ? "var(--rk-z-overlay)" : "var(--rk-z-modal)";
+    return offset === 0 ? base : `calc(${base} + ${offset})`;
+}
 
 interface Entry {
     id: string;
