@@ -1,17 +1,13 @@
 import "../css/button.css";
-import {CSSProperties, PropsWithChildren, ReactNode, useContext, useEffect, useRef, useState} from "react";
-import {isPromise} from "../../util/isPromise";
-import {Alert} from "../../mini/Alert";
-import {ToolTipSupported, wrapToolTip} from "../../mini/ToolTip";
-import {ApiErrorMessage} from "../../ErrorTracker";
+import {CSSProperties, PropsWithChildren, ReactNode, useContext, useState} from "react";
+import {ToolTipSupported} from "../../mini/ToolTip";
 import {AnyFormElement} from "./StandardFormElementProps";
 import {FormObject} from "../useAsyncForm";
 import {useForm} from "../Form";
-import {ERROR} from "@grest-ts/schema";
 import {useIsMobile} from "../../responsive/useResponsive";
 import {Intent} from "../../intents";
 import {ButtonAppearance, ButtonAppearanceContext} from "./buttonAppearance";
-import {CONFIRM_DOUBLE_WINDOW_MS, DEFAULT_CONFIRM_DOUBLE_TEXT, pickConfirmText} from "../confirmDouble";
+import {ButtonPrimitive, ButtonPrimitiveProps} from "./ButtonPrimitive";
 
 export interface ButtonProps extends PropsWithChildren<AnyFormElement>, ToolTipSupported {
     onClick: () => Promise<any> | void,
@@ -127,50 +123,7 @@ export function AddNewButton({onClick, children}: {onClick: () => void, children
 function AnyButton(props: PropsWithChildren<ButtonProps & {
     type: "button" | "submit" | "reset",
 }>) {
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<ERROR<string, any>>();
     const [hadError, setHadError] = useState(false);
-    const [armed, setArmed] = useState(false);
-    const [confirmText, setConfirmText] = useState<string>();
-    const [size, setSize] = useState<[number, number]>(undefined)
-    const ref = useRef<HTMLButtonElement>(null);
-    const armTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    useEffect(() => {
-        setSize([ref.current.offsetWidth, ref.current.offsetHeight])
-        if (props.confirmDouble) setConfirmText(pickConfirmText(ref.current, props.confirmDoubleText ?? DEFAULT_CONFIRM_DOUBLE_TEXT))
-    }, [ref.current]);
-
-    useEffect(() => () => { if (armTimer.current) clearTimeout(armTimer.current); }, []);
-
-    const run = () => {
-        const res = props.onClick();
-        if (isPromise(res)) {
-            setIsLoading(true);
-            res.then(() => {
-                setIsLoading(false);
-            }).catch((err) => {
-                setIsLoading(false);
-                setError(ERROR.fromUnknown(err))
-                setHadError(true)
-            })
-        }
-    }
-
-    const click = () => {
-        if (isLoading) {
-            return;
-        }
-        if (props.confirmDouble && !armed) {
-            setArmed(true);
-            if (armTimer.current) clearTimeout(armTimer.current);
-            armTimer.current = setTimeout(() => setArmed(false), CONFIRM_DOUBLE_WINDOW_MS);
-            return;
-        }
-        if (armTimer.current) clearTimeout(armTimer.current);
-        setArmed(false);
-        run();
-    }
 
     const effectiveIntent = hadError ? "warning" : props.intent;
     const intentVars = effectiveIntent ? {
@@ -182,20 +135,21 @@ function AnyButton(props: PropsWithChildren<ButtonProps & {
     const contextAppearance = useContext(ButtonAppearanceContext);
     const appearance = props.appearance ?? contextAppearance ?? "gradient";
 
-    const button = <button type={props.type}
-                ref={ref}
-                disabled={props.disabled || props.readOnly || isLoading}
-                title={armed ? (props.confirmDoubleText ?? DEFAULT_CONFIRM_DOUBLE_TEXT) : undefined}
-                style={{width: size?.[0], height: size?.[1], ...intentVars, ...props.style}}
-                className={["rkBtn", props.className, appearance === "outline" && "rkBtn-outline", armed && "rkBtn-armed", isLoading && "loading"].filter(Boolean).join(" ")}
-                onClick={click}
-                onMouseEnter={() => setHadError(false)}>
-            {isLoading && <div className={size?.[0] <= 45 ? "smallAnimation" : "defaultAnimation"}/>}
-            {!isLoading && (armed ? (confirmText ?? props.children) : props.children)}
-        </button>;
+    const className = ["rkBtn", props.className, appearance === "outline" && "rkBtn-outline"].filter(Boolean).join(" ");
 
-    return <>
-        {error && <Alert intent="danger" onClick={() => setError(undefined)}><ApiErrorMessage error={error}/></Alert>}
-        {armed ? button : wrapToolTip(props, button)}
-    </>
+    const primitiveProps: Omit<ButtonPrimitiveProps, "children"> = {
+        onClick: props.onClick,
+        disabled: props.disabled || props.readOnly,
+        confirmDouble: props.confirmDouble,
+        confirmDoubleText: props.confirmDoubleText,
+        type: props.type,
+        className,
+        style: {...intentVars, ...props.style},
+        title: props.title,
+        titleProps: props.titleProps,
+        onError: () => setHadError(true),
+        onErrorCleared: () => setHadError(false),
+    };
+
+    return <ButtonPrimitive {...primitiveProps}>{props.children}</ButtonPrimitive>;
 }
