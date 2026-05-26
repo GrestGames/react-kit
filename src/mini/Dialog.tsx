@@ -16,6 +16,7 @@ interface DialogRequest {
     confirmLabel?: string;
     cancelLabel?: string;
     buttonTitle?: string;
+    width?: number | string;
     resolve: (v: boolean) => void;
 }
 
@@ -56,6 +57,7 @@ export interface RkAlertOptions {
     intent?: Intent;
     iconLetter?: string;
     buttonTitle?: string;
+    width?: number | string;
 }
 
 type RkConfirmFn = (opts: RkConfirmOptions) => Promise<boolean>;
@@ -119,7 +121,7 @@ export function RkDialogLayer() {
     const letter = current.iconLetter ?? (intent ? iconForIntent(intent) : undefined);
 
     return <Modal band="top" onDismiss={() => resolveCurrent(false)}>
-        <Panel className={intent ? "panelAlert" : undefined} width="420px" style={{marginTop: "180px", ...alertVars}}>
+        <Panel className={intent ? "panelAlert" : undefined} width={current.width ?? "420px"} style={{marginTop: "180px", ...alertVars}}>
             <div className="alertBody">
                 {current.title && (intent
                     ? <div className="alertHead"><span className="alertIcon">{letter}</span><span className="alertHeadTitle">{current.title}</span></div>
