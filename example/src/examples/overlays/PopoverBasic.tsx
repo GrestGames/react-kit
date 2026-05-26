@@ -1,5 +1,5 @@
 import { useRef, useState, type ReactNode } from 'react';
-import { Popover, Button, type PopoverPlacement } from '@grest-ts/react';
+import { Popover, Button, RkConfirm, type PopoverPlacement } from '@grest-ts/react';
 
 function PopoverButton({ label, placement, maxHeight, children }: {
   label: string;
@@ -18,7 +18,6 @@ function PopoverButton({ label, placement, maxHeight, children }: {
       {open && (
         <Popover
           anchor={anchorRef}
-          width={240}
           placement={placement}
           maxHeight={maxHeight}
           onClose={() => setOpen(false)}
@@ -73,6 +72,18 @@ export default function PopoverBasic() {
           {Array.from({ length: 12 }, (_, i) => (
             <div key={i} style={{ color: 'var(--rk-text-secondary)' }}>Item {i + 1}</div>
           ))}
+        </PopoverButton>
+
+        <PopoverButton label="Confirm inside">
+          <div style={{ fontWeight: 700 }}>Dialog over a popover</div>
+          <div style={{ color: 'var(--rk-text-secondary)' }}>
+            An <code>RkConfirm</code>/<code>RkAlert</code> opens above the popover in the overlay
+            stack, so the popover stops listening for outside-presses while it's up — clicking the
+            dialog (or dismissing it) leaves this popover open.
+          </div>
+          <Button onClick={() => void RkConfirm.warning({ title: 'Confirm', message: 'This dialog opens over the popover. The popover should still be here afterwards.' })}>
+            Run confirm
+          </Button>
         </PopoverButton>
       </div>
     </>

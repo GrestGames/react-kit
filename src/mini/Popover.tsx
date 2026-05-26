@@ -1,5 +1,17 @@
-import {useEffect, useRef, type CSSProperties, type ReactNode, type RefObject} from "react";
-import {createPortal} from "react-dom";
+import {useEffect, useId, useLayoutEffect, type CSSProperties, type ReactNode, type RefObject} from "react";
+import {
+    autoUpdate,
+    flip,
+    FloatingPortal,
+    offset,
+    type Placement,
+    shift,
+    size,
+    useDismiss,
+    useFloating,
+    useInteractions,
+} from "@floating-ui/react";
+import {useOverlaySlot} from "./OverlayStack";
 import "./Popover.css";
 
 export type PopoverAnchor = RefObject<HTMLElement | null> | DOMRect | null;
@@ -10,14 +22,11 @@ export interface PopoverProps {
     /** Element (ref) or rect the popover positions against. */
     anchor: PopoverAnchor;
     children: ReactNode;
-    /** Effective width in px, used for viewport clamping. The popover does not
-     *  enforce it visually — set `style.width`/`minWidth`/`maxWidth` for that. */
-    width: number;
     /** Outside-click / Escape / (optional) window-blur dismissal. Omit to make
      *  the popover non-dismissable (caller controls mount). */
     onClose?: () => void;
-    /** "vertical" (default): below, or above when it has more room. "horizontal":
-     *  right or left, falling back to vertical. */
+    /** "vertical" (default): below, flipping above when cramped. "horizontal":
+     *  right or left, falling back to vertical. "above"/"below": forced side. */
     placement?: PopoverPlacement;
     /** Cap on rendered height; always clamped further by the viewport. */
     maxHeight?: number;
@@ -34,113 +43,91 @@ const VERTICAL_GAP = 4;
 const HORIZONTAL_GAP = 8;
 const HORIZONTAL_LIFT_PX = 30;
 
+const PLACEMENTS: Record<PopoverPlacement, Placement> = {
+    above: "top-start",
+    below: "bottom-start",
+    horizontal: "right-start",
+    vertical: "bottom-start",
+};
+
 export function Popover({
-    anchor, children, width, onClose,
+    anchor, children, onClose,
     placement = "vertical", maxHeight, viewportMargin = DEFAULT_VIEWPORT_MARGIN,
     closeOnWindowBlur = false, style, className,
 }: PopoverProps) {
-    const ref = useRef<HTMLDivElement | null>(null);
+    const id = useId();
+    const {isTop} = useOverlaySlot(id, "panel", 0);
+
+    const refEl = anchor && "current" in anchor ? anchor.current : null;
+    const rect = anchor && !("current" in anchor) ? anchor : null;
+
+    // Forced "above"/"below" stay on the caller-chosen side; "vertical"/"horizontal"
+    // flip to the opposite side / fall back to the other axis when room is tight.
+    const forced = placement === "above" || placement === "below";
+
+    const {refs, floatingStyles, context} = useFloating({
+        open: true,
+        onOpenChange: (open) => { if (!open) onClose?.(); },
+        strategy: "fixed",
+        placement: PLACEMENTS[placement],
+        middleware: [
+            offset(({placement: p}) => {
+                const horizontal = p.startsWith("left") || p.startsWith("right");
+                return {mainAxis: horizontal ? HORIZONTAL_GAP : VERTICAL_GAP, crossAxis: horizontal ? -HORIZONTAL_LIFT_PX : 0};
+            }),
+            ...(forced ? [] : [flip({
+                padding: viewportMargin,
+                fallbackPlacements: placement === "horizontal" ? ["left-start", "bottom-start", "top-start"] : undefined,
+            })]),
+            shift({padding: viewportMargin}),
+            size({padding: viewportMargin, apply({availableHeight, elements}) {
+                const cap = maxHeight !== undefined ? Math.min(maxHeight, availableHeight) : availableHeight;
+                elements.floating.style.maxHeight = `${Math.max(0, cap)}px`;
+            }}),
+        ],
+        whileElementsMounted: autoUpdate,
+    });
+
+    useLayoutEffect(() => {
+        if (refEl) refs.setReference(refEl);
+        else if (rect) refs.setPositionReference({getBoundingClientRect: () => rect});
+    }, [refEl, rect, refs]);
+
+    // Only the topmost overlay reacts to dismissal. A confirm/alert (RkConfirm/RkAlert)
+    // or any Modal opened over the popover sits higher in the OverlayStack, so clicking
+    // it no longer counts as an outside-press that would close the popover.
+    const dismiss = useDismiss(context, {
+        enabled: isTop && !!onClose,
+        outsidePress: (e) => {
+            const t = e.target as HTMLElement | null;
+            // Nested popovers and portaled menus (ActionMenu/ContextMenu) live outside this
+            // element's DOM subtree — treat a press inside any of them as "inside".
+            return !t?.closest("[data-rk-popover],[data-rk-dropdown-portal]");
+        },
+    });
+    const {getFloatingProps} = useInteractions([dismiss]);
 
     useEffect(() => {
-        if (!onClose) return undefined;
-        const onMouseDown = (e: MouseEvent) => {
-            const target = e.target as HTMLElement | null;
-            if (!target) return;
-            if (ref.current?.contains(target)) return;
-            const anchorEl = anchor && "current" in anchor ? anchor.current : null;
-            if (anchorEl?.contains(target)) return;
-            // Nested popovers and menus (ActionMenu) portal out — a click in any of
-            // them counts as inside, so opening a menu within a popover won't close it.
-            if (target.closest("[data-rk-popover],[data-rk-dropdown-portal]")) return;
+        if (!closeOnWindowBlur || !onClose || !isTop) return undefined;
+        const onBlur = () => setTimeout(() => {
+            const ae = document.activeElement;
+            if (ae?.tagName !== "IFRAME") return;
+            if (refs.floating.current?.contains(ae)) return;
             onClose();
-        };
-        const onKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-        document.addEventListener("mousedown", onMouseDown);
-        document.addEventListener("keydown", onKeyDown);
+        }, 0);
+        window.addEventListener("blur", onBlur);
+        return () => window.removeEventListener("blur", onBlur);
+    }, [closeOnWindowBlur, onClose, isTop, refs]);
 
-        let onBlur: (() => void) | undefined;
-        if (closeOnWindowBlur) {
-            onBlur = () => setTimeout(() => {
-                const ae = document.activeElement;
-                if (ae?.tagName !== "IFRAME") return;
-                if (ref.current?.contains(ae)) return;
-                onClose();
-            }, 0);
-            window.addEventListener("blur", onBlur);
-        }
-        return () => {
-            document.removeEventListener("mousedown", onMouseDown);
-            document.removeEventListener("keydown", onKeyDown);
-            if (onBlur) window.removeEventListener("blur", onBlur);
-        };
-    }, [onClose, anchor, closeOnWindowBlur]);
+    if (!refEl && !rect) return null;
 
-    const rect = resolveRect(anchor);
-    if (!rect) return null;
-
-    const pos = computePosition(rect, width, placement, viewportMargin, maxHeight);
-
-    return createPortal(
+    return <FloatingPortal>
         <div
-            ref={ref}
+            ref={refs.setFloating}
             data-rk-popover
             className={["rkPopover", className].filter(Boolean).join(" ")}
-            style={{zIndex: "var(--rk-z-popover)", ...pos, ...style}}
-        >{children}</div>,
-        document.body,
-    );
-}
-
-function resolveRect(anchor: PopoverAnchor): DOMRect | null {
-    if (!anchor) return null;
-    if ("current" in anchor) return anchor.current?.getBoundingClientRect() ?? null;
-    return anchor;
-}
-
-function computePosition(
-    rect: DOMRect, width: number, placement: PopoverPlacement,
-    margin: number, capHeight: number | undefined,
-): CSSProperties {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const spaceBelow = vh - rect.bottom;
-    const spaceAbove = rect.top;
-    const spaceRight = vw - rect.right;
-    const spaceLeft = rect.left;
-
-    const fitsRight = spaceRight >= width + HORIZONTAL_GAP;
-    const fitsLeft = spaceLeft >= width + HORIZONTAL_GAP;
-
-    type Side = "below" | "above" | "right" | "left";
-    const resolved: Side = (() => {
-        if (placement === "horizontal") {
-            if (fitsRight) return "right";
-            if (fitsLeft) return "left";
-            return spaceBelow >= spaceAbove ? "below" : "above";
-        }
-        if (placement === "below") return "below";
-        if (placement === "above") return "above";
-        return spaceBelow >= spaceAbove ? "below" : "above";
-    })();
-
-    const clampLeft = (x: number) => Math.max(margin, Math.min(x, vw - width - margin));
-    const clampMaxH = (h: number) => {
-        const available = Math.max(0, h);
-        return capHeight !== undefined ? Math.min(capHeight, available) : available;
-    };
-
-    switch (resolved) {
-        case "below":
-            return {top: rect.bottom + VERTICAL_GAP, left: clampLeft(rect.left), maxHeight: clampMaxH(spaceBelow - VERTICAL_GAP - margin)};
-        case "above":
-            return {bottom: vh - rect.top + VERTICAL_GAP, left: clampLeft(rect.left), maxHeight: clampMaxH(spaceAbove - VERTICAL_GAP - margin)};
-        case "right": {
-            const top = Math.max(margin, rect.top - HORIZONTAL_LIFT_PX);
-            return {top, left: clampLeft(rect.right + HORIZONTAL_GAP), maxHeight: clampMaxH(vh - top - margin)};
-        }
-        case "left": {
-            const top = Math.max(margin, rect.top - HORIZONTAL_LIFT_PX);
-            return {top, left: clampLeft(rect.left - width - HORIZONTAL_GAP), maxHeight: clampMaxH(vh - top - margin)};
-        }
-    }
+            style={{...floatingStyles, zIndex: "var(--rk-z-popover)", ...style}}
+            {...getFloatingProps()}
+        >{children}</div>
+    </FloatingPortal>;
 }
