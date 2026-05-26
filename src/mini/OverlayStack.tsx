@@ -15,6 +15,7 @@ interface Entry {
     band: OverlayBand;
     order: number;
     seq: number;
+    isModal: boolean;
 }
 
 const entries: Entry[] = [];
@@ -29,13 +30,15 @@ function emit() {
     listeners.forEach((l) => l());
 }
 
-function register(id: string, band: OverlayBand, order: number) {
+function register(id: string, band: OverlayBand, order: number, isModal: boolean) {
     const found = entries.find((e) => e.id === id);
     if (found) {
-        if (found.band !== band || found.order !== order) { found.band = band; found.order = order; emit(); }
+        if (found.band !== band || found.order !== order || found.isModal !== isModal) {
+            found.band = band; found.order = order; found.isModal = isModal; emit();
+        }
         return;
     }
-    entries.push({id, band, order, seq: seq++});
+    entries.push({id, band, order, seq: seq++, isModal});
     emit();
 }
 
@@ -58,18 +61,26 @@ function subscribe(cb: () => void) {
 }
 function getVersion() { return version; }
 
-export function useOverlaySlot(id: string, band: OverlayBand, order: number): {offset: number; isTop: boolean} {
+export function useOverlaySlot(id: string, band: OverlayBand, order: number, isModal = false): {offset: number; isTop: boolean; isTopModal: boolean} {
     useSyncExternalStore(subscribe, getVersion, getVersion);
     useLayoutEffect(() => {
-        register(id, band, order);
+        register(id, band, order, isModal);
         return () => unregister(id);
-    }, [id, band, order]);
+    }, [id, band, order, isModal]);
 
     const list = sorted();
     const i = list.findIndex((e) => e.id === id);
+
+    // isTopModal: this is the topmost modal entry (non-modal overlays like Popover don't count)
+    let isTopModal = false;
+    for (let j = list.length - 1; j >= 0; j--) {
+        if (list[j].isModal) { isTopModal = list[j].id === id; break; }
+    }
+
     return {
         offset: (i < 0 ? list.length : i) * STEP,
         isTop: list.length === 0 || list[list.length - 1].id === id,
+        isTopModal,
     };
 }
 

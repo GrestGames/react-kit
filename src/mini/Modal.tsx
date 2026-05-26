@@ -21,7 +21,7 @@ interface ModalProps {
 
 export function Modal({band, order, onDismiss, lockScroll = true, focusTrap = true, children}: ModalProps) {
     const id = useId();
-    const {offset, isTop} = useOverlaySlot(id, band, order ?? 0);
+    const {offset, isTop, isTopModal} = useOverlaySlot(id, band, order ?? 0, true);
     const z = overlayZ(band, offset);
 
     const {refs, context} = useFloating({open: true, onOpenChange: (open) => { if (!open) onDismiss?.(); }});
@@ -31,7 +31,7 @@ export function Modal({band, order, onDismiss, lockScroll = true, focusTrap = tr
 
     return <FloatingPortal>
         <FloatingOverlay lockScroll={lockScroll && isTop} style={{zIndex: z, background: "var(--rk-scrim)"}}/>
-        <FloatingFocusManager context={context} modal disabled={!isTop || !focusTrap}>
+        <FloatingFocusManager context={context} modal disabled={!isTopModal || !focusTrap}>
             <div ref={refs.setFloating} {...getFloatingProps()} style={{position: "relative", zIndex: z}}>
                 {children}
             </div>
