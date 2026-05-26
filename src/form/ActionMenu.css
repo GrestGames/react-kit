@@ -132,3 +132,20 @@
     letter-spacing: 0.3px;
     color: var(--rk-text-muted);
 }
+
+.tv2ActionMenuItemLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.tv2ActionMenuItemIcon {
+    display: inline-flex;
+    flex-shrink: 0;
+}
+
+.tv2ActionMenuItemIcon svg {
+    width: 14px;
+    height: 14px;
+}

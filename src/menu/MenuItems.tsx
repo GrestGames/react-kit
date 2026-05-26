@@ -1,9 +1,11 @@
-import {useState, useRef, useEffect, KeyboardEvent} from "react";
+import {useState, useRef, useEffect, type ReactNode, KeyboardEvent} from "react";
 import {CONFIRM_DOUBLE_WINDOW_MS, DEFAULT_CONFIRM_DOUBLE_TEXT} from "../form/confirmDouble";
 import "../form/ActionMenu.css";
 
 export interface ActionMenuItem {
     label: string;
+    /** Optional icon rendered to the left of the label. Use an SVG with `stroke="currentColor"` so it inherits danger/warning color. */
+    icon?: ReactNode;
     onClick?: () => void | Promise<void>;
     danger?: boolean;
     /** Soft-warning color (orange). No arming on its own — for non-destructive actions that warrant a visual flag. Pair with `confirm` to also require a second click. */
@@ -83,7 +85,10 @@ export function MenuItems({items, onClose}: {items: ActionMenuItem[]; onClose: (
             ].filter(Boolean).join(" ");
             return <div key={i} className={cls} role="menuitem" tabIndex={0}
                         onClick={() => activate(i, item)} onKeyDown={onItemKey(i, item)}>
-                <span>{armed ? (item.confirmDoubleText ?? DEFAULT_CONFIRM_DOUBLE_TEXT) : item.label}</span>
+                <span className="tv2ActionMenuItemLabel">
+                    {item.icon && <span className="tv2ActionMenuItemIcon" aria-hidden>{item.icon}</span>}
+                    {armed ? (item.confirmDoubleText ?? DEFAULT_CONFIRM_DOUBLE_TEXT) : item.label}
+                </span>
                 {pending && <span className="tv2ActionMenuSpinner" aria-hidden>⟳</span>}
             </div>;
         })}
