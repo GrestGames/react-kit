@@ -1,6 +1,7 @@
-import {useState, useRef, useEffect} from "react";
+import {useState} from "react";
 import DatePicker from "react-datepicker";
 import {DateUtils} from "../../util/DateUtils";
+import {autoUpdate, flip, FloatingPortal, offset, shift, useDismiss, useFloating, useInteractions} from "@floating-ui/react";
 
 export function formatRelativeDate(date: string): string {
     const today = DateUtils.dateNow();
@@ -31,8 +32,6 @@ export function RelativeDate({date}: { date: string | null }) {
 
 export function ClickableDate({date, onChange}: { date: string | null, onChange: (date: string | null) => void }) {
     const [open, setOpen] = useState(false);
-    const wrapperRef = useRef<HTMLSpanElement>(null);
-
     const selected = date ? new Date(date + "T00:00:00") : undefined;
 
     const handleChange = (d: Date | null) => {
@@ -42,29 +41,44 @@ export function ClickableDate({date, onChange}: { date: string | null, onChange:
         setOpen(false);
     };
 
-    useEffect(() => {
-        if (!open) return () => {};
-        const handleClickOutside = (e: MouseEvent) => {
-            if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-                setOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [open]);
+    const {refs, floatingStyles, context} = useFloating({
+        open,
+        onOpenChange: setOpen,
+        strategy: "fixed",
+        placement: "bottom-end",
+        middleware: [flip(), shift({padding: 8}), offset(4)],
+        whileElementsMounted: autoUpdate,
+    });
 
-    const label = !date ? <span style={{whiteSpace: "nowrap", color: "var(--rk-text-muted)"}}>No date</span>
+    const dismiss = useDismiss(context);
+    const {getFloatingProps} = useInteractions([dismiss]);
+
+    const label = !date
+        ? <span style={{whiteSpace: "nowrap", color: "var(--rk-text-muted)"}}>No date</span>
         : <span style={dateStyle(date)} title={date}>{formatRelativeDate(date)}</span>;
 
-    return <span ref={wrapperRef} style={{position: "relative", cursor: "pointer"}} onDoubleClick={(e) => { e.stopPropagation(); setOpen(!open); }}>
-        {label}
-        {open && <span style={{position: "absolute", right: 0, top: "100%", zIndex: 20}} onClick={(e) => e.stopPropagation()}>
-            <DatePicker
-                selected={selected}
-                onChange={handleChange}
-                inline
-                dateFormat="yyyy/MM/dd"
-            />
-        </span>}
-    </span>;
+    return <>
+        <span
+            ref={refs.setReference}
+            style={{cursor: "pointer"}}
+            onDoubleClick={(e) => { e.stopPropagation(); setOpen(!open); }}
+        >
+            {label}
+        </span>
+        {open && <FloatingPortal>
+            <span
+                ref={refs.setFloating}
+                style={{...floatingStyles, zIndex: "var(--rk-z-popover)"}}
+                onClick={(e) => e.stopPropagation()}
+                {...getFloatingProps()}
+            >
+                <DatePicker
+                    selected={selected}
+                    onChange={handleChange}
+                    inline
+                    dateFormat="yyyy/MM/dd"
+                />
+            </span>
+        </FloatingPortal>}
+    </>;
 }

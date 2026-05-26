@@ -1,7 +1,16 @@
 import {AnyInputElement, useInputData} from "./StandardFormElementProps";
 import DatePicker from "react-datepicker";
 import {DateUtils} from "../../util/DateUtils";
+import {FloatingPortal} from "@floating-ui/react";
+import type {ReactNode} from "react";
 
+function CalendarPortal({children}: {children?: ReactNode}) {
+    return <FloatingPortal>
+        <div style={{position: "relative", zIndex: "var(--rk-z-popover)"}}>
+            {children}
+        </div>
+    </FloatingPortal>;
+}
 
 export function DateInput<T extends string>(props: AnyInputElement<T>) {
     const data = useInputData(props);
@@ -17,6 +26,8 @@ export function DateInput<T extends string>(props: AnyInputElement<T>) {
             disabled={props.disabled}
             onChange={(date: Date | null) => data.onChange(DateParser.toOutput(date) as T)}
             className={"datePicker rkInput " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}
+            popperContainer={CalendarPortal}
+            popperProps={{strategy: "fixed"}}
         />
     </div>
 }
@@ -36,6 +47,8 @@ export function YearMonthSelect<T extends string>(props: AnyInputElement<T> & { 
             disabled={props.disabled}
             onChange={(date: Date | null) => data.onChange(DateParser.toYearMonthOutput(date) as T)}
             className={"datePicker rkInput " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}
+            popperContainer={CalendarPortal}
+            popperProps={{strategy: "fixed"}}
         />
     </div>
 }
