@@ -84,6 +84,12 @@ export function inlineSaveOrCancel<T>(opts: import("./InlineEditWrap").InlineEdi
 
 function InternalTextInput<T>(props: BasicInputProps2<T>) {
     const data = useInputData(props);
+    // fullWidth: the .formItem wrapper is inline-block by default, so an input's width:100% can't
+    // fill a flex/block parent. Make the wrapper block and zero the input's side margins so it
+    // truly spans the container.
+    const inputStyle = props.fullWidth
+        ? {width: "100%", marginLeft: 0, marginRight: 0, ...props.style}
+        : props.style;
 
     return <InlineEditWrap
         inlineEdit={!!props.inlineEdit}
@@ -95,11 +101,13 @@ function InternalTextInput<T>(props: BasicInputProps2<T>) {
         suffix={props.suffix}
         changed={data.isChanged}
         renderInput={(opts) =>
-            <div className={"formItem" + (props.suffix ? " formItemWithSuffix" : "")}>
+            <div className={"formItem" + (props.suffix ? " formItemWithSuffix" : "")}
+                 style={props.fullWidth ? {display: "block", width: "100%"} : undefined}>
                 {!opts && data.validationError && <div className="validationErrorMsg">{data.validationError.msg}</div>}
                 <input
                     ref={opts?.inputRef}
                     type={props.type}
+                    autoFocus={props.autoFocus}
                     name={data.name}
                     value={TextParser.toInput(data.value)}
                     readOnly={opts ? undefined : (props.readOnly || data.readOnly)}
@@ -112,7 +120,7 @@ function InternalTextInput<T>(props: BasicInputProps2<T>) {
                     } : undefined}
                     placeholder={props.placeholder}
                     className={"rkInput " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + " " + (props.suffix ? "inputWithSuffix" : "")}
-                    style={props.style}
+                    style={inputStyle}
                 />
                 {props.suffix && <div className={"inputSuffix " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}>{props.suffix}</div>}
             </div>

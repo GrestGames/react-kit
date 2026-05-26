@@ -8,6 +8,10 @@ export type AnyFormElement = {
     disabled?: boolean;
     style?: CSSProperties,
     className?: string
+    /** Focus the input on mount (forwarded to the native element). */
+    autoFocus?: boolean;
+    /** Stretch the input to fill its container instead of the fixed default width. */
+    fullWidth?: boolean;
     /** When true, renders as plain text and switches to input on click. */
     inlineEdit?: boolean;
     /** Placeholder shown when inlineEdit is true and value is empty. Default: "Click to edit" */
