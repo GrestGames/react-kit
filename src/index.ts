@@ -84,6 +84,7 @@ export * from "./mini/MainArea";
 export * from "./mini/MiniTip";
 export * from "./mini/Separator";
 export * from "./mini/ToolTip";
+export {overOffset, type OverlayPlacement, type Placement} from "./mini/overlayPlacement";
 export * from "./mini/StepBar";
 export * from "./mini/SlideDeck";
 export * from "./mini/AutoHeight";

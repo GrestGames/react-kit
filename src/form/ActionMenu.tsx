@@ -2,6 +2,7 @@ import {useState, KeyboardEvent, ReactNode} from "react";
 import {createPortal} from "react-dom";
 import {autoUpdate, flip, offset, type Placement, shift, size, useFloating} from "@floating-ui/react";
 import {ToolTipSupported, wrapToolTip} from "../mini/ToolTip";
+import {overOffset, type OverlayPlacement} from "../mini/overlayPlacement";
 import {ActionMenuItem, MenuItems} from "../menu/MenuItems";
 import "./ActionMenu.css";
 
@@ -9,8 +10,9 @@ export type {ActionMenuItem};
 
 interface ActionMenuProps extends ToolTipSupported {
     items: ActionMenuItem[];
-    align?: "left" | "right" | "center";
-    position?: "below" | "above";
+    /** Menu placement relative to the trigger: a Floating UI placement, or "over"
+     *  to center on it. Default "bottom-end". */
+    placement?: OverlayPlacement;
     /** Trigger content; defaults to the ⋯ glyph. Visual only — the menu owns the
      *  click/keyboard interaction, so don't pass an interactive element. */
     trigger?: ReactNode;
@@ -23,25 +25,25 @@ interface ActionMenuProps extends ToolTipSupported {
  * none of react-kit's global element styling — the menu is styled solely by its
  * own classes and can't be broken by changes to the base button/anchor rules.
  *
- * Positioned with @floating-ui (same lib as ToolTip/ContextMenu): `position`/`align`
- * pick the preferred placement, then flip up / shift in / cap height + scroll keep it
- * on-screen when the preferred side has no room.
+ * Positioned with @floating-ui (same lib as ToolTip/ContextMenu): `placement`
+ * picks the preferred side+alignment, then flip up / shift in / cap height + scroll
+ * keep it on-screen when the preferred side has no room.
  */
-export function ActionMenu({items, align = "right", position = "below", trigger = "⋯", triggerColor, title, titleProps}: ActionMenuProps) {
+export function ActionMenu({items, placement = "bottom-end", trigger = "⋯", triggerColor, title, titleProps}: ActionMenuProps) {
     const [open, setOpen] = useState(false);
     const [dark, setDark] = useState(false);
 
-    const side = position === "above" ? "top" : "bottom";
-    const placement: Placement = align === "center" ? side : `${side}-${align === "right" ? "end" : "start"}`;
+    const over = placement === "over";
+    const fuiPlacement: Placement = placement === "over" ? "bottom" : placement;
 
     const {refs, floatingStyles, placement: finalPlacement} = useFloating({
         open,
         onOpenChange: setOpen,
         strategy: "fixed",
-        placement,
+        placement: fuiPlacement,
         middleware: [
-            offset(4),
-            flip({padding: 8}),
+            over ? overOffset() : offset(4),
+            ...(over ? [] : [flip({padding: 8})]),
             shift({padding: 8}),
             size({padding: 8, apply({availableHeight, elements}) {
                 elements.floating.style.maxHeight = `${availableHeight}px`;

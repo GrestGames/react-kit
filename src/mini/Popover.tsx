@@ -12,11 +12,10 @@ import {
     useInteractions,
 } from "@floating-ui/react";
 import {useOverlaySlot} from "./OverlayStack";
+import {overOffset, type OverlayPlacement} from "./overlayPlacement";
 import "./Popover.css";
 
 export type PopoverAnchor = RefObject<HTMLElement | null> | DOMRect | null;
-
-export type PopoverPlacement = "vertical" | "above" | "below" | "horizontal";
 
 export interface PopoverProps {
     /** Element (ref) or rect the popover positions against. */
@@ -25,9 +24,10 @@ export interface PopoverProps {
     /** Outside-click / Escape / (optional) window-blur dismissal. Omit to make
      *  the popover non-dismissable (caller controls mount). */
     onClose?: () => void;
-    /** "vertical" (default): below, flipping above when cramped. "horizontal":
-     *  right or left, falling back to vertical. "above"/"below": forced side. */
-    placement?: PopoverPlacement;
+    /** Where the popover opens relative to its anchor: a Floating UI placement
+     *  ("bottom-start" default), or "over" to center it on the anchor. Always
+     *  flips/shifts to stay on-screen. */
+    placement?: OverlayPlacement;
     /** Cap on rendered height; always clamped further by the viewport. */
     maxHeight?: number;
     viewportMargin?: number;
@@ -43,16 +43,9 @@ const VERTICAL_GAP = 4;
 const HORIZONTAL_GAP = 8;
 const HORIZONTAL_LIFT_PX = 30;
 
-const PLACEMENTS: Record<PopoverPlacement, Placement> = {
-    above: "top-start",
-    below: "bottom-start",
-    horizontal: "right-start",
-    vertical: "bottom-start",
-};
-
 export function Popover({
     anchor, children, onClose,
-    placement = "vertical", maxHeight, viewportMargin = DEFAULT_VIEWPORT_MARGIN,
+    placement = "bottom-start", maxHeight, viewportMargin = DEFAULT_VIEWPORT_MARGIN,
     closeOnWindowBlur = false, style, className,
 }: PopoverProps) {
     const id = useId();
@@ -61,24 +54,20 @@ export function Popover({
     const refEl = anchor && "current" in anchor ? anchor.current : null;
     const rect = anchor && !("current" in anchor) ? anchor : null;
 
-    // Forced "above"/"below" stay on the caller-chosen side; "vertical"/"horizontal"
-    // flip to the opposite side / fall back to the other axis when room is tight.
-    const forced = placement === "above" || placement === "below";
+    const over = placement === "over";
+    const fuiPlacement: Placement = placement === "over" ? "bottom" : placement;
 
     const {refs, floatingStyles, context} = useFloating({
         open: true,
         onOpenChange: (open) => { if (!open) onClose?.(); },
         strategy: "fixed",
-        placement: PLACEMENTS[placement],
+        placement: fuiPlacement,
         middleware: [
-            offset(({placement: p}) => {
+            over ? overOffset() : offset(({placement: p}) => {
                 const horizontal = p.startsWith("left") || p.startsWith("right");
                 return {mainAxis: horizontal ? HORIZONTAL_GAP : VERTICAL_GAP, crossAxis: horizontal ? -HORIZONTAL_LIFT_PX : 0};
             }),
-            ...(forced ? [] : [flip({
-                padding: viewportMargin,
-                fallbackPlacements: placement === "horizontal" ? ["left-start", "bottom-start", "top-start"] : undefined,
-            })]),
+            ...(over ? [] : [flip({padding: viewportMargin, fallbackAxisSideDirection: "start"})]),
             shift({padding: viewportMargin}),
             size({padding: viewportMargin, apply({availableHeight, elements}) {
                 const cap = maxHeight !== undefined ? Math.min(maxHeight, availableHeight) : availableHeight;

@@ -33,16 +33,28 @@ export default function ToolTipBasic() {
         </ToolTip>
         <ToolTip
           anchor="target"
-          placement="above"
+          placement="top"
           maxWidth={220}
           message={
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <div style={{ fontWeight: 700 }}>Anchored above</div>
-              <div>placement="above" with maxWidth=220.</div>
+              <div style={{ fontWeight: 700 }}>Anchored top</div>
+              <div>placement="top" with maxWidth=220.</div>
             </div>
           }
         >
-          <Tag intent="success" size="small">Hover me (anchored, above)</Tag>
+          <Tag intent="success" size="small">Hover me (anchored, top)</Tag>
+        </ToolTip>
+        <ToolTip
+          anchor="target"
+          placement="right"
+          message={
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <div style={{ fontWeight: 700 }}>Anchored right</div>
+              <div>placement="right" — flips to left when cramped.</div>
+            </div>
+          }
+        >
+          <Tag intent="cool" size="small">Hover me (anchored, right)</Tag>
         </ToolTip>
       </div>
     </div>
