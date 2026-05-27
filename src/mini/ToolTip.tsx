@@ -25,7 +25,7 @@ export interface ToolTipProps {
     /** Cursor mode: which screen axis drives side selection. */
     align?: ToolTipAlign
     /** Target mode: preferred side; flips toward the side with room. */
-    placement?: "above" | "below"
+    placement?: "above" | "below" | "left" | "right"
     /** Target mode: max popup width in px. */
     maxWidth?: number
     /** Hover-in / hover-out delays in ms. Default 0 for cursor, 200/100 for target. */
@@ -75,8 +75,13 @@ export function ToolTip({
     const openDelay = openDelayMs ?? (anchor === "target" ? 200 : 0);
     const closeDelay = closeDelayMs ?? (anchor === "target" ? 100 : 0);
 
+    const targetPlacement: Placement =
+        placement === "above" ? "top"
+        : placement === "left" ? "left"
+        : placement === "right" ? "right"
+        : "bottom";
     const initialPlacement: Placement = anchor === "target"
-        ? (placement === "above" ? "top" : "bottom")
+        ? targetPlacement
         : (align === "horizontal" ? "right" : "bottom");
 
     const isOpen = pinned || open;
