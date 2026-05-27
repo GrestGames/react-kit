@@ -87,7 +87,7 @@ export function ToolTip({
             over ? overOffset() : offset(anchor === "target" ? 8 : 14),
             ...(over ? [] : [flip({padding: 8})]),
             shift({padding: 8}),
-            arrow({element: arrowRef}),
+            ...(over ? [] : [arrow({element: arrowRef})]),
         ],
         whileElementsMounted: autoUpdate,
     });
@@ -134,7 +134,7 @@ export function ToolTip({
         {isOpen && <FloatingPortal>
             <div
                 ref={refs.setFloating}
-                className={["toolTip", anchor === "target" && "toolTipAnchored", sideClass[side]].filter(Boolean).join(" ")}
+                className={["toolTip", anchor === "target" && "toolTipAnchored", over ? undefined : sideClass[side]].filter(Boolean).join(" ")}
                 style={{
                     ...floatingStyles,
                     margin: 0,
@@ -143,7 +143,7 @@ export function ToolTip({
                 }}
                 {...getFloatingProps()}
             >
-                <div className="arrow" ref={arrowRef} style={arrowStyle}/>
+                {!over && <div className="arrow" ref={arrowRef} style={arrowStyle}/>}
                 {resolveMessage(message)}
             </div>
         </FloatingPortal>}

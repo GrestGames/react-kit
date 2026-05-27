@@ -1,9 +1,9 @@
 import { useRef, useState, type ReactNode } from 'react';
-import { Popover, Button, RkConfirm, type PopoverPlacement } from '@grest-ts/react';
+import { Popover, Button, RkConfirm, type OverlayPlacement } from '@grest-ts/react';
 
 function PopoverButton({ label, placement, maxHeight, children }: {
   label: string;
-  placement?: PopoverPlacement;
+  placement?: OverlayPlacement;
   maxHeight?: number;
   children: ReactNode;
 }) {
@@ -46,24 +46,31 @@ export default function PopoverBasic() {
           </div>
         </PopoverButton>
 
-        <PopoverButton label="Below" placement="below">
-          <div style={{ fontWeight: 700 }}>placement="below"</div>
+        <PopoverButton label="Bottom" placement="bottom-start">
+          <div style={{ fontWeight: 700 }}>placement="bottom-start"</div>
           <div style={{ color: 'var(--rk-text-secondary)' }}>
-            Always pins under the anchor; height is still clamped to the space remaining below.
+            Opens under the anchor, start-aligned; flips above and clamps height to stay on-screen.
           </div>
         </PopoverButton>
 
-        <PopoverButton label="Above" placement="above">
-          <div style={{ fontWeight: 700 }}>placement="above"</div>
+        <PopoverButton label="Top" placement="top-start">
+          <div style={{ fontWeight: 700 }}>placement="top-start"</div>
           <div style={{ color: 'var(--rk-text-secondary)' }}>
-            Always pins over the anchor.
+            Opens over the anchor, start-aligned; flips below when there's more room there.
           </div>
         </PopoverButton>
 
-        <PopoverButton label="Horizontal" placement="horizontal">
-          <div style={{ fontWeight: 700 }}>placement="horizontal"</div>
+        <PopoverButton label="Right" placement="right-start">
+          <div style={{ fontWeight: 700 }}>placement="right-start"</div>
           <div style={{ color: 'var(--rk-text-secondary)' }}>
             Opens to the right, falling back to the left, then vertical when neither side fits.
+          </div>
+        </PopoverButton>
+
+        <PopoverButton label="Over" placement="over">
+          <div style={{ fontWeight: 700 }}>placement="over"</div>
+          <div style={{ color: 'var(--rk-text-secondary)' }}>
+            Centers on top of the anchor instead of beside it.
           </div>
         </PopoverButton>
 

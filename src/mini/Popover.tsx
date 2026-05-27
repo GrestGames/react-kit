@@ -56,6 +56,7 @@ export function Popover({
 
     const over = placement === "over";
     const fuiPlacement: Placement = placement === "over" ? "bottom" : placement;
+    const horizontal = fuiPlacement.startsWith("left") || fuiPlacement.startsWith("right");
 
     const {refs, floatingStyles, context} = useFloating({
         open: true,
@@ -67,7 +68,10 @@ export function Popover({
                 const horizontal = p.startsWith("left") || p.startsWith("right");
                 return {mainAxis: horizontal ? HORIZONTAL_GAP : VERTICAL_GAP, crossAxis: horizontal ? -HORIZONTAL_LIFT_PX : 0};
             }),
-            ...(over ? [] : [flip({padding: viewportMargin, fallbackAxisSideDirection: "start"})]),
+            // Vertical placements flip to the opposite side only (matches the old "vertical" behavior —
+            // a wide menu should not suddenly fly out sideways). Horizontal placements (left/right) cross
+            // to the vertical axis when neither side fits, preserving the old "horizontal" fallback.
+            ...(over ? [] : [flip({padding: viewportMargin, ...(horizontal ? {fallbackAxisSideDirection: "start"} : {})})]),
             shift({padding: viewportMargin}),
             size({padding: viewportMargin, apply({availableHeight, elements}) {
                 const cap = maxHeight !== undefined ? Math.min(maxHeight, availableHeight) : availableHeight;
