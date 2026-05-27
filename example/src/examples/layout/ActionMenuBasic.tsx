@@ -12,7 +12,7 @@ export default function ActionMenuBasic() {
         { label: 'Archive', warning: true, onClick: () => { RkToast.warning('Archived'); } },
         { label: 'Delete', danger: true, onClick: () => { RkToast.danger('Deleted'); } },
       ]} />
-      <ActionMenu trigger="⚙" triggerColor="#7c5cbf" title="Settings" align="center" position="above" items={[
+      <ActionMenu trigger="⚙" triggerColor="#7c5cbf" title="Settings" placement="top" items={[
         { label: 'Custom trigger, opens above, centered', info: true },
         { label: 'Preferences', onClick: () => { RkToast('Preferences'); } },
         { label: 'Sign out', danger: true, onClick: () => { RkToast.danger('Signed out'); } },

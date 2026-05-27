@@ -5,12 +5,11 @@ import {
 } from "@floating-ui/react";
 import "./ToolTip.css";
 import {Intent} from "../intents";
+import {overOffset, type OverlayPlacement} from "./overlayPlacement";
 
 export type MessageType = string | ReactNode | (() => string | ReactNode);
 
 export type ToolTipTemplate = "normal" | "error";
-
-export type ToolTipAlign = "vertical" | "horizontal";
 
 export interface ToolTipProps {
     message: MessageType
@@ -22,10 +21,9 @@ export interface ToolTipProps {
     intent?: Intent
     className?: string
     style?: CSSProperties
-    /** Cursor mode: which screen axis drives side selection. */
-    align?: ToolTipAlign
-    /** Target mode: preferred side; flips toward the side with room. */
-    placement?: "above" | "below" | "left" | "right"
+    /** Side relative to the trigger (target mode) or cursor (cursor mode): a
+     *  Floating UI placement, or "over" to center on the trigger. Default "bottom". */
+    placement?: OverlayPlacement
     /** Target mode: max popup width in px. */
     maxWidth?: number
     /** Hover-in / hover-out delays in ms. Default 0 for cursor, 200/100 for target. */
@@ -67,7 +65,7 @@ function combineRef<T>(set: (node: T | null) => void, orig: Ref<T> | undefined):
 
 export function ToolTip({
     message, children, anchor = "cursor", template, intent, className, style,
-    align, placement, maxWidth, openDelayMs, closeDelayMs, display = "inline", pinned,
+    placement, maxWidth, openDelayMs, closeDelayMs, display = "inline", pinned,
 }: ToolTipProps) {
     const [open, setOpen] = useState(false);
     const arrowRef = useRef<HTMLDivElement>(null);
@@ -75,14 +73,8 @@ export function ToolTip({
     const openDelay = openDelayMs ?? (anchor === "target" ? 200 : 0);
     const closeDelay = closeDelayMs ?? (anchor === "target" ? 100 : 0);
 
-    const targetPlacement: Placement =
-        placement === "above" ? "top"
-        : placement === "left" ? "left"
-        : placement === "right" ? "right"
-        : "bottom";
-    const initialPlacement: Placement = anchor === "target"
-        ? targetPlacement
-        : (align === "horizontal" ? "right" : "bottom");
+    const over = placement === "over";
+    const initialPlacement: Placement = placement == null || placement === "over" ? "bottom" : placement;
 
     const isOpen = pinned || open;
 
@@ -92,10 +84,10 @@ export function ToolTip({
         strategy: "fixed",
         placement: initialPlacement,
         middleware: [
-            offset(anchor === "target" ? 8 : 14),
-            flip({padding: 8}),
+            over ? overOffset() : offset(anchor === "target" ? 8 : 14),
+            ...(over ? [] : [flip({padding: 8})]),
             shift({padding: 8}),
-            arrow({element: arrowRef}),
+            ...(over ? [] : [arrow({element: arrowRef})]),
         ],
         whileElementsMounted: autoUpdate,
     });
@@ -142,7 +134,7 @@ export function ToolTip({
         {isOpen && <FloatingPortal>
             <div
                 ref={refs.setFloating}
-                className={["toolTip", anchor === "target" && "toolTipAnchored", sideClass[side]].filter(Boolean).join(" ")}
+                className={["toolTip", anchor === "target" && "toolTipAnchored", over ? undefined : sideClass[side]].filter(Boolean).join(" ")}
                 style={{
                     ...floatingStyles,
                     margin: 0,
@@ -151,7 +143,7 @@ export function ToolTip({
                 }}
                 {...getFloatingProps()}
             >
-                <div className="arrow" ref={arrowRef} style={arrowStyle}/>
+                {!over && <div className="arrow" ref={arrowRef} style={arrowStyle}/>}
                 {resolveMessage(message)}
             </div>
         </FloatingPortal>}

@@ -22,19 +22,18 @@ describe("ActionMenu", () => {
     expect(trigger.style.color).toBe("rgb(255, 0, 0)");
   });
 
-  it("anchors above and centered with @floating-ui when asked", async () => {
-    render(<ActionMenu items={[{ label: "X" }]} position="above" align="center" />);
+  it("positions with @floating-ui at the requested placement", async () => {
+    render(<ActionMenu items={[{ label: "X" }]} placement="top" />);
     await userEvent.click(screen.getByRole("button"));
     const menu = screen.getByRole("menu");
     // fixed strategy + a transform = positioned by floating-ui, not hand-rolled top/left.
     expect(menu.style.position).toBe("fixed");
     expect(menu.style.transform).not.toBe("");
-    // above + center -> "top" (no -start/-end alignment suffix).
     expect(menu.dataset.placement).toBe("top");
   });
 
-  it("maps below + right to a bottom-end placement", async () => {
-    render(<ActionMenu items={[{ label: "X" }]} position="below" align="right" />);
+  it("defaults to a bottom-end placement", async () => {
+    render(<ActionMenu items={[{ label: "X" }]} />);
     await userEvent.click(screen.getByRole("button"));
     expect(screen.getByRole("menu").dataset.placement).toBe("bottom-end");
   });
