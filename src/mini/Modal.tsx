@@ -13,7 +13,7 @@ import {OverlayBand, overlayZ, useOverlaySlot} from "./OverlayStack";
 interface ModalProps {
     band: OverlayBand;
     order?: number;
-    onDismiss?: () => void;
+    onDismiss?: (event?: Event) => void;
     lockScroll?: boolean;
     focusTrap?: boolean;
     children: ReactNode;
@@ -24,7 +24,7 @@ export function Modal({band, order, onDismiss, lockScroll = true, focusTrap = tr
     const {offset, isTop, isTopModal} = useOverlaySlot(id, band, order ?? 0, true);
     const z = overlayZ(band, offset);
 
-    const {refs, context} = useFloating({open: true, onOpenChange: (open) => { if (!open) onDismiss?.(); }});
+    const {refs, context} = useFloating({open: true, onOpenChange: (open, event) => { if (!open) onDismiss?.(event); }});
     const dismiss = useDismiss(context, {enabled: isTop && !!onDismiss});
     const role = useRole(context, {role: "dialog"});
     const {getFloatingProps} = useInteractions([dismiss, role]);
