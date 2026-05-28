@@ -1,4 +1,5 @@
-import { Grid, TextInput, Select, Button, RkToast } from '@grest-ts/react';
+import { useState } from 'react';
+import { Grid, TextInput, EmailInput, IntegerInput, Select, Button, PopupPanel, Form, FormSubmitButton, FormCancelButton, useAsyncForm, RkToast } from '@grest-ts/react';
 import type { GridField, GridQuery, FormObject } from '@grest-ts/react';
 
 interface Row {
@@ -32,54 +33,117 @@ const roleOptions = [
   { id: 'pm', name: 'Product Manager' },
 ];
 
-const fields: GridField<Row>[] = [
-  { title: '#', value: 'id', sortName: 'id', width: 40 },
-  { title: 'Name', value: 'name', sortName: 'name' },
-  { title: 'Email', value: 'email' },
-  { title: 'Role', value: (row) => roleOptions.find(r => r.id === row.role)?.name ?? row.role, sortName: 'role' },
-  { title: 'Score', value: 'score', sortName: 'score', sortDir: 'desc', align: 'right' },
-  // Buttons inside <Grid> auto-render as outline (pass appearance="gradient" to opt one back out).
-  { title: 'Actions', value: (row) => (
-    <>
-      <Button onClick={() => { RkToast(`View ${row.name}`); }}>View</Button>
-      <Button intent="info" onClick={() => { RkToast(`Edit ${row.name}`); }}>Edit</Button>
-      <Button intent="danger" confirmDouble confirmDoubleText={`Delete ${row.name}?`} onClick={() => { RkToast.danger(`Delete ${row.name}`); }}>Delete</Button>
-    </>
-  ), width: 200 },
-];
+const editRoleOptions = roleOptions.filter(r => r.id !== null);
 
 export default function GridBasic() {
+  const [editId, setEditId] = useState<number | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const fields: GridField<Row>[] = [
+    { title: '#', value: 'id', sortName: 'id', width: 40 },
+    { title: 'Name', value: 'name', sortName: 'name' },
+    { title: 'Email', value: 'email' },
+    { title: 'Role', value: (row) => roleOptions.find(r => r.id === row.role)?.name ?? row.role, sortName: 'role' },
+    { title: 'Score', value: 'score', sortName: 'score', sortDir: 'desc', align: 'right' },
+    // Buttons inside <Grid> auto-render as outline (pass appearance="gradient" to opt one back out).
+    { title: 'Actions', value: (row) => (
+      <>
+        <Button onClick={() => setEditId(row.id)}>View</Button>
+        <Button intent="danger" confirmDouble confirmDoubleText={`Delete ${row.name}?`} onClick={() => { RkToast.danger(`Delete ${row.name}`); }}>Delete</Button>
+      </>
+    ), width: 160 },
+  ];
+
   return (
-    <Grid<Row, Filters>
-      fields={fields}
-      defaultOrderBy={{ field: 'name', dir: 'asc' }}
-      filtersUrlKeyName="demo-grid"
-      load={async (query: Filters & GridQuery) => {
-        await new Promise(r => setTimeout(r, 300));
-        let rows = [...mockData];
-        if (query.search) {
-          const s = query.search.toLowerCase();
-          rows = rows.filter(r => r.name.toLowerCase().includes(s) || r.email.toLowerCase().includes(s));
-        }
-        if (query.role) {
-          rows = rows.filter(r => r.role === query.role);
-        }
-        if (query.orderBy?.field) {
-          const f = query.orderBy.field as keyof Row;
-          const dir = query.orderBy.dir === 'desc' ? -1 : 1;
-          rows.sort((a, b) => (a[f] > b[f] ? dir : a[f] < b[f] ? -dir : 0));
-        }
-        return { rows };
-      }}
-      filtersForm={(F: FormObject<Filters>) => (
-        <div className="demoRow" style={{ alignItems: 'center' }}>
-          <label style={{ flexDirection: 'row', alignItems: 'center' }}>Search: <TextInput prop={F.search} placeholder="Search..." /></label>
-          <label style={{ flexDirection: 'row', alignItems: 'center' }}>Role: <Select prop={F.role} options={roleOptions} /></label>
-          {/* Header buttons keep the default gradient appearance — only row buttons render as outline. */}
-          <Button intent="default" onClick={() => F.getForm().submit()}>Search</Button>
-          <Button onClick={() => { F.search.set(''); F.role.set(null); F.getForm().submit(); }}>Reset</Button>
-        </div>
+    <>
+      <Grid<Row, Filters>
+        reloadKey={reloadKey}
+        fields={fields}
+        defaultOrderBy={{ field: 'name', dir: 'asc' }}
+        filtersUrlKeyName="demo-grid"
+        load={async (query: Filters & GridQuery) => {
+          await new Promise(r => setTimeout(r, 300));
+          let rows = [...mockData];
+          if (query.search) {
+            const s = query.search.toLowerCase();
+            rows = rows.filter(r => r.name.toLowerCase().includes(s) || r.email.toLowerCase().includes(s));
+          }
+          if (query.role) {
+            rows = rows.filter(r => r.role === query.role);
+          }
+          if (query.orderBy?.field) {
+            const f = query.orderBy.field as keyof Row;
+            const dir = query.orderBy.dir === 'desc' ? -1 : 1;
+            rows.sort((a, b) => (a[f] > b[f] ? dir : a[f] < b[f] ? -dir : 0));
+          }
+          return { rows };
+        }}
+        filtersForm={(F: FormObject<Filters>) => (
+          <div className="demoRow" style={{ alignItems: 'center' }}>
+            <label style={{ flexDirection: 'row', alignItems: 'center' }}>Search: <TextInput prop={F.search} placeholder="Search..." /></label>
+            <label style={{ flexDirection: 'row', alignItems: 'center' }}>Role: <Select prop={F.role} options={roleOptions} /></label>
+            {/* Header buttons keep the default gradient appearance — only row buttons render as outline. */}
+            <Button intent="default" onClick={() => F.getForm().submit()}>Search</Button>
+            <Button onClick={() => { F.search.set(''); F.role.set(null); F.getForm().submit(); }}>Reset</Button>
+          </div>
+        )}
+      />
+      {editId !== null && (
+        <EditRowPanel
+          id={editId}
+          onClose={() => setEditId(null)}
+          onSaved={() => { setEditId(null); setReloadKey(k => k + 1); }}
+        />
       )}
-    />
+    </>
+  );
+}
+
+function EditRowPanel({ id, onClose, onSaved }: { id: number; onClose: () => void; onSaved: () => void }) {
+  const row = mockData.find(r => r.id === id)!;
+  const [F] = useAsyncForm<Row>({
+    init: { ...row },
+    reloadOnSubmit: false,
+    onSubmit: async (obj) => {
+      await new Promise(r => setTimeout(r, 400));
+      Object.assign(mockData.find(r => r.id === id)!, obj);
+      RkToast.success(`Saved ${obj.name}`);
+      onSaved();
+    },
+  }, [id]);
+
+  return (
+    <PopupPanel title={`Edit ${row.name}`} subTitle="Edits the same data store the grid reads from" width="500px" onClose={onClose}>
+      <Form prop={F}>
+        <table>
+          <tbody>
+            <tr>
+              <td style={{ padding: '4px 12px 4px 0' }}>Name:</td>
+              <td><TextInput prop={F.name} /></td>
+            </tr>
+            <tr>
+              <td style={{ padding: '4px 12px 4px 0' }}>Email:</td>
+              <td><EmailInput prop={F.email} /></td>
+            </tr>
+            <tr>
+              <td style={{ padding: '4px 12px 4px 0' }}>Role:</td>
+              <td><Select prop={F.role} options={editRoleOptions} /></td>
+            </tr>
+            <tr>
+              <td style={{ padding: '4px 12px 4px 0' }}>Score:</td>
+              <td><IntegerInput prop={F.score} /></td>
+            </tr>
+            <tr>
+              <td colSpan={2} style={{ paddingTop: 12 }}>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <FormCancelButton onClick={onClose}>Cancel</FormCancelButton>
+                  <FormSubmitButton>Save</FormSubmitButton>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </Form>
+    </PopupPanel>
   );
 }
