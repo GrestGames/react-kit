@@ -1,4 +1,4 @@
-import {ReactNode, useLayoutEffect, useState, useSyncExternalStore, type MouseEvent as ReactMouseEvent} from "react";
+import {ReactNode, useLayoutEffect, useRef, useState, useSyncExternalStore, type MouseEvent as ReactMouseEvent, type TouchEvent as ReactTouchEvent} from "react";
 import {autoUpdate, flip, FloatingPortal, offset, shift, useDismiss, useFloating, useInteractions} from "@floating-ui/react";
 import {ActionMenuItem, MenuItems} from "./MenuItems";
 import "../form/ActionMenu.css";
@@ -70,20 +70,73 @@ export interface ContextMenuProps {
     items: ActionMenuItem[];
     children: ReactNode;
     disabled?: boolean;
+    /** Also open on a plain left-click / tap, not just right-click. Opt in only when
+     *  the wrapped element has no competing click action of its own — otherwise the
+     *  two fight. (Touch always gets long-press regardless of this flag.) */
+    openOnClick?: boolean;
 }
 
-/** Declarative right-click menu: wrap any content, pass `items`. The wrapper is
- *  layout-neutral (`display: contents`), so it doesn't disturb grid/flex parents. */
-export function ContextMenu({items, children, disabled}: ContextMenuProps) {
+const LONG_PRESS_MS = 450;
+
+/** Declarative context menu: wrap any content, pass `items`. Opens on right-click;
+ *  on touch a long-press opens it too (no right-click there). Pass `openOnClick` to
+ *  also open on a plain tap/click. The wrapper is layout-neutral (`display: contents`),
+ *  so it doesn't disturb grid/flex parents. */
+export function ContextMenu({items, children, disabled, openOnClick}: ContextMenuProps) {
     const [point, setPoint] = useState<{x: number; y: number} | null>(null);
+    const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    // A fired long-press must swallow the click the browser synthesizes on touchend,
+    // or the wrapped element's own onClick (e.g. "open terminal") runs right after the menu opens.
+    const didLongPress = useRef(false);
+
+    const open = (x: number, y: number) => {
+        if (disabled || items.length === 0) return;
+        setPoint({x, y});
+    };
 
     const onContextMenu = (e: ReactMouseEvent) => {
         if (disabled || items.length === 0) return;
         e.preventDefault();
-        setPoint({x: e.clientX, y: e.clientY});
+        open(e.clientX, e.clientY);
     };
 
-    return <span style={{display: "contents"}} onContextMenu={onContextMenu}>
+    const onClick = openOnClick ? (e: ReactMouseEvent) => {
+        if (disabled || items.length === 0) return;
+        // The menu surface is a React child of this wrapper, so clicks on its items
+        // bubble here through the React tree (portals bubble by tree, not DOM) — ignore
+        // them, or activating an item would instantly reopen the menu.
+        if ((e.target as Element | null)?.closest?.("[data-rk-dropdown-portal]")) return;
+        e.preventDefault();
+        open(e.clientX, e.clientY);
+    } : undefined;
+
+    const clearLongPress = () => {
+        if (longPressTimer.current) { clearTimeout(longPressTimer.current); longPressTimer.current = null; }
+    };
+    const onTouchStart = (e: ReactTouchEvent) => {
+        if (disabled || items.length === 0) return;
+        didLongPress.current = false;
+        const {clientX, clientY} = e.touches[0]!;
+        clearLongPress();
+        longPressTimer.current = setTimeout(() => {
+            longPressTimer.current = null;
+            didLongPress.current = true;
+            open(clientX, clientY);
+        }, LONG_PRESS_MS);
+    };
+    const onTouchEnd = (e: ReactTouchEvent) => {
+        clearLongPress();
+        if (didLongPress.current) e.preventDefault();
+    };
+
+    return <span style={{display: "contents"}}
+        onContextMenu={onContextMenu}
+        onClick={onClick}
+        onTouchStart={onTouchStart}
+        onTouchMove={clearLongPress}
+        onTouchEnd={onTouchEnd}
+        onTouchCancel={clearLongPress}
+    >
         {children}
         {point && <ContextMenuSurface x={point.x} y={point.y} items={items} onClose={() => setPoint(null)}/>}
     </span>;
