@@ -73,9 +73,12 @@ export function Popover({
             // to the vertical axis when neither side fits, preserving the old "horizontal" fallback.
             ...(over ? [] : [flip({padding: viewportMargin, ...(horizontal ? {fallbackAxisSideDirection: "start"} : {})})]),
             shift({padding: viewportMargin}),
-            size({padding: viewportMargin, apply({availableHeight, elements}) {
+            size({padding: viewportMargin, apply({availableHeight, availableWidth, elements}) {
                 const cap = maxHeight !== undefined ? Math.min(maxHeight, availableHeight) : availableHeight;
                 elements.floating.style.maxHeight = `${Math.max(0, cap)}px`;
+                // Cap width to the room left to the viewport edge (placement-aware) so a wide
+                // popover anchored near an edge can't run off-screen — recomputed on resize by autoUpdate.
+                elements.floating.style.maxWidth = `${Math.max(0, availableWidth)}px`;
             }}),
         ],
         whileElementsMounted: autoUpdate,
