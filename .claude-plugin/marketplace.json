@@ -1,0 +1,22 @@
+{
+  "name": "react-kit",
+  "owner": {
+    "name": "GrestGames",
+    "url": "https://github.com/GrestGames"
+  },
+  "description": "Claude Code knowledge plugin for grest-react-kit — the grest-ts React UI library",
+  "plugins": [
+    {
+      "name": "react-kit",
+      "source": "./.claude-plugin/react-kit",
+      "description": "Component catalog, the use-react-kit-or-ask decision rule, and bundled form docs for grest-react-kit. Activates whenever Claude works in a project that depends on grest-react-kit.",
+      "version": "0.0.1",
+      "author": {
+        "name": "GrestGames"
+      },
+      "homepage": "https://github.com/GrestGames/react-kit",
+      "repository": "https://github.com/GrestGames/react-kit",
+      "category": "framework"
+    }
+  ]
+}

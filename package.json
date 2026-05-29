@@ -12,7 +12,8 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build:skill": "node scripts/build-skill.mjs"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.0"
