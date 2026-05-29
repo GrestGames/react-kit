@@ -58,7 +58,7 @@ export function FormCancelButton(props: ButtonProps) {
     return AnyButton({...props, type: "button", intent: "warning", children: props.children || "Cancel", className: "formSubmit " + props.className, style: {float: "left", ...props.style}})
 }
 
-export function ArrayPushButton<T>(props: Omit<ButtonProps, "onClick"> & { prop: FormObject<T[]>, blank?: Partial<T> | (() => Partial<T>) }) {
+export function ArrayPushButton<T>({prop, blank, ...props}: Omit<ButtonProps, "onClick"> & { prop: FormObject<T[]>, blank?: Partial<T> | (() => Partial<T>) }) {
     return AnyButton({
         children: props.children || "Add row",
         ...props,
@@ -66,8 +66,8 @@ export function ArrayPushButton<T>(props: Omit<ButtonProps, "onClick"> & { prop:
         intent: "cool",
         className: "addRowButton",
         onClick: () => {
-            const value = typeof props.blank === "function" ? (props.blank as (() => T))() : props.blank;
-            props.prop.push(value || {} as any)
+            const value = typeof blank === "function" ? (blank as (() => T))() : blank;
+            prop.push(value || {} as any)
         }
     })
 }
@@ -75,7 +75,7 @@ export function ArrayPushButton<T>(props: Omit<ButtonProps, "onClick"> & { prop:
 /**
  * @deprecated
  */
-export function ArrayRemoveButtonOLD<T>(props: { prop: FormObject<T[]>, index: number, style?: CSSProperties }) {
+export function ArrayRemoveButtonOLD<T>({prop, index, ...props}: { prop: FormObject<T[]>, index: number, style?: CSSProperties }) {
     return AnyButton({
         children: "X",
         ...props,
@@ -83,12 +83,12 @@ export function ArrayRemoveButtonOLD<T>(props: { prop: FormObject<T[]>, index: n
         intent: "danger",
         className: "deleteRowButton",
         onClick: () => {
-            props.prop.splice(props.index, 1)
+            prop.splice(index, 1)
         }
     })
 }
 
-export function ArrayRemoveButton<T>(props: { prop: FormObject<T>, style?: CSSProperties }) {
+export function ArrayRemoveButton<T>({prop, ...props}: { prop: FormObject<T>, style?: CSSProperties }) {
     return AnyButton({
         children: "X",
         ...props,
@@ -96,7 +96,7 @@ export function ArrayRemoveButton<T>(props: { prop: FormObject<T>, style?: CSSPr
         intent: "danger",
         className: "deleteRowButton",
         onClick: () => {
-            props.prop.removeFromParentArray();
+            prop.removeFromParentArray();
         }
     })
 }

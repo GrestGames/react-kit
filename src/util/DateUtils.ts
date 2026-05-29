@@ -1,5 +1,7 @@
-export type tDate = string & { __brand: "tDate" };
-export type tYearMonth = string & { __brand: "tYearMonth" };
+import type {Brand} from "@grest-ts/schema";
+
+export type tDate = string & Brand<"date">;
+export type tYearMonth = string & Brand<"YearMonth">;
 
 const month3 = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
