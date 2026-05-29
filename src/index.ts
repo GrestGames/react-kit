@@ -93,6 +93,9 @@ export * from "./mini/AutoHeight";
 export {TopMenu, type TopMenuItem, type TopMenuSubItem, type TopMenuProps} from "./menu/TopMenu";
 export {ContextMenu, RkContextMenu, type ContextMenuProps} from "./menu/ContextMenu";
 
+// Responsive
+export {useResponsive, useIsMobile} from "./responsive/useResponsive";
+
 // Helpers
 export * from "./helpers/useAsyncState";
 export * from "./helpers/useAsyncEffect";
