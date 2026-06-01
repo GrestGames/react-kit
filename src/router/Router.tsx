@@ -28,6 +28,11 @@ export class Router {
     private elements: ReactNode[] = [];
     private openKeys: string[] = [];
 
+    // Sub-params (e.g. a Tabs `urlKey`) scoped to an open route. Removing the
+    // owning route key drops them in the same update, so closing a popup doesn't
+    // leave its `?…Tab=…` orphaned in the URL.
+    private readonly childParams = new Map<string, Set<string>>();
+
     private isCtrlDown = false;
 
     private readonly onPopState = () => {
@@ -92,8 +97,21 @@ export class Router {
     }
     remove(...keys: string[]) {
         const next = {...this.routeArgs};
-        keys.forEach((k) => delete next[k]);
+        for (const k of keys) {
+            delete next[k];
+            this.childParams.get(k)?.forEach((child) => delete next[child]);
+        }
         this.updateRoutes(next);
+    }
+
+    registerChildParam(parent: string, key: string) {
+        let set = this.childParams.get(parent);
+        if (!set) this.childParams.set(parent, set = new Set());
+        set.add(key);
+    }
+
+    unregisterChildParam(parent: string, key: string) {
+        this.childParams.get(parent)?.delete(key);
     }
     reset() { this.updateRoutes({}); }
     reload() { window.location.reload(); }

@@ -41,7 +41,7 @@ export function SubmitButton(props: Omit<ButtonProps, "onClick">) {
     })
 }
 
-export function FormSubmitButton(props: Omit<ButtonProps, "onClick"> & {alwaysEnabled?: boolean}) {
+export function FormSubmitButton({alwaysEnabled, ...props}: Omit<ButtonProps, "onClick"> & {alwaysEnabled?: boolean}) {
     const form = useForm<any>();
     return AnyButton({
         ...props,
@@ -49,7 +49,7 @@ export function FormSubmitButton(props: Omit<ButtonProps, "onClick"> & {alwaysEn
         intent: props.intent ?? "danger",
         children: props.children || "Save",
         className: "formSubmit " + props.className,
-        disabled: props.disabled || (form && !props.alwaysEnabled ? !form.isChanged() : false),
+        disabled: props.disabled || (form && !alwaysEnabled ? !form.isChanged() : false),
         onClick: form ? async () => form.getForm().submit() : () => undefined
     })
 }
