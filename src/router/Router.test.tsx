@@ -50,4 +50,25 @@ describe("Router open-key ordering", () => {
         router.remove("b");
         expect(router.getOpenKeys()).toEqual(["a", "c"]);
     });
+
+    it("removes a key's registered child params in the same update", () => {
+        setUrl("a=1");
+        router = new Router(routes, "page=home");
+        router.add({aTab: "two"});
+        router.registerChildParam("a", "aTab");
+        expect(router.get("aTab")).toEqual("two");
+        router.remove("a");
+        expect(router.get("a")).toBeUndefined();
+        expect(router.get("aTab")).toBeUndefined();
+    });
+
+    it("does not touch child params once unregistered", () => {
+        setUrl("a=1");
+        router = new Router(routes, "page=home");
+        router.add({aTab: "two"});
+        router.registerChildParam("a", "aTab");
+        router.unregisterChildParam("a", "aTab");
+        router.remove("a");
+        expect(router.get("aTab")).toEqual("two");
+    });
 });

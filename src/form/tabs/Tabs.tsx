@@ -1,5 +1,5 @@
 import {ReactNode, useEffect, useState} from "react";
-import {useRouter} from "../../router";
+import {useRouter, useRouteKey} from "../../router";
 import "./Tabs.css"
 
 export interface Props {
@@ -17,7 +17,16 @@ export interface Tab {
 
 export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
     const {router} = useRouter();
+    const routeKey = useRouteKey();
     const [ready, setReady] = useState(false);
+
+    // Scope this tab's url param to the route it lives under (e.g. a popup), so
+    // closing that route also clears the tab param instead of orphaning it.
+    useEffect(() => {
+        if (!routeKey) return undefined;
+        router.registerChildParam(routeKey, urlKey);
+        return () => router.unregisterChildParam(routeKey, urlKey);
+    }, [router, routeKey, urlKey]);
 
     const tabsMap = new Map<string, Tab>();
     tabs.forEach((tab) => {
