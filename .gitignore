@@ -11,6 +11,7 @@ package-lock.json
 !jest.config.base.js
 !**/jest.config.js
 !exports/node/vitest.d.ts
+!src/css-modules.d.ts
 .verdaccio/storage/
 docs-web/src/
 docs-web/build/
