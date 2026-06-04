@@ -10,7 +10,7 @@ export function FileUpload(props: AnyInputElement<GGFile>) {
         ...props,
         multiple: false,
         value: data.value ? [data.value] : [],
-        validationError: {msg: data.validationError?.msg, errors: [data.validationError]},
+        validationError: {msg: data.validationError?.msg ?? "", errors: [data.validationError]},
         onChange: (files) => {
             data.onChange(files[0]);
         },
@@ -37,16 +37,16 @@ function _FilesUpload(props: AnyInputElementWithValue<GGFile[]> & { multiple?: b
             newEntries.push(GGFile.fromBrowserFile(filesData[i]));
         }
         if (props.multiple) {
-            props.onChange([...(props.value || []), ...newEntries] as any);
+            props.onChange?.([...(props.value || []), ...newEntries] as any);
         } else {
-            props.onChange([newEntries[newEntries.length - 1]]);
+            props.onChange?.([newEntries[newEntries.length - 1]]);
         }
     }
 
     const removeFile = (no: number) => {
         const copy = props.value ? [...props.value] : [];
         copy.splice(no, 1)
-        props.onChange(copy);
+        props.onChange?.(copy);
     }
 
     const dropMessageClass = "dropMessage " + (props.multiple ? "dropMessageMultiple" : "");
@@ -56,7 +56,7 @@ function _FilesUpload(props: AnyInputElementWithValue<GGFile[]> & { multiple?: b
         <div className={"fileUploadDropZone " + (disabled && "disabled") + (props.validationError?.msg ? " error" : "") + " " + props.className}
                 style={props.style}
                 onClick={(e) => {
-                    fileInput.current.click()
+                    fileInput.current?.click()
                 }}
                 onDragOver={(e) => {
                     e.preventDefault();
@@ -95,7 +95,7 @@ function _FilesUpload(props: AnyInputElementWithValue<GGFile[]> & { multiple?: b
             type="file" ref={fileInput}
             style={{display: "none"}}
             multiple={props.multiple}
-            onChange={(e) => addNewFiles(fileInput.current.files)}
+            onChange={(e) => fileInput.current?.files && addNewFiles(fileInput.current.files)}
         />}
     </div>
     </>

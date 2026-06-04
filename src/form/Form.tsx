@@ -48,7 +48,7 @@ export function Form<T>(props: PropsWithChildren<{ prop: FormObject<T>, hideVali
     }
 }
 
-export function FormLoader({f, containerRef: containerRef}: { f: FormRoot<any>, containerRef: React.MutableRefObject<HTMLElement> }) {
+export function FormLoader({f, containerRef: containerRef}: { f: FormRoot<any>, containerRef: React.RefObject<HTMLElement | null> }) {
     if (!containerRef.current || "disabled") { // @TODO Disabled it, as I can't find a way to position it correctly to cover whole form in scrolled panels.
         return <></>
     }

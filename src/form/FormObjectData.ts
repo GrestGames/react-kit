@@ -6,14 +6,14 @@ export type PropertyPath = (string | number)[];
 export class FormObjectData<T> {
 
     private readonly root: FormRoot<T>;
-    private readonly _onChange: (newValue: T, oldValue: T) => void;
+    private readonly _onChange?: (newValue: T, oldValue: T) => void;
 
-    private initialValue: T;
-    private currentValue: T;
-    private validationErrors: ValidationErrors<T>
+    private initialValue!: T;
+    private currentValue!: T;
+    private validationErrors: ValidationErrors<T> | undefined
     private hasChanges: boolean = false;
 
-    constructor(root: FormRoot<T>, onChange: (newValue: T, oldValue: T) => void) {
+    constructor(root: FormRoot<T>, onChange?: (newValue: T, oldValue: T) => void) {
         this.root = root;
         this._onChange = onChange;
     }
@@ -25,7 +25,7 @@ export class FormObjectData<T> {
         this.root.forceRender();
     }
 
-    public setValidationErrors(errors: ValidationErrors<T>) {
+    public setValidationErrors(errors: ValidationErrors<T> | undefined) {
         this.validationErrors = errors;
         this.root.forceRender();
     }
@@ -35,7 +35,7 @@ export class FormObjectData<T> {
             return;
         }
         if (!this.validationErrors) {
-            this.validationErrors = {msg: undefined}
+            this.validationErrors = {msg: ""}
         }
         let validationError: any = this.validationErrors;
         for (let i = 0; i < path.length; i++) {
@@ -139,9 +139,9 @@ export class FormObjectData<T> {
 
 function cloneObj<T>(obj: T): T {
     if (obj === undefined) {
-        return undefined;
+        return undefined as T;
     } else if (obj === null) {
-        return null;
+        return null as T;
     } else if (typeof obj === "string" || typeof obj === "number" || typeof obj === "boolean") {
         return obj;
     } else if (obj instanceof File) {
@@ -167,7 +167,7 @@ function cloneObj<T>(obj: T): T {
 function compare<T>(a: T, b: T): boolean {
     if (a === b) {
         return true;
-    } else if (typeof a === "object" && typeof b === "object") {
+    } else if (typeof a === "object" && a !== null && typeof b === "object" && b !== null) {
         if (Array.isArray(a) !== Array.isArray(b)) {
             return false;
         } else if (Array.isArray(a) && Array.isArray(b)) {

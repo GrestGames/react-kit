@@ -15,7 +15,7 @@ export interface Props<T> {
 
 export function DeleteObjectSection<T>({objectName, prop, onDelete}: Props<T>) {
     const [checked, setChecked] = useState(false);
-    const [error, setError] = useState<ERROR<string, any>>(undefined)
+    const [error, setError] = useState<ERROR<string, any> | undefined>(undefined)
 
     if (prop.getForm().isReadOnly()) {
         return <></>;

@@ -50,10 +50,6 @@ export class DateUtils {
      * Returns YYYY-MM-DD format
      */
     public static date(date: Date): tDate {
-        if (!date) {
-            return undefined;
-        }
-
         let year = date.getFullYear();
         let month = date.getMonth() + 1;
         let day = date.getDate();
@@ -69,10 +65,6 @@ export class DateUtils {
      * Returns YYYY-MM format
      */
     public static yearMonth(date: Date): string {
-        if (!date) {
-            return undefined;
-        }
-
         let year = date.getFullYear();
         let month = date.getMonth() + 1;
 

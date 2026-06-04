@@ -18,8 +18,8 @@ export interface LazyDataSetProviderProps<X> {
 
 export function LazyDataSetProvider<X>(props: PropsWithChildren<LazyDataSetProviderProps<X>>) {
     const [ver, setVer] = useState(0);
-    const [rows, setRows] = useState<X[]>(undefined);
-    const [error, setError] = useState<ERROR<string, any>>(undefined)
+    const [rows, setRows] = useState<X[] | undefined>(undefined);
+    const [error, setError] = useState<ERROR<string, any> | undefined>(undefined)
     const [loadState, setLoadState] = useState<"load" | "loading" | "loaded" | "init">("init");
 
     useEffect(() => {
@@ -76,7 +76,7 @@ export function LazyDataSetProvider<X>(props: PropsWithChildren<LazyDataSetProvi
                     // Trigger lazy load, but need to do it next frame otherwise conflicts with React rendering.
                     setTimeout(() => setLoadState("load"));
                 }
-                return rows
+                return rows ?? []
             }
         }
     }}>{props.children}</props.context.Provider>

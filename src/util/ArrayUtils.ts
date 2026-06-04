@@ -10,7 +10,7 @@ export class ArrayUtils {
     }
 
     public static addIfNotExist<T>(array: T[], element: T | undefined): void {
-        const index = array.indexOf(element)
+        const index = array.indexOf(element as T)
         if (element && index === -1) {
             array.push(element);
         } else if (!element && index !== -1) {

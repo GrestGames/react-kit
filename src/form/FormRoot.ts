@@ -20,11 +20,11 @@ export class FormRoot<T> {
     private _isReadOnly: boolean = false;
 
     private _isLoading: boolean = true;
-    private loadError: ERROR<string, any>;
+    private loadError: ERROR<string, any> | undefined;
     private _isReloading: boolean = false;
 
     private _isSaving: boolean = false;
-    private submitError: ERROR<string, any>;
+    private submitError: ERROR<string, any> | undefined;
 
     constructor(reactRefresh: () => void, listeners: FormRootListeners<T>) {
         this.reactRefresh = reactRefresh;
@@ -140,11 +140,11 @@ export class FormRoot<T> {
         return this._isSaving;
     }
 
-    public getLoadError(): ERROR<string, any> {
+    public getLoadError(): ERROR<string, any> | undefined {
         return this.loadError;
     }
 
-    public getValidationErrors(): FormValidationErrors<T> {
+    public getValidationErrors(): FormValidationErrors<T> | undefined {
         return this.data.getPropertyValidationError([]);
     }
 
@@ -160,7 +160,7 @@ export class FormRoot<T> {
     /**
      * Returns error that happened that is now validation error.
      */
-    public getSubmitError(): ERROR<string, any> {
+    public getSubmitError(): ERROR<string, any> | undefined {
         return this.submitError;
     }
 

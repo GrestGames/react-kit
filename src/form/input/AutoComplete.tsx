@@ -60,7 +60,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
                 }
                 return res;
             } else {
-                return props.options
+                return props.options || []
             }
         })
     }, props.dependencies || [])
@@ -74,7 +74,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
     useEffect(() => {
         const res = searchOptions(options || [], searchString);
         if (props.addEmpty && !searchString) {
-            res.unshift({id: undefined, name: ""})
+            res.unshift({id: undefined as K, name: ""})
         }
         setMatches(res);
     }, [options, searchString])
@@ -124,7 +124,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
                    onChange={(e) => {
                        if (!props.readOnly && !data.readOnly) {
                            setSearchString(e.target.value)
-                           data.onChange?.(undefined)
+                           data.onChange?.(undefined as K)
                        }
                    }}/>
             {isOpen && <FloatingPortal>

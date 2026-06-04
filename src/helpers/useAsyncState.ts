@@ -32,16 +32,19 @@ export interface UseAsyncStateOptions {
  *
  * It really is a super method :)
  */
-export function useAsyncState<S = undefined>(initialState: S | undefined = undefined, options?: UseAsyncStateOptions): [S | undefined, Dispatch<SetStateType<S>>, useAsyncStateState] {
+export function useAsyncState<S = undefined>(initialState: S | undefined = undefined, options?: UseAsyncStateOptions): [S | undefined, Dispatch<SetStateType<S> | undefined>, useAsyncStateState] {
 
-    const [data, setData] = useState<S>(initialState);
+    const [data, setData] = useState<S | undefined>(initialState);
     const [state, setState] = useState<useAsyncStateState>({state: AsyncState.INIT})
     const errors = useErrorTracker();
     const onlyLatest = useOnlyLatestResult<S>();
     const autoHandleErrors = !options?.disableErrorAutoHandling;
 
-    const asyncSetState = async (input: SetStateType<S>) => {
-        if (typeof input === "function") {
+    const asyncSetState = async (input: SetStateType<S> | undefined) => {
+        if (input === undefined) {
+            setData(undefined);
+            setState({state: AsyncState.OK});
+        } else if (typeof input === "function") {
             setData((data) => {
                 const funcResult = (input as any)(data);
                 if (isPromise(funcResult)) {
