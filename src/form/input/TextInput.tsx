@@ -145,7 +145,7 @@ export function PasswordInput(props: InputProps<string>) {
 }
 
 export class TextParser {
-    public static toInput(value: unknown): string | null {
+    public static toInput(value: unknown): string {
         if (value === null || value === undefined || value === "") {
             return "";
         } else {

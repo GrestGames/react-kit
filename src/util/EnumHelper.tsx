@@ -4,7 +4,7 @@ export class EnumHelper<T, R extends EnumEntry<T>> {
 
     private readonly _list: R[]
     private readonly _map: Map<T, R>
-    private readonly _getElement: (item: R) => ReactNode
+    private readonly _getElement?: (item: R) => ReactNode
 
     constructor(list: R[], getElement?: (item: R) => ReactNode) {
         this._list = list;
@@ -26,7 +26,7 @@ export class EnumHelper<T, R extends EnumEntry<T>> {
         return list;
     }
 
-    public get(id: T): R {
+    public get(id: T): R | undefined {
         return this._map.get(id)
     }
 

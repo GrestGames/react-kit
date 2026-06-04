@@ -64,7 +64,7 @@ class DateParser {
         return undefined;
     }
 
-    public static toOutput(date: Date): string | null {
+    public static toOutput(date: Date | null): string | null {
         if (!date || isNaN(date.getTime())) {
             return null;
         }
@@ -75,7 +75,7 @@ class DateParser {
         return str
     }
 
-    public static toYearMonthOutput(date: Date): string | null {
+    public static toYearMonthOutput(date: Date | null): string | null {
         if (!date || isNaN(date.getTime())) {
             return null;
         }

@@ -16,8 +16,8 @@ export class FormObjectProxyHandler {
         this.root = root;
 
         if (parent) {
-            this.name = name;
-            this.path = [...parent.path, name];
+            this.name = name!;
+            this.path = [...parent.path, name!];
             this.parent = parent;
         } else {
             this.name = null;
@@ -100,7 +100,7 @@ export class FormObjectProxyHandler {
                 const fieldValue = this.root.data.getPropertyValue([...this.path, args[0]]);
                 return fieldValue === args[1] ? args[2](this.proxy) : null;
             case "removeFromParentArray":
-                const parentValue = this.parent.getPropertyValue();
+                const parentValue = this.parent!.getPropertyValue();
                 if (Array.isArray(parentValue) && typeof this.name === "number") {
                     parentValue.splice(this.name, 1);
                     this.root.forceRender();
@@ -117,7 +117,7 @@ export class FormObjectProxyHandler {
 
     public apply(target: any, thisArg: any, args: any[]): any {
         // console.log("APPLY ", this.path, this.name)
-        return this.parent.applyFunc(this.name as string | Symbol, args);
+        return this.parent!.applyFunc(this.name as string | Symbol, args);
     }
 
     public get(target: any, prop: string) {
@@ -125,7 +125,7 @@ export class FormObjectProxyHandler {
         if (!this.children.has(prop)) {
             this.children.set(prop, new FormObjectProxyHandler(this.root, this, prop))
         }
-        return this.children.get(prop).proxy;
+        return this.children.get(prop)!.proxy;
     }
 
     /**

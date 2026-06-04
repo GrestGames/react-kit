@@ -12,7 +12,7 @@ export interface ErrorTracker {
     addError: (error: AnyError) => void;
 }
 
-const ApiContext = React.createContext<ErrorTracker>(undefined);
+const ApiContext = React.createContext<ErrorTracker>(undefined as unknown as ErrorTracker);
 
 export function useErrorTracker(): ErrorTracker {
     return React.useContext(ApiContext);

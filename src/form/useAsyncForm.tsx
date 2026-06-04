@@ -28,7 +28,7 @@ export function useAsyncForm<T>(props: Props<T>, dependencies: DependencyList): 
                 }
             },
             onChange: props.onChange
-        }).setReadOnly(props.readOnly);
+        }).setReadOnly(props.readOnly || false);
     }, dependencies);
 
     useAsyncEffect(async () => {

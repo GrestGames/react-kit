@@ -10,8 +10,8 @@ export interface Props {
 }
 
 export function FileIframe({src, width, height}: Props) {
-    const [url, setUrl] = useState<string>(undefined);
-    const [error, setError] = useState<string>(undefined);
+    const [url, setUrl] = useState<string | undefined>(undefined);
+    const [error, setError] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         let blobUrl: string | undefined;

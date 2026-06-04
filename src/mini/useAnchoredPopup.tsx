@@ -120,7 +120,7 @@ export interface WrapWithPopupConfig {
 
 /** Wrap an element with an anchored popup trigger, ToolTip-style ergonomic helper. */
 export function wrapWithPopup(config: WrapWithPopupConfig, element: React.ReactElement): ReactNode {
-    return <PopupWrapper config={config}>{element}</PopupWrapper>;
+    return <PopupWrapper config={config}>{element as React.ReactElement<Record<string, any>>}</PopupWrapper>;
 }
 
 function PopupWrapper({config, children}: {config: WrapWithPopupConfig; children: React.ReactElement<Record<string, any>>}) {

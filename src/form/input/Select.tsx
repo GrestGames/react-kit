@@ -71,7 +71,7 @@ export function Select<T extends string | number>(props: AnySelectFormElement<T>
             value={SelectParser.toInput(data.value)}
             disabled={props.disabled || props.readOnly || data.readOnly}
             onChange={(e) => {
-                data.onChange(SelectParser.toOutput<T>(e.target.value, [...(props.addEmpty ? [{id: null, name: ""}] : []), ...props.options]));
+                data.onChange(SelectParser.toOutput<T>(e.target.value, [...(props.addEmpty ? [{id: null, name: ""}] as unknown as ValueType<T>[] : []), ...props.options]));
                 if (props.inlineEdit) e.target.blur();
             }}
             className={"rkSelect " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "") + inlineClass}
@@ -93,15 +93,15 @@ class SelectParser {
     }
 
     public static toOutput<T>(val: string, options: ValueType<T>[]): T {
-        val = val === "" ? null : val;
+        const search: string | null = val === "" ? null : val;
         const item = options.find((opt) => {
-            if (val === null) {
+            if (search === null) {
                 return opt.id === null;
             } else {
-                return opt.id == val;
+                return opt.id == search;
             }
         });
-        return item.id;
+        return item!.id;
     }
 
 

@@ -60,7 +60,7 @@ export function useInputData<T>(input: AnyInputElement<T>): InputData<T> {
             value: input.value,
             validationError: input.validationError,
             readOnly: false,
-            onChange: input.onChange
+            onChange: input.onChange ?? (() => {})
         }
     }
 }

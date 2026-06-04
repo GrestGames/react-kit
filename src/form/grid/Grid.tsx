@@ -108,7 +108,7 @@ export function Grid<T extends { id: number }, Q>({
 
     const containerRef = useRef<any>(null);
 
-    const [filter, setFilter] = useState<FilterState<Q>>(undefined as FilterState<Q>);
+    const [filter, setFilter] = useState<FilterState<Q> | undefined>(undefined);
     const [data, setData, dataState] = useAsyncState<T[]>(undefined, {disableErrorAutoHandling: true});
 
     const lastRowsRef = useRef<T[] | undefined>(undefined);
@@ -138,7 +138,7 @@ export function Grid<T extends { id: number }, Q>({
                         delete (cleaned as any)[key];
                     }
                 }
-                const newFilters = {...cleaned, limit: [0, rowsPerCall], orderBy: filter.orderBy} as FilterState<Q>;
+                const newFilters = {...cleaned, limit: [0, rowsPerCall], orderBy: filter?.orderBy} as FilterState<Q>;
                 updateUrl(filtersUrlKeyName, newFilters)
                 return newFilters
             });
@@ -159,7 +159,7 @@ export function Grid<T extends { id: number }, Q>({
         if (!filter) {
             return undefined;
         }
-        const rowsToLoad = filter.limit[1] - filter.limit[0] - (data?.length || 0)
+        const rowsToLoad = filter.limit![1] - filter.limit![0] - (data?.length || 0)
         if (rowsToLoad > 0) {
             updateData(async (data) => {
                 let newRows: T[] = [];
@@ -190,7 +190,7 @@ export function Grid<T extends { id: number }, Q>({
             if (operation === TrackerOperation.CREATE) {
                 updateData(undefined);
                 setFilter((f) => {
-                    return {...f};
+                    return f ? {...f} : f;
                 });
             } else if (operation === TrackerOperation.UPDATE) {
                 if (id) {
@@ -249,7 +249,8 @@ export function Grid<T extends { id: number }, Q>({
 
     const loadMore = () => {
         setFilter((filter) => {
-            const newFilters = {...filter, limit: [filter.limit[0], filter.limit[1] + rowsPerCall]} as FilterState<Q>;
+            if (!filter) return filter;
+            const newFilters = {...filter, limit: [filter.limit![0], filter.limit![1] + rowsPerCall]} as FilterState<Q>;
             updateUrl(filtersUrlKeyName, newFilters)
             return newFilters
         });
@@ -288,8 +289,8 @@ export function Grid<T extends { id: number }, Q>({
     // hasMore and the footer derive from displayData (current rows, or the previous rows during a
     // reload) so the "Load more" row and the "No more rows" footer stay put instead of vanishing
     // and reflowing the table on every reload.
-    const hasMore = !isLoading && !dataState.error && displayData?.length === filter?.limit[1];
-    const showFooter = !hideFooter && !isLoading && !dataState.error && displayData?.length > 0 && displayData.length < filter?.limit[1];
+    const hasMore = !isLoading && !dataState.error && displayData?.length === filter.limit![1];
+    const showFooter = !hideFooter && !isLoading && !dataState.error && !!displayData && displayData.length > 0 && displayData.length < filter.limit![1];
     const isValidationError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type === VALIDATION_ERROR.TYPE;
     const isOtherError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type !== VALIDATION_ERROR.TYPE;
 
@@ -315,7 +316,7 @@ export function Grid<T extends { id: number }, Q>({
             {isEmpty && <div className="area"><TipBox intent="default">No entries found!</TipBox></div>}
             {isLoading && <div className="area"><div className="gridCardsLoading"><div className="loader"></div></div></div>}
             {isValidationError && <div className="area"><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></div>}
-            {isOtherError && <div className="area"><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error)}</TipBox></div>}
+            {isOtherError && <div className="area"><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox></div>}
         </> : isMobile && mobileCard ? (
             /* ── Mobile: card view ─────────────────────────────── */
             <div className="area">
@@ -329,7 +330,7 @@ export function Grid<T extends { id: number }, Q>({
                 {isLoading && <div className="gridCardsLoading"><div className="loader"></div></div>}
                 {showFooter && <div className="gridCardsFooter">No more rows. Found {displayData.length} row(s)!</div>}
                 {isValidationError && <TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox>}
-                {isOtherError && <TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error)}</TipBox>}
+                {isOtherError && <TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox>}
             </div>
         ) : (
             /* ── Desktop: table view ───────────────────────────── */
@@ -339,7 +340,7 @@ export function Grid<T extends { id: number }, Q>({
                     <tbody>
                     <tr>
                         {fields.map((f, s) => {
-                            let onClick: () => void = undefined;
+                            let onClick: (() => void) | undefined = undefined;
                             const isSortable = !!f.sortName;
                             if (isSortable) {
                                 onClick = () => {
@@ -367,7 +368,7 @@ export function Grid<T extends { id: number }, Q>({
                                 rowSpanCounts[s]--;
                                 return undefined;
                             }
-                            let rowSpan: (a: any, b: any, c: any) => number = undefined;
+                            let rowSpan: ((a: any, b: any, c: any) => number) | undefined = undefined;
                             if (f.rowSpan === "sameId") {
                                 rowSpan = (a: any, b: any, c: any) => sameIdRowSpan("id", a, b, c);
                             } else if (typeof f.rowSpan === "string") {
@@ -376,7 +377,7 @@ export function Grid<T extends { id: number }, Q>({
                                 rowSpan = f.rowSpan as any;
                             }
                             const rowSpanValue = rowSpan?.(row, i, displayData);
-                            if (rowSpanValue > 1) {
+                            if (rowSpanValue !== undefined && rowSpanValue > 1) {
                                 rowSpanCounts[s] = rowSpanValue;
                             }
 
@@ -402,7 +403,7 @@ export function Grid<T extends { id: number }, Q>({
                         <td colSpan={fields.length + 1}><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></td>
                     </tr>}
                     {isOtherError && <tr>
-                        <td colSpan={fields.length + 1}><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error)}</TipBox></td>
+                        <td colSpan={fields.length + 1}><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox></td>
                     </tr>}
                     </tbody>
                 </table>

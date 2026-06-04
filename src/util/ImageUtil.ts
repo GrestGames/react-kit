@@ -26,6 +26,10 @@ export class ImageUtil {
                 elem.width = width;
                 elem.height = height;
                 const ctx = elem.getContext('2d');
+                if (!ctx) {
+                    reject(new Error("Could not get 2d canvas context"));
+                    return;
+                }
 
                 const scaleFactor = Math.max(width / img.width, height / img.height);
 
@@ -37,6 +41,10 @@ export class ImageUtil {
 
                 ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
                 ctx.canvas.toBlob(async (resultBlob) => {
+                    if (!resultBlob) {
+                        reject(new Error("Could not create blob from canvas"));
+                        return;
+                    }
                     const resultBuffer = new Uint8Array(await resultBlob.arrayBuffer());
                     resolve(GGFile.fromBuffer(resultBuffer, file.name, 'image/png'));
                 }, 'image/png', 1);

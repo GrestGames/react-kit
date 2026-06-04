@@ -12,7 +12,7 @@ export function IntegerInput<T extends number>(props: IntegerInputProps<T>) {
 }
 
 export function PositiveIntegerInput<T extends number>(props: IntegerInputProps<T>) {
-    if (props.min < 0) {
+    if (props.min !== undefined && props.min < 0) {
         throw new Error("Min must be positive or zero for positive number!")
     }
     return InternalNumberInput({step: 1, min: 0, max: 2147483647, ...props, fractionDigits: 0});
@@ -23,7 +23,7 @@ export function DecimalInput<T extends number>(props: DecimalInputProps<T>) {
 }
 
 export function PositiveDecimalInput<T extends number>(props: DecimalInputProps<T>) {
-    if (props.min < 0) {
+    if (props.min !== undefined && props.min < 0) {
         throw new Error("Min must be positive or zero for positive number!")
     }
     return InternalNumberInput({min: 0, ...props});
@@ -89,7 +89,7 @@ export function InputRange(props: { children: [ReactNode, ReactNode] }) {
 
 export class NumberParser {
 
-    public static checkInput(value: unknown, min: number, max: number, fractionalDigits: number): string {
+    public static checkInput(value: unknown, min: number | undefined, max: number | undefined, fractionalDigits: number): string {
         // We are not using fractionalDigits on purpose to avoid changing the input value and user would not notice.
         if (value === null || value === undefined || value === "" || isNaN(Number(value))) {
             return "";
