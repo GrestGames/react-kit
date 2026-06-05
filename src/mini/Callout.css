@@ -1,0 +1,49 @@
+@import "../css/theme.css";
+
+.rkCallout {
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border-radius: var(--rk-radius);
+    border: 1px solid var(--callout-border, var(--rk-border));
+    background: var(--callout-bg, var(--rk-bg-raised));
+    color: var(--rk-text);
+}
+
+.rkCalloutHead {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--callout-text);
+    margin-bottom: 8px;
+}
+
+.rkCalloutTitle {
+    font-size: var(--rk-font-size-huge);
+    font-weight: 600;
+}
+
+.rkCalloutIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: var(--rk-font-size-large);
+    color: var(--callout-text);
+    border: 1px solid var(--callout-border);
+    background: var(--callout-bg);
+}
+
+.rkCalloutBody {
+    color: var(--rk-text);
+    line-height: 1.5;
+}
+
+.rkCalloutActions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+}

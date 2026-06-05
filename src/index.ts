@@ -72,6 +72,7 @@ export {useAnchoredPopup, wrapWithPopup, type AnchoredPopupConfig, type WrapWith
 export * from "./mini/Popover";
 export * from "./mini/DarkBackground";
 export * from "./mini/Alert";
+export * from "./mini/Callout";
 export * from "./mini/Toast";
 export * from "./mini/Dialog";
 export * from "./mini/RkOverlayHost";
