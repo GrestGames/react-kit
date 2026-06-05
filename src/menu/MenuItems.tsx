@@ -1,5 +1,6 @@
 import {useState, useRef, useEffect, type ReactNode, KeyboardEvent} from "react";
 import {CONFIRM_DOUBLE_WINDOW_MS, DEFAULT_CONFIRM_DOUBLE_TEXT} from "../form/confirmDouble";
+import {alertError} from "../ErrorTracker";
 import "../form/ActionMenu.css";
 
 export interface ActionMenuItem {
@@ -53,6 +54,8 @@ export function MenuItems({items, onClose}: {items: ActionMenuItem[]; onClose: (
         setPendingIdxs(prev => { const next = new Set(prev); next.add(idx); return next; });
         try {
             await result;
+        } catch (err) {
+            alertError(err);
         } finally {
             setPendingIdxs(prev => { const next = new Set(prev); next.delete(idx); return next; });
             if (!item.keepOpen) onClose();

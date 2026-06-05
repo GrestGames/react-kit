@@ -1,9 +1,7 @@
 import {CSSProperties, forwardRef, ReactNode, useEffect, useRef, useState} from "react";
 import {isPromise} from "../../util/isPromise";
-import {Alert} from "../../mini/Alert";
 import {ToolTipSupported, wrapToolTip} from "../../mini/ToolTip";
-import {ApiErrorMessage} from "../../ErrorTracker";
-import {ERROR} from "@grest-ts/schema";
+import {alertError} from "../../ErrorTracker";
 import {CONFIRM_DOUBLE_WINDOW_MS, DEFAULT_CONFIRM_DOUBLE_TEXT, pickConfirmText} from "../confirmDouble";
 import React from "react";
 import {Intent} from "../../intents";
@@ -40,7 +38,6 @@ export const ButtonPrimitive = forwardRef<HTMLButtonElement, ButtonPrimitiveProp
         ...rest
     }, forwardedRef) {
         const [asyncLoading, setAsyncLoading] = useState(false);
-        const [error, setError] = useState<ERROR<string, any>>();
         const [armed, setArmed] = useState(false);
         const [confirmText, setConfirmText] = useState<string>();
         const internalRef = useRef<HTMLButtonElement>(null);
@@ -73,8 +70,8 @@ export const ButtonPrimitive = forwardRef<HTMLButtonElement, ButtonPrimitiveProp
                     setAsyncLoading(false);
                 }).catch((err) => {
                     setAsyncLoading(false);
-                    setError(ERROR.fromUnknown(err));
                     onError?.();
+                    alertError(err);
                 });
             }
         };
@@ -126,9 +123,6 @@ export const ButtonPrimitive = forwardRef<HTMLButtonElement, ButtonPrimitiveProp
             </button>
         );
 
-        return <>
-            {error && <Alert intent="danger" onClick={() => setError(undefined)}><ApiErrorMessage error={error}/></Alert>}
-            {armed ? button : wrapToolTip({title, titleProps}, button)}
-        </>;
+        return armed ? button : wrapToolTip({title, titleProps}, button);
     }
 );
