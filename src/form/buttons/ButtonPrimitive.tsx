@@ -1,9 +1,7 @@
 import {CSSProperties, forwardRef, ReactNode, useEffect, useRef, useState} from "react";
 import {isPromise} from "../../util/isPromise";
-import {RkAlert} from "../../mini/Dialog";
 import {ToolTipSupported, wrapToolTip} from "../../mini/ToolTip";
-import {ApiErrorMessage} from "../../ErrorTracker";
-import {ERROR} from "@grest-ts/schema";
+import {alertError} from "../../ErrorTracker";
 import {CONFIRM_DOUBLE_WINDOW_MS, DEFAULT_CONFIRM_DOUBLE_TEXT, pickConfirmText} from "../confirmDouble";
 import React from "react";
 import {Intent} from "../../intents";
@@ -73,7 +71,7 @@ export const ButtonPrimitive = forwardRef<HTMLButtonElement, ButtonPrimitiveProp
                 }).catch((err) => {
                     setAsyncLoading(false);
                     onError?.();
-                    void RkAlert.danger({message: <ApiErrorMessage error={ERROR.fromUnknown(err)} />});
+                    alertError(err);
                 });
             }
         };

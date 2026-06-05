@@ -2,8 +2,13 @@ import React, {useState} from "react";
 import {ArrayUtils} from "./util/ArrayUtils";
 import {ApiErrors} from "./ApiError";
 import {TipBox} from "./form/other/TipBox";
+import {RkAlert} from "./mini/Dialog";
 import {ERROR, VALIDATION_ERROR} from "@grest-ts/schema";
 import "./ErrorTracker.css";
+
+export function alertError(err: unknown): void {
+    void RkAlert.danger({message: <ApiErrorMessage error={ERROR.fromUnknown(err)} />});
+}
 
 type AnyError = ERROR<string, any> | Error | unknown;
 
