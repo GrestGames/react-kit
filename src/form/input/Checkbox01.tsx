@@ -1,7 +1,8 @@
+import type {ReactNode} from "react";
 import {AnyInputElement, useInputData} from "./StandardFormElementProps";
 import "./checkbox.css";
 
-type ExtraProps = { id?: string, isChanged?: boolean };
+type ExtraProps = { id?: string, isChanged?: boolean, afterText?: ReactNode };
 
 export function Checkbox01(props: AnyInputElement<0 | 1> & ExtraProps) {
     return InternalCheckbox(props as AnyInputElement<boolean | 0 | 1> & ExtraProps, true);
@@ -33,6 +34,7 @@ function InternalCheckbox(props: AnyInputElement<boolean | 0 | 1> & ExtraProps, 
                     <path d="M2.5 6l2.5 2.5 4.5-5"/>
                 </svg>
             </span>
+            {props.afterText !== undefined && <span className="cbText">{props.afterText}</span>}
         </label>
     </div>
 }

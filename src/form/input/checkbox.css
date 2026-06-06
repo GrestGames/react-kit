@@ -13,6 +13,10 @@
     opacity: 0.5;
 }
 
+.cbText {
+    margin-left: 6px;
+}
+
 .cb input {
     position: absolute;
     opacity: 0;
