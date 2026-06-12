@@ -73,12 +73,17 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
     }, props.dependencies || [])
 
 
-    useEffect(() => {
-        // Don't clobber the text mid-typing; blur/select re-syncs it below.
-        if (isFocused && isFiltering) return;
+    const valueName = (() => {
         const match = options?.find((e) => String(e.id) === String(data.value));
-        setSearchString(match?.name || (props.allowCustom && data.value !== undefined ? String(data.value) : ""));
-    }, [options, data.value, isFocused, isFiltering])
+        return match?.name || (props.allowCustom && data.value !== undefined ? String(data.value) : "");
+    })();
+
+    useEffect(() => {
+        // While focused the text is local (cleared on focus, then whatever the
+        // user types); blur re-syncs it to the committed value.
+        if (isFocused) return;
+        setSearchString(valueName);
+    }, [options, data.value, isFocused])
 
     useEffect(() => {
         const filter = isFiltering ? searchString : "";
@@ -108,10 +113,14 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
             if (e.key === "ArrowDown") { e.preventDefault(); setActiveIndex((i) => Math.min(matches.length - 1, i + 1)); }
             else if (e.key === "ArrowUp") { e.preventDefault(); setActiveIndex((i) => Math.max(0, i - 1)); }
             else if (e.key === "Enter") { e.preventDefault(); const m = matches[activeIndex]; if (m) select(m.id, m.name); }
-            else if (e.key === "Escape") { inputRef.current?.blur(); }
+            // type=text on purpose: type=search natively clears on Escape,
+            // which would commit "" under allowCustom. Escape closes ONLY the
+            // dropdown — stopPropagation keeps it from also closing a parent
+            // popup (capture registration below runs this handler first).
+            else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); inputRef.current?.blur(); }
         };
-        window.addEventListener("keydown", onKey);
-        return () => window.removeEventListener("keydown", onKey);
+        window.addEventListener("keydown", onKey, true);
+        return () => window.removeEventListener("keydown", onKey, true);
     }, [isOpen, matches, activeIndex])
 
     const inlineClass = props.inlineEdit ? " inlineEditSelect" + (!data.value ? " inlineEditEmpty" : "") : "";
@@ -119,10 +128,10 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
     return <div className="formItem">
         {data.validationError ? <div className="validationErrorMsg">{data.validationError.msg}</div> : ""}
         {(setOptionsState.state === AsyncState.LOADING || setOptionsState.state === AsyncState.INIT) &&
-            <input type="search" value="Loading..." disabled={true} style={props.style} className={"rkInput " + props.className + inlineClass}/>}
-        {setOptionsState.state === AsyncState.ERROR && <input type="search" value="Failed to load options!" disabled={true} style={props.style} className={"rkInput error " + props.className + inlineClass}/>}
+            <input type="text" value="Loading..." disabled={true} style={props.style} className={"rkInput " + props.className + inlineClass}/>}
+        {setOptionsState.state === AsyncState.ERROR && <input type="text" value="Failed to load options!" disabled={true} style={props.style} className={"rkInput error " + props.className + inlineClass}/>}
         {setOptionsState.state === AsyncState.OK && <>
-            <input type="search" ref={setInputRef}
+            <input type="text" ref={setInputRef}
                    autoComplete="off"
                    style={props.style}
                    name={data.name}
@@ -130,13 +139,15 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
                    readOnly={props.readOnly || data.readOnly}
                    disabled={props.disabled}
                    value={searchString}
-                   onFocus={(e) => {
+                   placeholder={isFocused && !searchString ? valueName : undefined}
+                   onFocus={() => {
                        if (!props.readOnly && !data.readOnly) {
                            setIsFocused(true);
                            setIsFiltering(false);
-                           // Select-all so typing replaces the current value
-                           // instead of appending to it.
-                           e.target.select();
+                           // Clear the text so typing starts a fresh filter —
+                           // the committed value stays (and shows as the
+                           // placeholder below); blur re-syncs the display.
+                           setSearchString("");
                        }
                    }}
                    onBlur={() => { if (!props.readOnly && !data.readOnly) setIsFocused(false) }}
