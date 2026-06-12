@@ -10,6 +10,9 @@ import {ValueType} from "./Select";
 
 export type AutoCompleteProps<K> = AnyInputElement<K> & {
     addEmpty?: boolean;
+    /** Typed text commits as the value (K must be string) — options become
+     *  suggestions rather than the only valid inputs. */
+    allowCustom?: boolean;
     options?: ValueType<K>[] | (() => ValueType<K>[]) | (() => Promise<ValueType<K>[]>)
     dependencies?: DependencyList
 }
@@ -68,7 +71,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
 
     useEffect(() => {
         const match = options?.find((e) => String(e.id) === String(data.value));
-        setSearchString(match?.name || "");
+        setSearchString(match?.name || (props.allowCustom && data.value !== undefined ? String(data.value) : ""));
     }, [options, data.value])
 
     useEffect(() => {
@@ -124,7 +127,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
                    onChange={(e) => {
                        if (!props.readOnly && !data.readOnly) {
                            setSearchString(e.target.value)
-                           data.onChange?.(undefined as K)
+                           data.onChange?.(props.allowCustom ? (e.target.value as K) : (undefined as K))
                        }
                    }}/>
             {isOpen && <FloatingPortal>
