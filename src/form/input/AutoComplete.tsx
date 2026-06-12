@@ -23,6 +23,10 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
     const [options, setOptions, setOptionsState] = useAsyncState<ValueType<K>[]>(Array.isArray(props.options) ? props.options : [], {disableErrorAutoHandling: true});
     const [searchString, setSearchString] = useState("")
     const [matches, setMatches] = useState<ValueType<K>[]>([]);
+    // The displayed text only narrows the dropdown after the user TYPES —
+    // opening with a selected value shows every option (otherwise the list
+    // collapses to the one already-selected entry); selecting resets.
+    const [isFiltering, setIsFiltering] = useState(false);
 
     const [isFocused, setIsFocused] = useState(false);
     const [isMouseOver, setIsMouseOver] = useState(false);
@@ -70,17 +74,20 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
 
 
     useEffect(() => {
+        // Don't clobber the text mid-typing; blur/select re-syncs it below.
+        if (isFocused && isFiltering) return;
         const match = options?.find((e) => String(e.id) === String(data.value));
         setSearchString(match?.name || (props.allowCustom && data.value !== undefined ? String(data.value) : ""));
-    }, [options, data.value])
+    }, [options, data.value, isFocused, isFiltering])
 
     useEffect(() => {
-        const res = searchOptions(options || [], searchString);
-        if (props.addEmpty && !searchString) {
+        const filter = isFiltering ? searchString : "";
+        const res = searchOptions(options || [], filter);
+        if (props.addEmpty && !filter) {
             res.unshift({id: undefined as K, name: ""})
         }
         setMatches(res);
-    }, [options, searchString])
+    }, [options, searchString, isFiltering])
 
     useEffect(() => {
         setActiveIndex(0);
@@ -88,6 +95,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
 
     const select = (id: K, name: string) => {
         setSearchString(name)
+        setIsFiltering(false);
         setIsFocused(false);
         setIsMouseOver(false);
         inputRef.current?.blur();
@@ -122,11 +130,20 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
                    readOnly={props.readOnly || data.readOnly}
                    disabled={props.disabled}
                    value={searchString}
-                   onFocus={() => { if (!props.readOnly && !data.readOnly) setIsFocused(true) }}
+                   onFocus={(e) => {
+                       if (!props.readOnly && !data.readOnly) {
+                           setIsFocused(true);
+                           setIsFiltering(false);
+                           // Select-all so typing replaces the current value
+                           // instead of appending to it.
+                           e.target.select();
+                       }
+                   }}
                    onBlur={() => { if (!props.readOnly && !data.readOnly) setIsFocused(false) }}
                    onChange={(e) => {
                        if (!props.readOnly && !data.readOnly) {
                            setSearchString(e.target.value)
+                           setIsFiltering(true)
                            data.onChange?.(props.allowCustom ? (e.target.value as K) : (undefined as K))
                        }
                    }}/>
