@@ -1,9 +1,9 @@
-import {DependencyList, useEffect, useRef, useState} from "react";
+import {DependencyList, useEffect, useState} from "react";
 import "./AutoComplete.css";
 import {AsyncState, useAsyncState} from "../../helpers/useAsyncState";
 import {AnyInputElement, useInputData} from "./StandardFormElementProps";
 import {isPromise} from "../../util/isPromise";
-import {autoUpdate, flip, FloatingPortal, offset, size, useFloating, useMergeRefs} from "@floating-ui/react";
+import {autoUpdate, flip, FloatingPortal, offset, size, useFloating} from "@floating-ui/react";
 
 import {ValueType} from "./Select";
 
@@ -32,7 +32,6 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
     const [isMouseOver, setIsMouseOver] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
 
-    const inputRef = useRef<HTMLInputElement>(null)
     const data = useInputData(props);
 
     const isOpen = isFocused || isMouseOver;
@@ -55,8 +54,6 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
             }),
         ],
     });
-    const setInputRef = useMergeRefs([inputRef, refs.setReference]);
-
     useEffect(() => {
         setOptions(async () => {
             if (typeof props.options === "function") {
@@ -103,7 +100,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
         setIsFiltering(false);
         setIsFocused(false);
         setIsMouseOver(false);
-        inputRef.current?.blur();
+        refs.domReference.current?.blur();
         data.onChange?.(id)
     }
 
@@ -117,7 +114,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
             // which would commit "" under allowCustom. Escape closes ONLY the
             // dropdown — stopPropagation keeps it from also closing a parent
             // popup (capture registration below runs this handler first).
-            else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); inputRef.current?.blur(); }
+            else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); refs.domReference.current?.blur(); }
         };
         window.addEventListener("keydown", onKey, true);
         return () => window.removeEventListener("keydown", onKey, true);
@@ -131,7 +128,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
             <input type="text" value="Loading..." disabled={true} style={props.style} className={"rkInput " + props.className + inlineClass}/>}
         {setOptionsState.state === AsyncState.ERROR && <input type="text" value="Failed to load options!" disabled={true} style={props.style} className={"rkInput error " + props.className + inlineClass}/>}
         {setOptionsState.state === AsyncState.OK && <>
-            <input type="text" ref={setInputRef}
+            <input type="text" ref={refs.setReference}
                    autoComplete="off"
                    style={props.style}
                    name={data.name}
