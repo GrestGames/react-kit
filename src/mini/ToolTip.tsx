@@ -45,9 +45,6 @@ function intentVars(intent: Intent | undefined, template: ToolTipTemplate | unde
 
 function resolveMessage(message: MessageType): ReactNode {
     const value = typeof message === "function" ? message() : message;
-    if (typeof value === "string") {
-        return <div className="text" dangerouslySetInnerHTML={{__html: value}}/>;
-    }
     return <div className="text">{value}</div>;
 }
 
