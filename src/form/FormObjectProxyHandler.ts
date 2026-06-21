@@ -128,6 +128,12 @@ export class FormObjectProxyHandler {
         return this.children.get(prop)!.proxy;
     }
 
+    public set(_target: any, _prop: string, _value: any): boolean {
+        // Safari JSC throws on direct assignment when the function target has non-writable
+        // properties (name/length) and there's no set trap. Use F.field.set(value) instead.
+        return true;
+    }
+
     /**
      * Returns field names that were accessed as form fields (not method calls).
      * Field proxies have sub-children (e.g. val(), name()) while method proxies don't.
