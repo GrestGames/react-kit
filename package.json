@@ -26,8 +26,8 @@
     "react-dom": ">=18"
   },
   "devDependencies": {
-    "@grest-ts/schema": "^0.0.63",
-    "@grest-ts/schema-file": "^0.0.63",
+    "@grest-ts/schema": "^0.0.64",
+    "@grest-ts/schema-file": "^0.0.64",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
