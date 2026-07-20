@@ -165,7 +165,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
                         <div key={e.id === undefined ? "____" : String(e.id)}
                              className={index === activeIndex ? "selected" : ""}
                              onMouseEnter={() => setActiveIndex(index)}
-                             onClick={() => select(e.id, e.name)}>
+                             onMouseDown={(ev) => { ev.preventDefault(); select(e.id, e.name); }}>
                             {e.name}
                         </div>)}
                 </div>
