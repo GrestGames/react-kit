@@ -61,7 +61,10 @@ type Access<T> = {
     isChanged(): boolean;
     validationErrors(): ValidationErrors<T>,
     setValidationError(error: ValidationErrors<T>): true
+    /** Set the value as an edit: replaces the current value, keeps the initial snapshot, so isChanged() becomes true. */
     set(value: T, error?: ValidationErrors<T>): void
+    /** (Re)define the pristine baseline: sets both the initial and current value, so isChanged() stays false. */
+    setInitial(value: T): void
     getForm: () => FormRoot<T>
     removeFromParentArray: () => void;
     when<K extends keyof T, V extends T[K], R>(field: K, value: V, render: (form: FormObject<Extract<T, Record<K, V>>>) => R): R | null;

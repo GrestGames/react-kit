@@ -56,6 +56,9 @@ export class FormObjectProxyHandler {
             case "set":
                 this.root.data.setPropertyValue(this.path, args[0])
                 return;
+            case "setInitial":
+                this.root.data.setInitialValue(this.path, args[0])
+                return;
             case "getForm":
                 return this.root;
             case "forEach":

@@ -25,6 +25,35 @@ export class FormObjectData<T> {
         this.root.forceRender();
     }
 
+    public setCurrentValue(value: T) {
+        this.currentValue = cloneObj(value);
+        this.hasChanges = true;
+        this.validationErrors = undefined;
+        this._onChange?.(this.currentValue, this.initialValue);
+        this.root.resetSubmitError();
+    }
+
+    public setInitialValue(path: PropertyPath, value: any): void {
+        if (path.length === 0) {
+            this.setValue(value);
+            return;
+        }
+        const assign = (node: any) => {
+            for (let i = 0; i < path.length - 1; i++) {
+                const key = path[i];
+                if (node[key] === undefined) {
+                    node[key] = typeof path[i + 1] === "number" ? [] : {};
+                }
+                node = node[key];
+            }
+            node[path[path.length - 1]] = cloneObj(value);
+        };
+        assign(this.initialValue);
+        assign(this.currentValue);
+        this.validationErrors = undefined;
+        this.root.forceRender();
+    }
+
     public setValidationErrors(errors: ValidationErrors<T> | undefined) {
         this.validationErrors = errors;
         this.root.forceRender();
@@ -74,7 +103,9 @@ export class FormObjectData<T> {
 
     public setPropertyValue(path: PropertyPath, value: any): void {
         if (path.length === 0) {
-            this.setValue(value);
+            // A whole-object set is an edit like a field set: replace current, keep the initial
+            // snapshot so the form reads as changed. Use setInitialValue to (re)define the baseline.
+            this.setCurrentValue(value);
 
         } else {
             let didChange = false;
