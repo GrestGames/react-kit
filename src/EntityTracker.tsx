@@ -31,6 +31,15 @@ export class Tracker<T> {
         }
     }
 
+    /**
+     * Notify listeners that the tracked set changed without a meaningful id —
+     * the "something happened, reload the list" ping. Listeners that key off the
+     * id get undefined; those that just re-fetch (the common case) ignore it.
+     */
+    public refresh() {
+        this.listeners?.forEach((e) => e(undefined as T, TrackerOperation.UPDATE))
+    }
+
     public update(id: T) {
         this.listeners?.forEach((e) => e(id, TrackerOperation.UPDATE))
     }
