@@ -14,8 +14,9 @@ export interface TagProps extends ToolTipSupported {
 
 export function Tag({children, intent = "default", size = "micro", bold, className, style, onClick, title, titleProps}: TagProps) {
     const intentVars = {
-        // Tag draws no border, so default-soft (= surface) is invisible; back the no-status chip with a raised gray.
-        "--tag-bg": intent === "default" ? "var(--rk-bg-raised)" : `var(--rk-${intent}-soft)`,
+        // Tag draws no border, so default-soft (= surface) is invisible; back the no-status chip
+        // with a gray one step above --rk-bg-raised, which is itself the Card/Panel background.
+        "--tag-bg": intent === "default" ? "var(--rk-bg-hover)" : `var(--rk-${intent}-soft)`,
         "--tag-text": `var(--rk-${intent}-soft-text)`,
         "--tag-font-size": `var(--rk-font-size-${size})`,
     } as CSSProperties;
