@@ -62,6 +62,36 @@ describe("Router open-key ordering", () => {
         expect(router.get("aTab")).toBeUndefined();
     });
 
+    it("reopening a key drops the child params of its previous target", () => {
+        setUrl("a=1");
+        router = new Router(routes, "page=home");
+        router.registerChildParam("a", "aTab");
+        router.add({aTab: "two"});
+        router.add({a: "9"});
+        expect(router.get("a")).toEqual("9");
+        expect(router.get("aTab")).toBeUndefined();
+    });
+
+    it("keeps a child param passed in the same call as its parent", () => {
+        setUrl("a=1&aTab=two");
+        router = new Router(routes, "page=home");
+        router.registerChildParam("a", "aTab");
+        router.add({a: "9", aTab: "three"});
+        expect(router.get("a")).toEqual("9");
+        expect(router.get("aTab")).toEqual("three");
+    });
+
+    it("leaves another key's child params alone when reopening", () => {
+        setUrl("a=1&b=2");
+        router = new Router(routes, "page=home");
+        router.registerChildParam("a", "aTab");
+        router.registerChildParam("b", "bTab");
+        router.add({aTab: "two", bTab: "three"});
+        router.add({a: "9"});
+        expect(router.get("aTab")).toBeUndefined();
+        expect(router.get("bTab")).toEqual("three");
+    });
+
     it("does not touch child params once unregistered", () => {
         setUrl("a=1");
         router = new Router(routes, "page=home");
