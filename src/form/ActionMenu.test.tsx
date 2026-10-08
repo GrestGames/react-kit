@@ -39,11 +39,19 @@ describe("ActionMenu", () => {
   });
 
   it("caps the menu height and lets it scroll so items stay reachable", async () => {
-    render(<ActionMenu items={[{ label: "X" }]} />);
-    await userEvent.click(screen.getByRole("button"));
-    const menu = screen.getByRole("menu");
-    expect(menu.style.overflowY).toBe("auto");
-    expect(menu.style.maxHeight).not.toBe("");
+    // jsdom runs no layout, so documentElement reports a 0-height viewport and
+    // Floating UI's size() derives a negative availableHeight, which jsdom then
+    // rejects as an invalid max-height. Give it a viewport to measure against.
+    const viewport = vi.spyOn(document.documentElement, "clientHeight", "get").mockReturnValue(768);
+    try {
+      render(<ActionMenu items={[{ label: "X" }]} />);
+      await userEvent.click(screen.getByRole("button"));
+      const menu = screen.getByRole("menu");
+      expect(menu.style.overflowY).toBe("auto");
+      expect(menu.style.maxHeight).not.toBe("");
+    } finally {
+      viewport.mockRestore();
+    }
   });
 
   it("marks its portal so a host's outside-click handler can treat it as inside", async () => {

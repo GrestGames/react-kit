@@ -19,26 +19,26 @@
     "@floating-ui/react": "^0.27.0"
   },
   "peerDependencies": {
-    "@grest-ts/schema": ">=0.0.42",
-    "@grest-ts/schema-file": ">=0.0.42",
-    "react": ">=18",
+    "@grest-ts/schema": ">=0.0.71",
+    "@grest-ts/schema-file": ">=0.0.71",
+    "react": "^19",
     "react-datepicker": ">=7",
-    "react-dom": ">=18"
+    "react-dom": "^19"
   },
   "devDependencies": {
-    "@grest-ts/schema": "0.0.69",
-    "@grest-ts/schema-file": "0.0.69",
-    "@testing-library/jest-dom": "^6.6.3",
+    "@grest-ts/schema": "0.0.71",
+    "@grest-ts/schema-file": "0.0.71",
+    "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.2.14",
-    "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^19.2.3",
-    "jsdom": "^26.1.0",
+    "jsdom": "^30.1.2",
     "react": "^19.2.4",
     "react-datepicker": "^9.1.0",
     "react-dom": "^19.2.4",
     "typescript": "^6.0.3",
-    "vitest": "^3.2.3"
+    "vite": "^7.3.1",
+    "vitest": "^5.0.3"
   }
 }
