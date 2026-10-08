@@ -92,7 +92,14 @@ export class Router {
     set(params: RouteArgs) { this.updateRoutes(params); }
     add(params: RouteArgs) {
         const copy = {...this.routeArgs};
-        for (const k in params) delete copy[k];
+        for (const k in params) {
+            delete copy[k];
+            // Symmetric with remove(): reopening a route drops the child params of its
+            // previous target, so a tab/selection from an earlier open can't silently
+            // apply to the new one. An explicit child param in this same call survives,
+            // since params is assigned after the cascade.
+            this.childParams.get(k)?.forEach((child) => delete copy[child]);
+        }
         this.updateRoutes(Object.assign(copy, params));
     }
     remove(...keys: string[]) {
