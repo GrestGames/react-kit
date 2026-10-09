@@ -215,8 +215,11 @@ is `string | number`, so use the entity's own id and no hashing is needed.
 | Deleting a row | `tracker.delete(entityId)` | Drops that one row. No refetch. |
 | Saving an existing row | `tracker.update(entityId)` | Refetches just that row via `load({...filters, id})`. |
 | Creating a row | `tracker.create(newId)` | Reloads the list (position is the server's call). |
-| Save-or-create in one handler | `tracker.sync(wasNew ? undefined : id, savedId)` | Picks `update` or `create` for you. |
 | Anything broader | `tracker.refresh()` | Reloads the list. |
+
+A save handler that also creates branches on what it already knows —
+`isNew ? tracker.create(saved.id) : tracker.update(id)` — rather than routing
+through `sync`, which only re-derives that branch from an id sentinel.
 
 So `load` must honour `input.id` — return just that row when it's set — or `update`
 writes the wrong row into the grid. Reach for `refresh()` only when one op changed

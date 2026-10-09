@@ -15,7 +15,9 @@ type FilterState<Q> = Q & GridQuery;
 
 export interface Props<T extends { id: string | number }, Q> {
     fields: GridField<T>[]
-    load: (input: Q) => Promise<{ rows: T[] }>
+    /** Grid injects `limit`/`orderBy`, and `id` when a tracker asks for one row
+     *  back — honour `input.id` or `tracker.update(id)` patches the wrong row. */
+    load: (input: Q & GridQuery) => Promise<{ rows: T[] }>
 
     onData?: (rows: T[]) => void,
 
@@ -116,14 +118,6 @@ export function Grid<T extends { id: string | number }, Q>({
         lastRowsRef.current = data;
     }
 
-    // The tracker listener is registered once (it must not re-subscribe on every
-    // filter change) but needs the live filter and rows, so it reads both through
-    // refs rather than through its mount-time closure.
-    const filterRef = useRef<FilterState<Q> | undefined>(undefined);
-    filterRef.current = filter;
-    const dataRef = useRef<T[] | undefined>(undefined);
-    dataRef.current = data;
-
     const updateData = (rows: undefined | ((data: T[]) => T[]) | ((data: T[]) => Promise<T[]>)): void => {
         if (rows === undefined) {
             setData(undefined);
@@ -136,27 +130,26 @@ export function Grid<T extends { id: string | number }, Q>({
         }
     }
 
-    /** Refetch from the top, keeping the page size so loaded-more rows stay loaded. */
-    const reload = () => {
+    /** Refetch from the top. Keeps the page size, so loaded-more rows stay loaded
+     *  unless `resetPage` asks for the first page only. */
+    const reload = (resetPage?: boolean) => {
         updateData(undefined);
-        setFilter((f) => f ? {...f} : f);
+        setFilter((f) => f ? {...f, limit: resetPage ? [0, rowsPerCall] as [number, number] : f.limit} : f);
     }
 
-    /** Mutates the one loaded row matching `id`, leaving the rest of the page untouched. */
-    const patchRow = (id: T["id"], mutate: (rows: T[], index: number) => void) => {
-        const rows = dataRef.current;
-        if (rows === undefined) {
-            // A load is in flight; patching would cancel it (useOnlyLatestResult keeps
-            // only the newest result) and leave the grid empty, so refetch instead.
-            reload();
-            return;
-        }
-        const i = rows.findIndex((e) => String(e.id) === String(id));
+    /** Replaces the one loaded row matching `id` (or drops it when `next` is undefined),
+     *  leaving the rest of the page untouched. */
+    const patchRow = (id: T["id"], next: T | undefined) => {
+        const i = data!.findIndex((e) => String(e.id) === String(id));
         if (i === -1) {
             return;
         }
-        const copy = [...rows];
-        mutate(copy, i);
+        const copy = [...data!];
+        if (next === undefined) {
+            copy.splice(i, 1);
+        } else {
+            copy[i] = next;
+        }
         updateData(() => copy);
     }
 
@@ -213,35 +206,41 @@ export function Grid<T extends { id: string | number }, Q>({
 
     useEffect(() => {
         if (reloadKey === undefined) return;
-        updateData(undefined);
-        setFilter((f) => f ? {...f, limit: [0, rowsPerCall] as [number, number]} : f);
+        reload(true);
     }, [reloadKey]);
 
-    useEffect(() => {
-        const unregister = tracker?.listen((id, operation) => {
-            const hasId = id !== undefined && id !== null;
-            if (operation === TrackerOperation.CREATE || !hasId) {
-                // CREATE and the id-less `refresh()` ping both mean "the set changed in a
-                // way this grid can't patch locally" — refetch from the top, keeping the
-                // current page size so loaded-more rows stay loaded.
-                reload();
-            } else if (operation === TrackerOperation.UPDATE) {
-                load({...filterRef.current, id: id, orderBy: undefined, limit: [0, 1]} as FilterState<Q>)
-                    .then((res) => {
-                        // @TODO Possible can update with outdated version here, if race condition happens.
-                        patchRow(id, (copy, i) => {
-                            copy[i] = res.rows[0]
-                        })
-                    })
-                    .catch(() => {
-
-                    });
-            } else if (operation === TrackerOperation.DELETE) {
-                patchRow(id, (copy, i) => {
-                    copy.splice(i, 1)
+    const onTracked = (id: T["id"] | undefined, operation: TrackerOperation) => {
+        if (operation === TrackerOperation.RELOAD || operation === TrackerOperation.CREATE) {
+            // Neither names a row this grid can patch in place: a reload ping says the set
+            // changed, and a new row's position is the server's call.
+            reload();
+        } else if (data === undefined) {
+            // A load is already in flight and will bring the row's new state with it.
+            // Patching now would cancel it (useOnlyLatestResult keeps only the newest
+            // result) and leave the grid empty.
+        } else if (operation === TrackerOperation.UPDATE) {
+            load({...filter, id: id, orderBy: undefined, limit: [0, 1]} as FilterState<Q>)
+                .then((res) => {
+                    // @TODO Possible can update with outdated version here, if race condition happens.
+                    patchRow(id!, res.rows[0]);
                 })
-            }
-        });
+                .catch(() => {
+
+                });
+        } else if (operation === TrackerOperation.DELETE) {
+            patchRow(id!, undefined);
+        }
+    }
+
+    // Registered once — it must not re-subscribe on every filter change, and its cleanup
+    // owns the URL keys — so the listener calls through a ref that each render refreshes.
+    // That keeps the live filter, rows and `load` in reach without a ref per variable.
+    const onTrackedRef = useRef(onTracked);
+    useEffect(() => {
+        onTrackedRef.current = onTracked;
+    });
+    useEffect(() => {
+        const unregister = tracker?.listen((id, operation) => onTrackedRef.current(id, operation));
         return () => {
             unregister?.();
             cleanUrl(filtersUrlKeyName);

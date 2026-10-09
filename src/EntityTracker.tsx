@@ -1,9 +1,9 @@
 export class Tracker<T> {
 
     private ids: number = 0;
-    private listeners: Map<number, ((id: T, operation: TrackerOperation) => void)> = new Map()
+    private listeners: Map<number, ((id: T | undefined, operation: TrackerOperation) => void)> = new Map()
 
-    public listen(tracker: (id: T, operation: TrackerOperation) => void): () => void {
+    public listen(tracker: (id: T | undefined, operation: TrackerOperation) => void): () => void {
         const id = this.ids++;
         this.listeners.set(id, tracker);
         return () => {
@@ -11,7 +11,7 @@ export class Tracker<T> {
         };
     }
 
-    public listenForEffect(tracker: (id: T, operation: TrackerOperation) => void) {
+    public listenForEffect(tracker: (id: T | undefined, operation: TrackerOperation) => void) {
         return () => {
             return this.listen(tracker);
         }
@@ -23,7 +23,7 @@ export class Tracker<T> {
      *  - update if inputId is set
      *  - create if inputId is undefined
      */
-    public sync(inputId: T | undefined, resultId: T) {
+    public sync(inputId: T, resultId: T) {
         if (inputId) {
             this.update(inputId);
         } else {
@@ -32,12 +32,11 @@ export class Tracker<T> {
     }
 
     /**
-     * Notify listeners that the tracked set changed without a meaningful id —
-     * the "something happened, reload the list" ping. Listeners that key off the
-     * id get undefined; those that just re-fetch (the common case) ignore it.
+     * Notify listeners that the tracked set changed in a way no single id
+     * describes — the "something happened, re-read the list" ping.
      */
     public refresh() {
-        this.listeners?.forEach((e) => e(undefined as T, TrackerOperation.UPDATE))
+        this.listeners?.forEach((e) => e(undefined, TrackerOperation.RELOAD))
     }
 
     public update(id: T) {
@@ -56,5 +55,7 @@ export class Tracker<T> {
 export enum TrackerOperation {
     UPDATE = "update",
     CREATE = "create",
-    DELETE = "delete"
+    DELETE = "delete",
+    /** From `refresh()`: the set changed, but no one id describes how. Carries no id. */
+    RELOAD = "reload"
 }
