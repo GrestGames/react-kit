@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@grest-ts/react": "file:..",
-    "@grest-ts/schema": "0.0.71",
-    "@grest-ts/schema-file": "0.0.71",
+    "@grest-ts/schema": "0.0.73",
+    "@grest-ts/schema-file": "0.0.73",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-datepicker": "^9.1.0"
