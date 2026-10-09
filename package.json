@@ -19,15 +19,15 @@
     "@floating-ui/react": "^0.27.0"
   },
   "peerDependencies": {
-    "@grest-ts/schema": ">=0.0.73",
-    "@grest-ts/schema-file": ">=0.0.73",
+    "@grest-ts/schema": ">=0.0.74",
+    "@grest-ts/schema-file": ">=0.0.74",
     "react": "^19",
     "react-datepicker": ">=7",
     "react-dom": "^19"
   },
   "devDependencies": {
-    "@grest-ts/schema": "0.0.73",
-    "@grest-ts/schema-file": "0.0.73",
+    "@grest-ts/schema": "0.0.74",
+    "@grest-ts/schema-file": "0.0.74",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
