@@ -217,9 +217,8 @@ is `string | number`, so use the entity's own id and no hashing is needed.
 | Creating a row | `tracker.create(newId)` | Reloads the list (position is the server's call). |
 | Anything broader | `tracker.refresh()` | Reloads the list. |
 
-A save handler that also creates branches on what it already knows —
-`isNew ? tracker.create(saved.id) : tracker.update(id)` — rather than routing
-through `sync`, which only re-derives that branch from an id sentinel.
+A save handler that also creates branches on what it already knows:
+`isNew ? tracker.create(saved.id) : tracker.update(id)`.
 
 So `load` must honour `input.id` — return just that row when it's set — or `update`
 writes the wrong row into the grid. Reach for `refresh()` only when one op changed

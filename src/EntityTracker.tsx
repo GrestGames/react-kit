@@ -19,19 +19,6 @@ export class Tracker<T> {
 
 
     /**
-     * Convenience method that uses
-     *  - update if inputId is set
-     *  - create if inputId is undefined
-     */
-    public sync(inputId: T, resultId: T) {
-        if (inputId) {
-            this.update(inputId);
-        } else {
-            this.create(resultId);
-        }
-    }
-
-    /**
      * Notify listeners that the tracked set changed in a way no single id
      * describes — the "something happened, re-read the list" ping.
      */

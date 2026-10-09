@@ -118,10 +118,10 @@ export function Grid<T extends { id: string | number }, Q>({
     const [filter, setFilter] = useState<FilterState<Q> | undefined>(undefined);
     const [data, setData, dataState] = useAsyncState<T[]>(undefined, {disableErrorAutoHandling: true});
 
-    /** `next` is the token the newest load returned; `byCursor` latches once a loader has
-     *  returned one, since from then on only the token can say whether more rows exist.
-     *  `ver` discards an older in-flight load's token — useOnlyLatestResult drops its rows too. */
-    const pagingRef = useRef<{ byCursor: boolean, next?: string, ver: number }>({byCursor: false, ver: 0});
+    /** `byCursor` latches once a loader has returned a token, since from then on only the
+     *  token can say whether more rows exist — a cursor loader's last page can be full.
+     *  `ver` discards an older in-flight load's result — useOnlyLatestResult drops its rows too. */
+    const pagingRef = useRef<{ byCursor: boolean, hasMore: boolean, next?: string, ver: number }>({byCursor: false, hasMore: false, ver: 0});
 
     const lastRowsRef = useRef<T[] | undefined>(undefined);
     if (data !== undefined) {
@@ -140,27 +140,29 @@ export function Grid<T extends { id: string | number }, Q>({
         }
     }
 
-    /** Refetch from the top. Keeps the page size, so loaded-more rows stay loaded
-     *  unless `resetPage` asks for the first page only. */
+    /** Keeps the page size, so loaded-more rows stay loaded unless `resetPage`
+     *  asks for the first page only. */
     const reload = (resetPage?: boolean) => {
         updateData(undefined);
         setFilter((f) => f ? {...f, limit: resetPage ? [0, rowsPerCall] as [number, number] : f.limit} : f);
     }
 
-    /** Replaces the one loaded row matching `id` (or drops it when `next` is undefined),
-     *  leaving the rest of the page untouched. */
+    // Sets the finished array straight through useAsyncState's value path: updateData would
+    // wrap it in a promise, costing a LOADING frame that flashes the spinner row.
     const patchRow = (id: T["id"], next: T | undefined) => {
-        const i = data!.findIndex((e) => String(e.id) === String(id));
+        const rows = data!;
+        const i = rows.findIndex((e) => String(e.id) === String(id));
         if (i === -1) {
             return;
         }
-        const copy = [...data!];
+        const copy = [...rows];
         if (next === undefined) {
             copy.splice(i, 1);
         } else {
             copy[i] = next;
         }
-        updateData(() => copy);
+        onData?.(copy);
+        setData(copy);
     }
 
     const [F] = useAsyncForm({
@@ -204,8 +206,10 @@ export function Grid<T extends { id: string | number }, Q>({
                     const res = await load({...filter, limit: [offset, rowsToLoad], cursor: offset > 0 ? pagingRef.current.next : undefined} as FilterState<Q>);
                     newRows = res.rows;
                     if (ver === pagingRef.current.ver) {
-                        pagingRef.current.next = res.nextCursor;
-                        pagingRef.current.byCursor = pagingRef.current.byCursor || res.nextCursor !== undefined;
+                        const paging = pagingRef.current;
+                        paging.next = res.nextCursor;
+                        paging.byCursor = paging.byCursor || res.nextCursor !== undefined;
+                        paging.hasMore = paging.byCursor ? res.nextCursor !== undefined : newRows.length === rowsToLoad;
                     }
                 } catch (e) {
                     if (ApiErrors.is(e) && e.type === VALIDATION_ERROR.TYPE) {
@@ -230,11 +234,14 @@ export function Grid<T extends { id: string | number }, Q>({
             // Neither names a row this grid can patch in place: a reload ping says the set
             // changed, and a new row's position is the server's call.
             reload();
-        } else if (data === undefined) {
-            // A load is already in flight and will bring the row's new state with it.
-            // Patching now would cancel it (useOnlyLatestResult keeps only the newest
-            // result) and leave the grid empty.
-        } else if (operation === TrackerOperation.UPDATE) {
+            return;
+        }
+        // A load is already in flight and will bring the row's new state with it. Patching now
+        // would cancel it (useOnlyLatestResult keeps only the newest result) and empty the grid.
+        if (data === undefined) {
+            return;
+        }
+        if (operation === TrackerOperation.UPDATE) {
             load({...filter, id: id, orderBy: undefined, limit: [0, 1]} as FilterState<Q>)
                 .then((res) => {
                     // @TODO Possible can update with outdated version here, if race condition happens.
@@ -250,7 +257,6 @@ export function Grid<T extends { id: string | number }, Q>({
 
     // Registered once — it must not re-subscribe on every filter change, and its cleanup
     // owns the URL keys — so the listener calls through a ref that each render refreshes.
-    // That keeps the live filter, rows and `load` in reach without a ref per variable.
     const onTrackedRef = useRef(onTracked);
     useEffect(() => {
         onTrackedRef.current = onTracked;
@@ -318,14 +324,12 @@ export function Grid<T extends { id: string | number }, Q>({
     const reloading = loadingState && data === undefined && lastRowsRef.current !== undefined;
     const displayData = data !== undefined ? data : (reloading ? lastRowsRef.current : undefined);
     const isLoading = loadingState && !reloading;
-    // hasMore and the footer derive from displayData (current rows, or the previous rows during a
-    // reload) so the "Load more" row and the "No more rows" footer stay put instead of vanishing
-    // and reflowing the table on every reload.
-    // A cursor loader's last page can be full and simply carry no token, so a full page says
-    // nothing there — only offset paging may infer "more rows" from the row count.
-    const {byCursor, next: cursor} = pagingRef.current;
-    const hasMore = !isLoading && !dataState.error && (byCursor ? cursor !== undefined : displayData?.length === filter.limit![1]);
-    const showFooter = !hideFooter && !isLoading && !dataState.error && !!displayData && displayData.length > 0 && (byCursor ? cursor === undefined : displayData.length < filter.limit![1]);
+    // Both read the last completed load's verdict, and the footer counts displayData (current
+    // rows, or the previous rows during a reload), so the "Load more" row and the "No more rows"
+    // footer stay put instead of vanishing and reflowing the table on every reload.
+    const moreRows = pagingRef.current.hasMore;
+    const hasMore = !isLoading && !dataState.error && moreRows;
+    const showFooter = !hideFooter && !isLoading && !dataState.error && !!displayData && displayData.length > 0 && !moreRows;
     const isValidationError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type === VALIDATION_ERROR.TYPE;
     const isOtherError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type !== VALIDATION_ERROR.TYPE;
 
