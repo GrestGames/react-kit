@@ -13,9 +13,13 @@ import {ButtonAppearanceContext} from "../buttons/buttonAppearance";
 
 type FilterState<Q> = Q & GridQuery;
 
-export interface Props<T extends { id: number }, Q> {
+export interface Props<T extends { id: string | number }, Q> {
     fields: GridField<T>[]
-    load: (input: Q) => Promise<{ rows: T[] }>
+    /** Grid injects `limit`/`orderBy`, and `id` when a tracker asks for one row
+     *  back — honour `input.id` or `tracker.update(id)` patches the wrong row.
+     *  Return `nextCursor` to page by token instead of offset: Grid sends it back as
+     *  `input.cursor` on the next page and treats its absence as the end of the list. */
+    load: (input: Q & GridQuery) => Promise<{ rows: T[], nextCursor?: string }>
 
     onData?: (rows: T[]) => void,
 
@@ -46,6 +50,9 @@ export interface GridQuery {
     id?: any;
     orderBy?: GridOrderBy
     limit?: [number, number]
+    /** Token from the previous load's `nextCursor`. Only set on a load-more call; a first
+     *  page never carries one, so `limit[0]` can be ignored when paging by cursor. */
+    cursor?: string
 }
 
 export interface GridOrderBy {
@@ -70,7 +77,7 @@ export interface GridField<T> {
     mobileOrder?: number;
 }
 
-export function Grid<T extends { id: number }, Q>({
+export function Grid<T extends { id: string | number }, Q>({
                                                                            load,
                                                                            filtersForm,
                                                                            summaryForm,
@@ -111,6 +118,11 @@ export function Grid<T extends { id: number }, Q>({
     const [filter, setFilter] = useState<FilterState<Q> | undefined>(undefined);
     const [data, setData, dataState] = useAsyncState<T[]>(undefined, {disableErrorAutoHandling: true});
 
+    /** `byCursor` latches once a loader has returned a token, since from then on only the
+     *  token can say whether more rows exist — a cursor loader's last page can be full.
+     *  `ver` discards an older in-flight load's result — useOnlyLatestResult drops its rows too. */
+    const pagingRef = useRef<{ byCursor: boolean, hasMore: boolean, next?: string, ver: number }>({byCursor: false, hasMore: false, ver: 0});
+
     const lastRowsRef = useRef<T[] | undefined>(undefined);
     if (data !== undefined) {
         lastRowsRef.current = data;
@@ -126,6 +138,31 @@ export function Grid<T extends { id: number }, Q>({
                 return rrows;
             });
         }
+    }
+
+    /** Keeps the page size, so loaded-more rows stay loaded unless `resetPage`
+     *  asks for the first page only. */
+    const reload = (resetPage?: boolean) => {
+        updateData(undefined);
+        setFilter((f) => f ? {...f, limit: resetPage ? [0, rowsPerCall] as [number, number] : f.limit} : f);
+    }
+
+    // Sets the finished array straight through useAsyncState's value path: updateData would
+    // wrap it in a promise, costing a LOADING frame that flashes the spinner row.
+    const patchRow = (id: T["id"], next: T | undefined) => {
+        const rows = data!;
+        const i = rows.findIndex((e) => String(e.id) === String(id));
+        if (i === -1) {
+            return;
+        }
+        const copy = [...rows];
+        if (next === undefined) {
+            copy.splice(i, 1);
+        } else {
+            copy[i] = next;
+        }
+        onData?.(copy);
+        setData(copy);
     }
 
     const [F] = useAsyncForm({
@@ -162,10 +199,18 @@ export function Grid<T extends { id: number }, Q>({
         const rowsToLoad = filter.limit![1] - filter.limit![0] - (data?.length || 0)
         if (rowsToLoad > 0) {
             updateData(async (data) => {
+                const offset = data?.length || 0;
+                const ver = ++pagingRef.current.ver;
                 let newRows: T[] = [];
                 try {
-                    const res = await load({...filter, limit: [data?.length || 0, rowsToLoad]} as FilterState<Q>);
+                    const res = await load({...filter, limit: [offset, rowsToLoad], cursor: offset > 0 ? pagingRef.current.next : undefined} as FilterState<Q>);
                     newRows = res.rows;
+                    if (ver === pagingRef.current.ver) {
+                        const paging = pagingRef.current;
+                        paging.next = res.nextCursor;
+                        paging.byCursor = paging.byCursor || res.nextCursor !== undefined;
+                        paging.hasMore = paging.byCursor ? res.nextCursor !== undefined : newRows.length === rowsToLoad;
+                    }
                 } catch (e) {
                     if (ApiErrors.is(e) && e.type === VALIDATION_ERROR.TYPE) {
                         F.getForm().setValidationErrors(
@@ -181,50 +226,40 @@ export function Grid<T extends { id: number }, Q>({
 
     useEffect(() => {
         if (reloadKey === undefined) return;
-        updateData(undefined);
-        setFilter((f) => f ? {...f, limit: [0, rowsPerCall] as [number, number]} : f);
+        reload(true);
     }, [reloadKey]);
 
-    useEffect(() => {
-        const unregister = tracker?.listen((id, operation) => {
-            if (operation === TrackerOperation.CREATE) {
-                updateData(undefined);
-                setFilter((f) => {
-                    return f ? {...f} : f;
-                });
-            } else if (operation === TrackerOperation.UPDATE) {
-                if (id) {
-                    load({...filter, id: id, orderBy: undefined, limit: [0, 1]} as FilterState<Q>)
-                        .then((res) => {
-                            // @TODO Possible can update with outdated version here, if race condition happens.
-                            updateData((data) => {
-                                const i = data ? data.findIndex((e) => String(e.id) === String(id)) : -1;
-                                if (i !== -1) {
-                                    const copy = [...data];
-                                    copy[i] = res.rows[0]
-                                    return copy
-                                } else {
-                                    return data;
-                                }
-                            })
-                        })
-                        .catch(() => {
-
-                        });
-                }
-            } else if (operation === TrackerOperation.DELETE) {
-                updateData((data) => {
-                    const i = data ? data.findIndex((e) => String(e.id) === String(id)) : -1;
-                    if (i !== -1) {
-                        const copy = [...data];
-                        copy.splice(i, 1);
-                        return copy
-                    } else {
-                        return data;
-                    }
+    const onTracked = (id: T["id"] | undefined, operation: TrackerOperation) => {
+        // RELOAD and CREATE name no row this grid can patch — a reload ping says the set
+        // changed, and a new row's position is the server's call. Nor can anything be patched
+        // while a load is in flight: there are no rows yet, and that read may have been issued
+        // before the mutation landed, so re-read rather than drop the op.
+        if (operation === TrackerOperation.RELOAD || operation === TrackerOperation.CREATE || data === undefined) {
+            reload();
+            return;
+        }
+        if (operation === TrackerOperation.UPDATE) {
+            load({...filter, id: id, orderBy: undefined, limit: [0, 1]} as FilterState<Q>)
+                .then((res) => {
+                    // @TODO Possible can update with outdated version here, if race condition happens.
+                    patchRow(id!, res.rows[0]);
                 })
-            }
-        });
+                .catch(() => {
+
+                });
+        } else if (operation === TrackerOperation.DELETE) {
+            patchRow(id!, undefined);
+        }
+    }
+
+    // Registered once — it must not re-subscribe on every filter change, and its cleanup
+    // owns the URL keys — so the listener calls through a ref that each render refreshes.
+    const onTrackedRef = useRef(onTracked);
+    useEffect(() => {
+        onTrackedRef.current = onTracked;
+    });
+    useEffect(() => {
+        const unregister = tracker?.listen((id, operation) => onTrackedRef.current(id, operation));
         return () => {
             unregister?.();
             cleanUrl(filtersUrlKeyName);
@@ -286,11 +321,12 @@ export function Grid<T extends { id: number }, Q>({
     const reloading = loadingState && data === undefined && lastRowsRef.current !== undefined;
     const displayData = data !== undefined ? data : (reloading ? lastRowsRef.current : undefined);
     const isLoading = loadingState && !reloading;
-    // hasMore and the footer derive from displayData (current rows, or the previous rows during a
-    // reload) so the "Load more" row and the "No more rows" footer stay put instead of vanishing
-    // and reflowing the table on every reload.
-    const hasMore = !isLoading && !dataState.error && displayData?.length === filter.limit![1];
-    const showFooter = !hideFooter && !isLoading && !dataState.error && !!displayData && displayData.length > 0 && displayData.length < filter.limit![1];
+    // Both read the last completed load's verdict, and the footer counts displayData (current
+    // rows, or the previous rows during a reload), so the "Load more" row and the "No more rows"
+    // footer stay put instead of vanishing and reflowing the table on every reload.
+    const moreRows = pagingRef.current.hasMore;
+    const hasMore = !isLoading && !dataState.error && moreRows;
+    const showFooter = !hideFooter && !isLoading && !dataState.error && !!displayData && displayData.length > 0 && !moreRows;
     const isValidationError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type === VALIDATION_ERROR.TYPE;
     const isOtherError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type !== VALIDATION_ERROR.TYPE;
 
