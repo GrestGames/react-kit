@@ -13,7 +13,7 @@ import {ButtonAppearanceContext} from "../buttons/buttonAppearance";
 
 type FilterState<Q> = Q & GridQuery;
 
-export interface Props<T extends { id: number }, Q> {
+export interface Props<T extends { id: string | number }, Q> {
     fields: GridField<T>[]
     load: (input: Q) => Promise<{ rows: T[] }>
 
@@ -70,7 +70,7 @@ export interface GridField<T> {
     mobileOrder?: number;
 }
 
-export function Grid<T extends { id: number }, Q>({
+export function Grid<T extends { id: string | number }, Q>({
                                                                            load,
                                                                            filtersForm,
                                                                            summaryForm,
@@ -116,6 +116,14 @@ export function Grid<T extends { id: number }, Q>({
         lastRowsRef.current = data;
     }
 
+    // The tracker listener is registered once (it must not re-subscribe on every
+    // filter change) but needs the live filter and rows, so it reads both through
+    // refs rather than through its mount-time closure.
+    const filterRef = useRef<FilterState<Q> | undefined>(undefined);
+    filterRef.current = filter;
+    const dataRef = useRef<T[] | undefined>(undefined);
+    dataRef.current = data;
+
     const updateData = (rows: undefined | ((data: T[]) => T[]) | ((data: T[]) => Promise<T[]>)): void => {
         if (rows === undefined) {
             setData(undefined);
@@ -126,6 +134,30 @@ export function Grid<T extends { id: number }, Q>({
                 return rrows;
             });
         }
+    }
+
+    /** Refetch from the top, keeping the page size so loaded-more rows stay loaded. */
+    const reload = () => {
+        updateData(undefined);
+        setFilter((f) => f ? {...f} : f);
+    }
+
+    /** Mutates the one loaded row matching `id`, leaving the rest of the page untouched. */
+    const patchRow = (id: T["id"], mutate: (rows: T[], index: number) => void) => {
+        const rows = dataRef.current;
+        if (rows === undefined) {
+            // A load is in flight; patching would cancel it (useOnlyLatestResult keeps
+            // only the newest result) and leave the grid empty, so refetch instead.
+            reload();
+            return;
+        }
+        const i = rows.findIndex((e) => String(e.id) === String(id));
+        if (i === -1) {
+            return;
+        }
+        const copy = [...rows];
+        mutate(copy, i);
+        updateData(() => copy);
     }
 
     const [F] = useAsyncForm({
@@ -187,41 +219,26 @@ export function Grid<T extends { id: number }, Q>({
 
     useEffect(() => {
         const unregister = tracker?.listen((id, operation) => {
-            if (operation === TrackerOperation.CREATE) {
-                updateData(undefined);
-                setFilter((f) => {
-                    return f ? {...f} : f;
-                });
+            const hasId = id !== undefined && id !== null;
+            if (operation === TrackerOperation.CREATE || !hasId) {
+                // CREATE and the id-less `refresh()` ping both mean "the set changed in a
+                // way this grid can't patch locally" — refetch from the top, keeping the
+                // current page size so loaded-more rows stay loaded.
+                reload();
             } else if (operation === TrackerOperation.UPDATE) {
-                if (id) {
-                    load({...filter, id: id, orderBy: undefined, limit: [0, 1]} as FilterState<Q>)
-                        .then((res) => {
-                            // @TODO Possible can update with outdated version here, if race condition happens.
-                            updateData((data) => {
-                                const i = data ? data.findIndex((e) => String(e.id) === String(id)) : -1;
-                                if (i !== -1) {
-                                    const copy = [...data];
-                                    copy[i] = res.rows[0]
-                                    return copy
-                                } else {
-                                    return data;
-                                }
-                            })
+                load({...filterRef.current, id: id, orderBy: undefined, limit: [0, 1]} as FilterState<Q>)
+                    .then((res) => {
+                        // @TODO Possible can update with outdated version here, if race condition happens.
+                        patchRow(id, (copy, i) => {
+                            copy[i] = res.rows[0]
                         })
-                        .catch(() => {
+                    })
+                    .catch(() => {
 
-                        });
-                }
+                    });
             } else if (operation === TrackerOperation.DELETE) {
-                updateData((data) => {
-                    const i = data ? data.findIndex((e) => String(e.id) === String(id)) : -1;
-                    if (i !== -1) {
-                        const copy = [...data];
-                        copy.splice(i, 1);
-                        return copy
-                    } else {
-                        return data;
-                    }
+                patchRow(id, (copy, i) => {
+                    copy.splice(i, 1)
                 })
             }
         });
