@@ -23,7 +23,7 @@ export class Tracker<T> {
      *  - update if inputId is set
      *  - create if inputId is undefined
      */
-    public sync(inputId: T, resultId: T) {
+    public sync(inputId: T | undefined, resultId: T) {
         if (inputId) {
             this.update(inputId);
         } else {
