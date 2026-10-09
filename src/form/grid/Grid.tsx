@@ -16,8 +16,10 @@ type FilterState<Q> = Q & GridQuery;
 export interface Props<T extends { id: string | number }, Q> {
     fields: GridField<T>[]
     /** Grid injects `limit`/`orderBy`, and `id` when a tracker asks for one row
-     *  back — honour `input.id` or `tracker.update(id)` patches the wrong row. */
-    load: (input: Q & GridQuery) => Promise<{ rows: T[] }>
+     *  back — honour `input.id` or `tracker.update(id)` patches the wrong row.
+     *  Return `nextCursor` to page by token instead of offset: Grid sends it back as
+     *  `input.cursor` on the next page and treats its absence as the end of the list. */
+    load: (input: Q & GridQuery) => Promise<{ rows: T[], nextCursor?: string }>
 
     onData?: (rows: T[]) => void,
 
@@ -48,6 +50,9 @@ export interface GridQuery {
     id?: any;
     orderBy?: GridOrderBy
     limit?: [number, number]
+    /** Token from the previous load's `nextCursor`. Only set on a load-more call; a first
+     *  page never carries one, so `limit[0]` can be ignored when paging by cursor. */
+    cursor?: string
 }
 
 export interface GridOrderBy {
@@ -112,6 +117,11 @@ export function Grid<T extends { id: string | number }, Q>({
 
     const [filter, setFilter] = useState<FilterState<Q> | undefined>(undefined);
     const [data, setData, dataState] = useAsyncState<T[]>(undefined, {disableErrorAutoHandling: true});
+
+    /** `next` is the token the newest load returned; `byCursor` latches once a loader has
+     *  returned one, since from then on only the token can say whether more rows exist.
+     *  `ver` discards an older in-flight load's token — useOnlyLatestResult drops its rows too. */
+    const pagingRef = useRef<{ byCursor: boolean, next?: string, ver: number }>({byCursor: false, ver: 0});
 
     const lastRowsRef = useRef<T[] | undefined>(undefined);
     if (data !== undefined) {
@@ -187,10 +197,16 @@ export function Grid<T extends { id: string | number }, Q>({
         const rowsToLoad = filter.limit![1] - filter.limit![0] - (data?.length || 0)
         if (rowsToLoad > 0) {
             updateData(async (data) => {
+                const offset = data?.length || 0;
+                const ver = ++pagingRef.current.ver;
                 let newRows: T[] = [];
                 try {
-                    const res = await load({...filter, limit: [data?.length || 0, rowsToLoad]} as FilterState<Q>);
+                    const res = await load({...filter, limit: [offset, rowsToLoad], cursor: offset > 0 ? pagingRef.current.next : undefined} as FilterState<Q>);
                     newRows = res.rows;
+                    if (ver === pagingRef.current.ver) {
+                        pagingRef.current.next = res.nextCursor;
+                        pagingRef.current.byCursor = pagingRef.current.byCursor || res.nextCursor !== undefined;
+                    }
                 } catch (e) {
                     if (ApiErrors.is(e) && e.type === VALIDATION_ERROR.TYPE) {
                         F.getForm().setValidationErrors(
@@ -305,8 +321,11 @@ export function Grid<T extends { id: string | number }, Q>({
     // hasMore and the footer derive from displayData (current rows, or the previous rows during a
     // reload) so the "Load more" row and the "No more rows" footer stay put instead of vanishing
     // and reflowing the table on every reload.
-    const hasMore = !isLoading && !dataState.error && displayData?.length === filter.limit![1];
-    const showFooter = !hideFooter && !isLoading && !dataState.error && !!displayData && displayData.length > 0 && displayData.length < filter.limit![1];
+    // A cursor loader's last page can be full and simply carry no token, so a full page says
+    // nothing there — only offset paging may infer "more rows" from the row count.
+    const {byCursor, next: cursor} = pagingRef.current;
+    const hasMore = !isLoading && !dataState.error && (byCursor ? cursor !== undefined : displayData?.length === filter.limit![1]);
+    const showFooter = !hideFooter && !isLoading && !dataState.error && !!displayData && displayData.length > 0 && (byCursor ? cursor === undefined : displayData.length < filter.limit![1]);
     const isValidationError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type === VALIDATION_ERROR.TYPE;
     const isOtherError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type !== VALIDATION_ERROR.TYPE;
 

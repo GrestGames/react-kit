@@ -224,3 +224,26 @@ through `sync`, which only re-derives that branch from an id sentinel.
 So `load` must honour `input.id` — return just that row when it's set — or `update`
 writes the wrong row into the grid. Reach for `refresh()` only when one op changed
 several rows; it throws away the whole page.
+
+## Paging a `Grid`: offset or cursor
+
+`load` is always called with `limit: [offset, count]`. Return `{rows}` and the grid pages by
+offset: "Load more" asks for the next `count` rows starting at the rows already on screen, and
+a page shorter than `count` means the end.
+
+A store that cannot serve an offset (DynamoDB pages by `LastEvaluatedKey`) returns a token
+instead — `{rows, nextCursor}`. The grid hands it back as `input.cursor` on the next load-more
+call and stops as soon as a page omits `nextCursor`, so a full final page isn't mistaken for
+"there is more". `limit[1]` is still the page size; `limit[0]` can be ignored.
+
+```ts
+load={async (q: Filters & GridQuery) => {
+    const page = await api.list.call({...q, cursor: q.cursor, take: q.limit![1]});
+    return {rows: page.items, nextCursor: page.nextKey};
+}}
+```
+
+Return `nextCursor` on every page that has a successor — a page that omits it is the last one.
+A filter, sort or `reloadKey` change, and `tracker.refresh()` / `create`, restart at the first
+page with the held token dropped (a first-page call never carries a `cursor`); the extra pages
+a user had loaded are not restored.
