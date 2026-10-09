@@ -8,17 +8,17 @@
   },
   "dependencies": {
     "@grest-ts/react": "file:..",
-    "@grest-ts/schema": "^0.0.17",
-    "@grest-ts/schema-file": "^0.0.17",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "@grest-ts/schema": "0.0.71",
+    "@grest-ts/schema-file": "0.0.71",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "react-datepicker": "^9.1.0"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^4.3.0",
-    "typescript": "^5.9.3",
-    "vite": "^6.0.0"
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "~5.1.4",
+    "typescript": "^6.0.3",
+    "vite": "^7.3.1"
   }
 }
