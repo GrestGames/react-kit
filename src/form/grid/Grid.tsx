@@ -230,15 +230,12 @@ export function Grid<T extends { id: string | number }, Q>({
     }, [reloadKey]);
 
     const onTracked = (id: T["id"] | undefined, operation: TrackerOperation) => {
-        if (operation === TrackerOperation.RELOAD || operation === TrackerOperation.CREATE) {
-            // Neither names a row this grid can patch in place: a reload ping says the set
-            // changed, and a new row's position is the server's call.
+        // RELOAD and CREATE name no row this grid can patch — a reload ping says the set
+        // changed, and a new row's position is the server's call. Nor can anything be patched
+        // while a load is in flight: there are no rows yet, and that read may have been issued
+        // before the mutation landed, so re-read rather than drop the op.
+        if (operation === TrackerOperation.RELOAD || operation === TrackerOperation.CREATE || data === undefined) {
             reload();
-            return;
-        }
-        // A load is already in flight and will bring the row's new state with it. Patching now
-        // would cancel it (useOnlyLatestResult keeps only the newest result) and empty the grid.
-        if (data === undefined) {
             return;
         }
         if (operation === TrackerOperation.UPDATE) {

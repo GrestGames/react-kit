@@ -100,6 +100,43 @@ describe("Grid tracker ops", () => {
         await waitFor(() => expect(g.names()).toEqual(["Alpha", "Beta", "Gamma", "Delta"]));
     });
 
+    // The row is gone server-side before the tracker fires, but a read already in flight was
+    // issued before that and answers with the stale page — so the op must force a re-read
+    // rather than be dropped for finding no rows to patch.
+    it("re-reads when an op lands with a load in flight", async () => {
+        let table = [...rows];
+        let park = false;
+        let release: (() => void) | undefined;
+        const load = vi.fn(async (input: any) => {
+            if (input?.id !== undefined && input.id !== null) {
+                return {rows: table.filter(r => r.id === String(input.id))};
+            }
+            const snapshot = [...table];
+            if (park) {
+                park = false;
+                await new Promise<void>(res => { release = res });
+            }
+            return {rows: snapshot};
+        });
+        const tracker = new Tracker<string>();
+        const view = render(<Grid<Row, any>
+            load={load} tracker={tracker} hideFooter
+            fields={[{title: "Name", value: r => r.name}]}
+        />);
+        const names = () => Array.from(view.container.querySelectorAll("table.grid td")).map(td => td.textContent);
+        await waitFor(() => expect(names()).toEqual(["Alpha", "Beta", "Gamma"]));
+
+        park = true;
+        await act(async () => { tracker.refresh() });
+        await waitFor(() => expect(release).toBeDefined());
+
+        table = table.filter(r => r.id !== "img-b");
+        await act(async () => { tracker.delete("img-b") });
+        await act(async () => { release!() });
+
+        await waitFor(() => expect(names()).toEqual(["Alpha", "Gamma"]));
+    });
+
     it("stops listening once unmounted", async () => {
         const g = setup(rows);
         await loaded(g);
