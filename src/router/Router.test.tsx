@@ -101,4 +101,24 @@ describe("Router open-key ordering", () => {
         router.remove("a");
         expect(router.get("aTab")).toEqual("two");
     });
+
+    it("adopts a deep-linked child param from the URL when its owner registers", () => {
+        setUrl("a=1&aTab=two");
+        router = new Router(routes, "page=home");
+        expect(router.get("aTab")).toBeUndefined();
+        router.registerChildParam("a", "aTab");
+        expect(router.get("aTab")).toEqual("two");
+        expect(window.location.search).toEqual("?a=1&aTab=two");
+    });
+
+    it("doesn't adopt a child param whose owner isn't open, or override one already set", () => {
+        setUrl("b=1&aTab=two");
+        router = new Router(routes, "page=home");
+        router.registerChildParam("a", "aTab");
+        expect(router.get("aTab")).toBeUndefined();
+
+        router.add({a: "1", aTab: "three"});
+        router.registerChildParam("a", "aTab");
+        expect(router.get("aTab")).toEqual("three");
+    });
 });

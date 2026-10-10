@@ -115,6 +115,11 @@ export class Router {
         let set = this.childParams.get(parent);
         if (!set) this.childParams.set(parent, set = new Set());
         set.add(key);
+        // A child param isn't a route key, so the constructor didn't pick it up from a deep link
+        // (`?editUser=1&userTab=login`). makeNewUrl leaves it in the URL; adopt it once its owner registers.
+        if (this.routeArgs[parent] === undefined || this.routeArgs[key] !== undefined) return;
+        const fromUrl = new URL(window.location.href).searchParams.get(key);
+        if (fromUrl !== null) this.updateRoutes({...this.routeArgs, [key]: fromUrl}, false);
     }
 
     unregisterChildParam(parent: string, key: string) {
