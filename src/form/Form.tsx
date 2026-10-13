@@ -38,7 +38,7 @@ export function Form<T>(props: PropsWithChildren<{ prop: FormObject<T>, hideVali
                 e.preventDefault();
             }}>
                 <FormContext.Provider value={props.prop}>
-                    {f.getSubmitError() && !(props.hideValidationTip && f.getSubmitError()?.type === VALIDATION_ERROR.TYPE) && <TipBox intent="danger" iconLetter="!" style={{marginBottom: 16}} onClick={() => f.resetSubmitError()}>
+                    {f.getSubmitError() && !(props.hideValidationTip && f.getSubmitError()?.type === VALIDATION_ERROR.TYPE) && <TipBox intent="danger" iconLetter="!" style={{marginBottom: 16}} onClose={() => f.resetSubmitError()}>
                         <ApiErrorMessage error={f.getSubmitError()}/>
                     </TipBox>}
                     {props.children}

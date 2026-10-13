@@ -1,5 +1,6 @@
 import {CSSProperties, ReactNode} from "react";
 import {Intent} from "../../intents";
+import {IconButton} from "../buttons/IconButton";
 import "./TipBox.css"
 
 export interface Props {
@@ -9,9 +10,11 @@ export interface Props {
     style?: CSSProperties,
     className?: string,
     onClick?: () => void;
+    /** Shows a small ✕ in the top-right corner; the rest of the box stays selectable. */
+    onClose?: () => void;
 }
 
-export function TipBox({intent = "default", iconLetter, children, style, className, onClick}: Props) {
+export function TipBox({intent = "default", iconLetter, children, style, className, onClick, onClose}: Props) {
     const intentVars = {
         "--tip-bg": `var(--rk-${intent}-soft)`,
         "--tip-border": `var(--rk-${intent}-soft-border)`,
@@ -22,6 +25,7 @@ export function TipBox({intent = "default", iconLetter, children, style, classNa
                 onClick={onClick}>
         {iconLetter && <div className="tipIcon">{iconLetter}</div>}
         <div className="tipText">{children}</div>
+        {onClose && <div className="tipClose"><IconButton icon="✕" title="Dismiss" variant="glyph" size={12} onClick={onClose}/></div>}
     </div>
 }
 
