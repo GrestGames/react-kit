@@ -51,8 +51,7 @@ export function Form<T>(props: PropsWithChildren<{ prop: FormObject<T>, hideVali
 
 // Shown to the form's user: the issues are already on their fields, so no schema paths or error codes.
 function SubmitErrorMessage({error}: { error: ERROR<string, any> }) {
-    if (error.type !== VALIDATION_ERROR.TYPE) return <div>{ApiErrors.getDisplayMessage(error)}</div>
-    const messages = [...new Set(ApiErrors.getValidationErrors(error as typeof VALIDATION_ERROR.infer).map(i => i.message))]
+    const messages = error.type === VALIDATION_ERROR.TYPE ? [...new Set(ApiErrors.getValidationErrors(error as typeof VALIDATION_ERROR.infer).map(i => i.message))] : []
     if (messages.length === 0) return <div>{ApiErrors.getDisplayMessage(error)}</div>
     return <div>{messages.map(m => <div key={m}>{m}</div>)}</div>
 }

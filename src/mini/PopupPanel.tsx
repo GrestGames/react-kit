@@ -52,7 +52,8 @@ export function PopupPanel({title, subTitle, width, onClickTitle, onClose, style
     // Panel already scroll-locks via useDisableMainPage; FloatingOverlay's lockScroll would
     // double-lock and add a spurious body padding-right (the app forces html overflow-y:scroll,
     // so its scrollbar never disappears), shifting the page left and forcing a horizontal scrollbar.
-    return <Modal band="panel" order={order} onDismiss={tryClose} lockScroll={false}>
+    // initialFocus 1 skips the close button (first tabbable) so focus starts in the content.
+    return <Modal band="panel" order={order} onDismiss={tryClose} lockScroll={false} initialFocus={1}>
         <CloseGuardContext.Provider value={{register: registerGuard}}>
             <Panel title={title} subTitle={subTitle} style={style} width={width} onClickTitle={onClickTitle} onClose={tryClose}>
                 {children}
