@@ -5,7 +5,8 @@ import {ApiErrorMessage} from "../ErrorTracker";
 import {FormRoot} from "./FormRoot";
 import {AddToBody} from "../helpers/AddToBody";
 import {CloseGuardContext} from "../mini/PopupPanel";
-import {VALIDATION_ERROR} from "@grest-ts/schema";
+import {ERROR, VALIDATION_ERROR} from "@grest-ts/schema";
+import {ApiErrors} from "../ApiError";
 
 const FormContext = React.createContext<any>(undefined);
 
@@ -39,13 +40,21 @@ export function Form<T>(props: PropsWithChildren<{ prop: FormObject<T>, hideVali
             }}>
                 <FormContext.Provider value={props.prop}>
                     {f.getSubmitError() && !(props.hideValidationTip && f.getSubmitError()?.type === VALIDATION_ERROR.TYPE) && <TipBox intent="danger" iconLetter="!" style={{marginBottom: 16}} onClick={() => f.resetSubmitError()}>
-                        <ApiErrorMessage error={f.getSubmitError()}/>
+                        <SubmitErrorMessage error={f.getSubmitError()!}/>
                     </TipBox>}
                     {props.children}
                 </FormContext.Provider>
             </form>
         </div>
     }
+}
+
+// Shown to the form's user: the issues are already on their fields, so no schema paths or error codes.
+function SubmitErrorMessage({error}: { error: ERROR<string, any> }) {
+    if (error.type !== VALIDATION_ERROR.TYPE) return <div>{ApiErrors.getDisplayMessage(error)}</div>
+    const messages = [...new Set(ApiErrors.getValidationErrors(error as typeof VALIDATION_ERROR.infer).map(i => i.message))]
+    if (messages.length === 0) return <div>{ApiErrors.getDisplayMessage(error)}</div>
+    return <div>{messages.map(m => <div key={m}>{m}</div>)}</div>
 }
 
 export function FormLoader({f, containerRef: containerRef}: { f: FormRoot<any>, containerRef: React.RefObject<HTMLElement | null> }) {

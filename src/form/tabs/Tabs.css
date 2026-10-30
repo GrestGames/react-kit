@@ -59,14 +59,12 @@
     .tabsArea .tabsMenu {
         display: flex;
         overflow-x: auto;
+        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         white-space: nowrap;
         gap: 2px;
-        scrollbar-width: none;
-    }
-
-    .tabsArea .tabsMenu::-webkit-scrollbar {
-        display: none;
+        /* Visible, so tabs past the edge read as scrollable rather than missing. */
+        scrollbar-width: thin;
     }
 
     .tabsArea .tabsMenu .tab {

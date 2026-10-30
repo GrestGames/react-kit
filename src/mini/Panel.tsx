@@ -32,7 +32,8 @@ export function Panel({children, title, subTitle, width, zIndex, style, classNam
                 {subTitle && <><br/><span className="panelSubTitle">{subTitle}</span></>}
             </div>}
 
-            {onClose && <div className="closeButton" onClick={onClose}>X</div>}
+            {/* Out of the tab order so a dialog's initial focus lands on its content; Escape closes it. */}
+            {onClose && <button type="button" tabIndex={-1} className="closeButton" aria-label="Close" onClick={onClose}>X</button>}
         </div>
 
         <div className="panelInner" style={{width: "100%", height: "100%"}}>

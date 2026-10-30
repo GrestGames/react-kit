@@ -72,8 +72,10 @@
     font-size: 16px;
     line-height: 1;
     cursor: pointer;
+    border: none;
     border-radius: var(--rk-radius);
     background-color: transparent;
+    font-family: inherit;
 }
 
 .panel .closeButton:hover {

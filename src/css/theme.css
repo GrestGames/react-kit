@@ -4,6 +4,7 @@
  */
 
 :root {
+    color-scheme: light;
     --rk-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
     --rk-font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
 
@@ -163,6 +164,7 @@
 }
 
 .rk-dark {
+    color-scheme: dark;
     --rk-bg-body: #1a1b26;
     --rk-bg-surface: #1e1e2e;
     --rk-bg-subtle: #1d1e2c;
