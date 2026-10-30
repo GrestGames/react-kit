@@ -48,14 +48,14 @@ export function FormSubmitButton({alwaysEnabled, ...props}: Omit<ButtonProps, "o
         type: form ? "button" : "submit",
         intent: props.intent ?? "danger",
         children: props.children || "Save",
-        className: "formSubmit " + props.className,
+        className: ["formSubmit", props.className].filter(Boolean).join(" "),
         disabled: props.disabled || (form && !alwaysEnabled ? !form.isChanged() : false),
         onClick: form ? async () => form.getForm().submit() : () => undefined
     })
 }
 
 export function FormCancelButton(props: ButtonProps) {
-    return AnyButton({...props, type: "button", intent: "warning", children: props.children || "Cancel", className: "formSubmit " + props.className, style: {float: "left", ...props.style}})
+    return AnyButton({...props, type: "button", intent: "warning", children: props.children || "Cancel", className: ["formSubmit", props.className].filter(Boolean).join(" "), style: {float: "left", ...props.style}})
 }
 
 export function ArrayPushButton<T>({prop, blank, ...props}: Omit<ButtonProps, "onClick"> & { prop: FormObject<T[]>, blank?: Partial<T> | (() => Partial<T>) }) {
