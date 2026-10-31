@@ -89,18 +89,12 @@ export function Select<T extends string | number>(props: AnySelectFormElement<T>
 class SelectParser {
 
     public static toInput(val: unknown): string {
-        return val === null ? "" : String(val)
+        return isEmptyOptionId(val) ? "" : String(val)
     }
 
+    /** `""` is the empty choice: `addEmpty`'s, or an option whose id is null or `""` (e.g. a "None" or placeholder entry). */
     public static toOutput<T>(val: string, options: ValueType<T>[]): T {
-        const search: string | null = val === "" ? null : val;
-        const item = options.find((opt) => {
-            if (search === null) {
-                return opt.id === null;
-            } else {
-                return opt.id == search;
-            }
-        });
+        const item = options.find((opt) => val === "" ? isEmptyOptionId(opt.id) : opt.id == val);
         return item!.id;
     }
 

@@ -390,7 +390,7 @@ export function Grid<T extends { id: string | number }, Q>({
                                     applySort(newOrderBy.field!, newOrderBy.dir!);
                                 }
                             }
-                            const props: any = {width: f.width, style: compact ? {whiteSpace: "normal"} : undefined};
+                            const props: any = {width: f.width, style: {textAlign: f.align, ...compact && {whiteSpace: "normal"}}};
                             return <th key={s} {...props} onClick={onClick} className={"normal "+(isSortable ? "sort" : "") + (isSortable && f.sortName === filter.orderBy?.field ? " sorted" : "")}>{f.title || ""}
                                 {isSortable && <>{compact && <br/>}<span className={"gridArrow " + (f.sortName === filter.orderBy?.field ? "" : "gridArrowNeutral")}>
                             {f.sortName === filter.orderBy?.field ? (filter.orderBy?.dir === "asc" ? <>&#8595;</> : <>&#8593;</>) : <>&#8693;</>}
