@@ -42,7 +42,7 @@ Reach for these before hand-rolling. Exact props live in the source files / `exa
 - Text: `TextInput`, `TextArea`, `PasswordInput`, `EmailInput`, `PhoneInput`.
 - Number: `NumberInput`, `IntegerInput`/`PositiveIntegerInput`, `DecimalInput`/`PositiveDecimalInput`, `InputRange`.
 - Date: `DateInput`, `YearMonthSelect`.
-- Choice: `Select`, `RadioSelect`, `AutoComplete` (sync + async).
+- Choice: `Select`, `RadioSelect`, `AutoComplete` (sync + async), `SegmentedControl` (joined button row, one selected — `size` like buttons, `intent` for the selected fill, per-option `title` tooltip / `disabled`; ARIA radiogroup with arrow keys; use for compact filters/view switches).
 - Boolean: `Checkbox`, `Checkbox01`, `CheckboxGroup` (`disabled`/`readOnly` are group-wide — to disable one option, filter it out), `Toggle`, `Toggle01`.
 - File: `FileUpload` (single), `FileMultiUpload`.
 - Inline editing: `InlineEditWrap` + `useInlineEdit`.

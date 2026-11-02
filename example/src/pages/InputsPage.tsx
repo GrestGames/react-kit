@@ -12,6 +12,9 @@ import dateInputBasicSource from '../examples/inputs/DateInputBasic.tsx?raw';
 import SelectBasic from '../examples/inputs/SelectBasic';
 import selectBasicSource from '../examples/inputs/SelectBasic.tsx?raw';
 
+import SegmentedControlBasic from '../examples/inputs/SegmentedControlBasic';
+import segmentedControlBasicSource from '../examples/inputs/SegmentedControlBasic.tsx?raw';
+
 import CheckboxBasic from '../examples/inputs/CheckboxBasic';
 import checkboxBasicSource from '../examples/inputs/CheckboxBasic.tsx?raw';
 
@@ -43,6 +46,10 @@ export default function InputsPage() {
 
       <ShowCase title="Select, RadioSelect, AutoComplete" source={selectBasicSource}>
         <SelectBasic />
+      </ShowCase>
+
+      <ShowCase title="SegmentedControl" source={segmentedControlBasicSource}>
+        <SegmentedControlBasic />
       </ShowCase>
 
       <ShowCase title="Checkbox, Checkbox01, CheckboxGroup" source={checkboxBasicSource}>
