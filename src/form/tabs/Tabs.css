@@ -171,10 +171,26 @@
     padding-left: 16px;
 }
 
+.tabsArea.tabsSide .tabsTitleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 0 10px;
+}
+
+/* Zero height: actions centre on the title line without making it taller than a title-only tab's. */
+.tabsArea.tabsSide .tabsTitleActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 0;
+}
+
 .tabsArea.tabsSide .tabsTitle {
     font-size: var(--rk-font-size-huge);
     font-weight: 600;
-    margin: 0 0 10px;
+    margin: 0;
 }
 
 @media (max-width: 768px) {

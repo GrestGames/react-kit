@@ -36,6 +36,13 @@ describe("Tabs side layout", () => {
         expect(router.get("tab")).toBe("clouds");
     });
 
+    it("puts the selected tab's actions on its title line", async () => {
+        renderTabs([...tabs, {urlKey: "builds", title: "Builds", actions: () => <button>Open builds</button>, body: () => "builds body"}]);
+        expect(screen.queryByRole("button", {name: "Open builds"})).toBeNull();
+        await userEvent.click(screen.getByRole("tab", {name: "Builds"}));
+        expect(screen.getByRole("heading").parentElement).toContainElement(screen.getByRole("button", {name: "Open builds"}));
+    });
+
     it("moves with the arrow keys and wraps, keeping one tab in the tab order", async () => {
         renderTabs(tabs);
         const general = screen.getByRole("tab", {name: "General"});

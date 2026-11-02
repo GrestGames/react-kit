@@ -21,6 +21,8 @@ export interface Tab {
     group?: string;
     /** Red title; in the side layout it is pinned to the bottom of the nav. */
     danger?: boolean;
+    /** Side layout: shown at the right end of the selected tab's title line. */
+    actions?: () => ReactNode;
     body: () => ReactNode | ReactNode[];
 }
 
@@ -111,7 +113,10 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
     }
     const body = <div id={`${baseId}-panel`} role="tabpanel" aria-labelledby={tabId(current)}
                       className={(ready ? "tabsContentLoaded" : "tabsContentInit") + " tabsContent"}>
-        {side && <h2 className="tabsTitle">{tabsMap.get(current)?.title}</h2>}
+        {side && <div className="tabsTitleRow">
+            <h2 className="tabsTitle">{tabsMap.get(current)?.title}</h2>
+            <div className="tabsTitleActions">{tabsMap.get(current)?.actions?.()}</div>
+        </div>}
         {getTabBody()}
     </div>
 
