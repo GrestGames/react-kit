@@ -73,3 +73,111 @@
         padding: 6px 10px;
     }
 }
+.tabsArea .tabsMenu .tabDanger {
+    color: var(--rk-danger);
+}
+
+/* ── Side layout ───────────────────────────────────── */
+
+.tabsArea.tabsSide {
+    display: flex;
+    min-height: 440px;
+}
+
+.tabsArea.tabsSide .tabsMenu {
+    flex: 0 0 164px;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 2px 8px 2px 0;
+    border-bottom: none;
+    border-right: 1px solid var(--rk-border);
+    font-size: var(--rk-font-size-normal);
+}
+
+.tabsArea.tabsSide .tabsMenu .tab,
+.tabsArea.tabsSide .tabsMenu .tabSelected {
+    top: 0;
+    display: block;
+    margin: 0;
+    padding: 3px 8px;
+    line-height: 18px;
+    border: none;
+    border-radius: 3px;
+    background: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: none;
+}
+
+.tabsArea.tabsSide .tabsMenu .tab:hover {
+    background-color: var(--rk-bg-hover);
+}
+
+.tabsArea.tabsSide .tabsMenu .tabSelected,
+.tabsArea.tabsSide .tabsMenu .tabSelected:hover {
+    background-color: var(--rk-info-soft) !important;
+    color: var(--rk-text-bright);
+    font-weight: 600;
+}
+
+.tabsArea.tabsSide .tabsGroup {
+    font-size: var(--rk-font-size-micro);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--rk-text-muted);
+    padding: 9px 8px 2px;
+}
+
+.tabsArea.tabsSide .tabsGroup:first-child {
+    padding-top: 0;
+}
+
+.tabsArea.tabsSide .tabsSpacer {
+    flex: 1;
+    min-height: 12px;
+}
+
+.tabsArea.tabsSide .tabsContent {
+    flex: 1;
+    min-width: 0;
+    padding-left: 16px;
+}
+
+.tabsArea.tabsSide .tabsTitle {
+    font-size: var(--rk-font-size-huge);
+    font-weight: 600;
+    margin: 0 0 10px;
+}
+
+@media (max-width: 768px) {
+    .tabsArea.tabsSide {
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .tabsArea.tabsSide .tabsMenu {
+        flex: none;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--rk-border);
+        padding: 0 0 6px;
+    }
+
+    .tabsArea.tabsSide .tabsGroup,
+    .tabsArea.tabsSide .tabsSpacer {
+        display: none;
+    }
+
+    .tabsArea.tabsSide .tabsMenu .tab {
+        flex-shrink: 0;
+        padding: 5px 10px;
+    }
+
+    .tabsArea.tabsSide .tabsContent {
+        padding: 12px 0 0;
+    }
+}

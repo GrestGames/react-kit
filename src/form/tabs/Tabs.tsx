@@ -1,4 +1,4 @@
-import {ReactNode, useEffect, useState} from "react";
+import {Fragment, ReactNode, useEffect, useState} from "react";
 import {useRouter, useRouteKey} from "../../router";
 import "./Tabs.css"
 
@@ -6,16 +6,22 @@ export interface Props {
     urlKey: string;
     tabs: Tab[]
     defaultTab?: string;
+    /** "side": a compact left nav with `group` headings and the selected tab's title above its body. */
+    layout?: "top" | "side";
 }
 
 export interface Tab {
     urlKey: string;
     title: string;
     isVisible?: boolean
+    /** Side layout: heading over consecutive tabs with the same group. */
+    group?: string;
+    /** Red title; in the side layout it is pinned to the bottom of the nav. */
+    danger?: boolean;
     body: () => ReactNode | ReactNode[];
 }
 
-export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
+export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
     const {router} = useRouter();
     const routeKey = useRouteKey();
     const [ready, setReady] = useState(false);
@@ -66,19 +72,37 @@ export function Tabs({urlKey, tabs, defaultTab = ""}: Props) {
         }
     }
 
+    const current = tabsMap.has(selectedTab) ? selectedTab : defaultTab
+    const visible = tabs.filter(t => t && t.isVisible)
+    const tabItem = (val: Tab) => <div key={"tab-" + val.urlKey}
+                                       className={"tab" + (val.urlKey === current ? " tabSelected" : "") + (val.danger ? " tabDanger" : "")}
+                                       onClick={() => selectTab(val.urlKey)}>{val.title}</div>
+    const body = <div className={(ready ? "tabsContentLoaded" : "tabsContentInit") + " tabsContent"}>
+        {layout === "side" && <h2 className="tabsTitle">{tabsMap.get(current)?.title}</h2>}
+        {getTabBody()}
+    </div>
+
+    if (layout === "side") {
+        const main = visible.filter(t => !t.danger)
+        const danger = visible.filter(t => t.danger)
+        return <div className="tabsArea tabsSide">
+            <nav className="tabsMenu">
+                {main.map((t, i) => <Fragment key={"tab-" + t.urlKey}>
+                    {t.group && t.group !== main[i - 1]?.group && <div className="tabsGroup">{t.group}</div>}
+                    {tabItem(t)}
+                </Fragment>)}
+                {danger.length > 0 && <div className="tabsSpacer"/>}
+                {danger.map(tabItem)}
+            </nav>
+            {body}
+        </div>
+    }
+
     return <div className="tabsArea">
         <div className="tabsMenu">
-            {tabs.map((val) => {
-                if (val && val.isVisible) {
-                    return <div key={"tab-" + val.urlKey} className={"tab " + (val.urlKey === selectedTab ? "tabSelected" : "")} onClick={() => selectTab(val.urlKey)}>{val.title}</div>
-                } else {
-                    return undefined
-                }
-            })}
+            {visible.map(tabItem)}
         </div>
-        <div className={(ready ? "tabsContentLoaded" : "tabsContentInit") + " tabsContent"}>
-            {getTabBody()}
-        </div>
+        {body}
     </div>
 
 }

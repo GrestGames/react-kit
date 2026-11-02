@@ -5,6 +5,8 @@ import topMenuBasicSource from '../examples/layout/TopMenuBasic.tsx?raw';
 
 import TabsBasic from '../examples/layout/TabsBasic';
 import tabsBasicSource from '../examples/layout/TabsBasic.tsx?raw';
+import TabsSide from '../examples/layout/TabsSide';
+import tabsSideSource from '../examples/layout/TabsSide.tsx?raw';
 
 import PanelBasic from '../examples/layout/PanelBasic';
 import panelBasicSource from '../examples/layout/PanelBasic.tsx?raw';
@@ -26,6 +28,10 @@ export default function LayoutPage() {
 
       <ShowCase title="Tabs" source={tabsBasicSource}>
         <TabsBasic />
+      </ShowCase>
+
+      <ShowCase title="Tabs, side layout" source={tabsSideSource}>
+        <TabsSide />
       </ShowCase>
 
       <ShowCase title="PopupPanel" source={panelBasicSource}>
