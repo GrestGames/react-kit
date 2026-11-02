@@ -30,6 +30,8 @@
 .panelInner {
     overflow-x: hidden;
     overflow-y: auto;
+    /* Content keeps its width whether or not the scrollbar shows. */
+    scrollbar-gutter: stable;
     padding: 10px;
     box-sizing: border-box;
     max-height: calc(100vh - 140px)
