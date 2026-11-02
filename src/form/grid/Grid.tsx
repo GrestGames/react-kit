@@ -10,6 +10,7 @@ import {Form} from "../Form";
 import {useIsMobile} from "../../responsive/useResponsive";
 import {MobileSortBar} from "./GridCards";
 import {ButtonAppearanceContext} from "../buttons/buttonAppearance";
+import {ToolTip} from "../../mini/ToolTip";
 
 type FilterState<Q> = Q & GridQuery;
 
@@ -69,7 +70,10 @@ export interface GridField<T> {
     title?: string | ReactNode | ReactNode[];
     value: keyof T | ((row: T, no: number, data: T[]) => string | ReactNode | ReactNode[]);
     align?: "left" | "center" | "right";
-    wrap?: boolean,
+    /** `true` wraps anywhere (`word-break: break-all`); `"words"` keeps words whole and splits only a token that can't fit. */
+    wrap?: boolean | "words",
+    /** Max cell width in px: content stays on one line, cut with an ellipsis, full value in a tooltip. */
+    truncate?: number;
     style?: CSSProperties
     /** @deprecated Use mobileCard prop on Grid instead. Kept for backwards compatibility. */
     mobile?: string;
@@ -418,7 +422,10 @@ export function Grid<T extends { id: string | number }, Q>({
                             }
 
                             const style: CSSProperties = {whiteSpace: f.wrap ? "normal" : "nowrap", ...f.style}
-                            return <td key={s} rowSpan={rowSpanValue} align={f.align} style={style}>{getValue(f, i, row, displayData)}</td>
+                            const value = getValue(f, i, row, displayData);
+                            return <td key={s} rowSpan={rowSpanValue} align={f.align} style={style} className={f.wrap === "words" ? "gridWrapWords" : undefined}>
+                                {f.truncate ? <ToolTip message={value} anchor="target" overflowOnly display="block" className="gridTruncate" style={{maxWidth: f.truncate}}>{value}</ToolTip> : value}
+                            </td>
                         })}</tr>
                     })}
                     {hasMore && <tr>
