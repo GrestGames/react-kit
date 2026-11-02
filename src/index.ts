@@ -25,6 +25,7 @@ export * from "./form/input/TextInput";
 export * from "./form/input/NumberInput";
 export * from "./form/input/DateInput";
 export * from "./form/input/Select";
+export * from "./form/input/SegmentedControl";
 export * from "./form/input/AutoComplete";
 export * from "./form/input/Checkbox01";
 export * from "./form/input/CheckboxGroup";
