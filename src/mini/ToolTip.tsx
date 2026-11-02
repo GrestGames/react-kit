@@ -33,6 +33,8 @@ export interface ToolTipProps {
     display?: "inline" | "block"
     /** Force the tooltip open without hover — useful for onboarding hints. */
     pinned?: boolean
+    /** Open only while the trigger's content is cut off (e.g. an ellipsis). */
+    overflowOnly?: boolean
 }
 
 function intentVars(intent: Intent | undefined, template: ToolTipTemplate | undefined): CSSProperties | undefined {
@@ -62,7 +64,7 @@ function combineRef<T>(set: (node: T | null) => void, orig: Ref<T> | undefined):
 
 export function ToolTip({
     message, children, anchor = "cursor", template, intent, className, style,
-    placement, maxWidth, openDelayMs, closeDelayMs, display = "inline", pinned,
+    placement, maxWidth, openDelayMs, closeDelayMs, display = "inline", pinned, overflowOnly,
 }: ToolTipProps) {
     const [open, setOpen] = useState(false);
     const arrowRef = useRef<HTMLDivElement>(null);
@@ -77,7 +79,10 @@ export function ToolTip({
 
     const {refs, floatingStyles, context, middlewareData, placement: finalPlacement} = useFloating({
         open: isOpen,
-        onOpenChange: pinned ? undefined : setOpen,
+        onOpenChange: pinned ? undefined : (next) => {
+            const el = refs.domReference.current;
+            setOpen(next && !(overflowOnly && el && el.scrollWidth <= el.clientWidth));
+        },
         strategy: "fixed",
         placement: initialPlacement,
         middleware: [

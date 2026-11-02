@@ -88,6 +88,17 @@ table.grid td {
     word-break: break-all;
 }
 
+table.grid td.gridWrapWords {
+    word-break: normal;
+    overflow-wrap: anywhere;
+}
+
+table.grid .gridTruncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 table.grid .noMoreRows {
     padding: 10px;
     text-align: center;
