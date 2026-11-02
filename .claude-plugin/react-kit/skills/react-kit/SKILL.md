@@ -57,7 +57,7 @@ Reach for these before hand-rolling. Exact props live in the source files / `exa
 
 **Feedback** — `TipBox` (+ `SuccessBox`/`WarningBox`/`ErrorBox`/`NeutralTipBox`), `Alert`, `Toast`, `ProgressBar`, `LoadingPopup`, `BatchProgressPopup`.
 
-**Layout & nav** — `Cards`/`Card` (`variant="add"` for a "+" tile), `Tabs` (`urlKey` persists active tab; lazy `body` factories; `layout="side"` for a compact left nav with `group` headings and `danger` tabs pinned to the bottom, for settings panels with many sections), `TopMenu`, `MainArea`, `Separator`, `MiniTip`, `StepBar`, `SlideDeck`, `AutoHeight`. Routing: `grest-react-kit/router` (`Router`, `RouterProvider`, `RouterOutlet`, `useRouter`, `useRouteKey`).
+**Layout & nav** — `Cards`/`Card` (`variant="add"` for a "+" tile), `Tabs` (`urlKey` persists active tab; lazy `body` factories; `layout="side"` for a compact left nav with `group` headings, `danger` tabs pinned to the bottom and a filter box past 15 tabs, for settings panels with many sections; ARIA tablist with arrow-key navigation; side nav sized by `--rk-tabs-side-width` / `--rk-tabs-side-min-height`), `TopMenu`, `MainArea`, `Separator`, `MiniTip`, `StepBar`, `SlideDeck`, `AutoHeight`. Routing: `grest-react-kit/router` (`Router`, `RouterProvider`, `RouterOutlet`, `useRouter`, `useRouteKey`).
 
 **Data display** — `Grid` (server-driven sort/page/query; pass `reloadKey` to refetch), `GridCards`, `FileGrid`/`FileGridMini`, `LazyDataSet`, `FileViewer`/`FileIframe`. Trackers: `EntityTracker`, `ErrorTracker`. Page scaffold: `MyPage`.
 

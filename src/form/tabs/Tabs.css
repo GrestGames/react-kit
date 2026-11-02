@@ -10,6 +10,8 @@
 }
 
 .tabsArea .tabsMenu .tab {
+    font: inherit;
+    color: inherit;
     user-select: none;
     position: relative;
     top: 3px;
@@ -23,6 +25,11 @@
     cursor: pointer;
     background-color: var(--rk-bg-raised);
     transition: background-color 0.2s ease, padding 0.3s ease;
+}
+
+.tabsArea .tabsMenu .tab:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--rk-border-focus);
 }
 
 .tabsArea .tabsMenu .tab:hover {
@@ -81,11 +88,11 @@
 
 .tabsArea.tabsSide {
     display: flex;
-    min-height: 440px;
+    min-height: var(--rk-tabs-side-min-height, 440px);
 }
 
 .tabsArea.tabsSide .tabsMenu {
-    flex: 0 0 164px;
+    flex: 0 0 var(--rk-tabs-side-width, 164px);
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -95,10 +102,28 @@
     font-size: var(--rk-font-size-normal);
 }
 
+.tabsArea.tabsSide .tabsList {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.tabsArea.tabsSide .tabsFilter {
+    font: inherit;
+    margin: 0 0 6px;
+    padding: 3px 8px;
+    border: 1px solid var(--rk-border);
+    border-radius: var(--rk-radius-sm);
+    background: var(--rk-bg-surface);
+    color: var(--rk-text);
+}
+
 .tabsArea.tabsSide .tabsMenu .tab,
 .tabsArea.tabsSide .tabsMenu .tabSelected {
     top: 0;
     display: block;
+    width: 100%;
+    text-align: left;
     margin: 0;
     padding: 3px 8px;
     line-height: 18px;
@@ -160,11 +185,14 @@
 
     .tabsArea.tabsSide .tabsMenu {
         flex: none;
-        flex-direction: row;
-        overflow-x: auto;
         border-right: none;
         border-bottom: 1px solid var(--rk-border);
         padding: 0 0 6px;
+    }
+
+    .tabsArea.tabsSide .tabsList {
+        flex-direction: row;
+        overflow-x: auto;
     }
 
     .tabsArea.tabsSide .tabsGroup,
@@ -173,6 +201,7 @@
     }
 
     .tabsArea.tabsSide .tabsMenu .tab {
+        width: auto;
         flex-shrink: 0;
         padding: 5px 10px;
     }
