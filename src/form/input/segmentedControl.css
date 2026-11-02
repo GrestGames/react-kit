@@ -1,0 +1,88 @@
+@import "../../css/theme.css";
+
+.rkSegmented {
+    display: inline-flex;
+    vertical-align: middle;
+    box-sizing: border-box;
+    margin: 2px 4px;
+    border: 1px solid var(--rk-border-strong);
+    border-radius: var(--rk-radius);
+    background: var(--rk-bg-surface);
+    overflow: hidden;
+}
+
+.rkSegmented.fullWidth {
+    display: flex;
+}
+
+.rkSegmented.fullWidth .rkSegment {
+    flex: 1;
+}
+
+.rkSegment {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: var(--rk-text-secondary);
+    font-family: var(--rk-font);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+/* Same font and vertical padding as the matching Button size, so the group lines up with it. */
+.rkSegmented-size-micro .rkSegment { font-size: var(--rk-font-size-micro); padding: 2px 8px; min-width: 20px; }
+.rkSegmented-size-small .rkSegment { font-size: var(--rk-font-size-small); padding: 5px 10px; min-width: 28px; }
+.rkSegmented-size-normal .rkSegment { font-size: var(--rk-font-size-normal); padding: 8px 12px; min-width: 34px; }
+
+.rkSegment + .rkSegment {
+    border-left: 1px solid var(--rk-border);
+}
+
+.rkSegment:hover:not(.selected):not([aria-disabled]) {
+    background: var(--rk-bg-hover);
+    color: var(--rk-text);
+}
+
+.rkSegment.selected {
+    background: var(--seg-bg);
+    color: var(--seg-fg);
+}
+
+.rkSegment.selected:not([aria-disabled]), .rkSegment.selected:not([aria-disabled]) + .rkSegment {
+    border-left-color: var(--seg-bg);
+}
+
+.rkSegment:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--rk-border-focus);
+}
+
+.rkSegment.selected:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--rk-border-focus), inset 0 0 0 3px var(--rk-bg-surface);
+}
+
+.rkSegment[aria-disabled] {
+    color: var(--rk-text-muted);
+    cursor: not-allowed;
+}
+
+.rkSegment.selected[aria-disabled] {
+    background: var(--rk-bg-active);
+}
+
+.rkSegmented.disabled {
+    background: var(--rk-disabled-bg);
+}
+
+.rkSegmented.changed {
+    border-color: var(--rk-changed-border);
+    background: var(--rk-changed-bg);
+}
+
+.rkSegmented.error {
+    border-color: var(--rk-danger);
+    background: var(--rk-danger-soft);
+}

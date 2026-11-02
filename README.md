@@ -15,7 +15,7 @@ live gallery of all of it (`cd example && npm run dev`).
   validation automatically (see [`src/form/README.md`](src/form/README.md)); `DeleteObjectSection`
   for delete flows.
 - **Form inputs** — `TextInput` (+ TextArea/Email/Phone/Password), `NumberInput`
-  (Integer/Decimal/Positive/`InputRange`), `DateInput`/`YearMonthSelect`, `Select`/`RadioSelect`,
+  (Integer/Decimal/Positive/`InputRange`), `DateInput`/`YearMonthSelect`, `Select`/`RadioSelect`, `SegmentedControl`,
   `AutoComplete` (sync + async), `Checkbox`/`Checkbox01`/`CheckboxGroup`, `Toggle`/`Toggle01`,
   `FileUpload`/`FileMultiUpload`, inline edit (`InlineEditWrap`/`useInlineEdit`). Each works in a
   `value`+`onChange` mode or bound to a form `prop`.
