@@ -49,7 +49,7 @@ export function Popover({
     closeOnWindowBlur = false, style, className,
 }: PopoverProps) {
     const id = useId();
-    const {isTop} = useOverlaySlot(id, "panel", 0);
+    const {offset: stackOffset, isTop} = useOverlaySlot(id, "panel", 0);
 
     const refEl = anchor && "current" in anchor ? anchor.current : null;
     const rect = anchor && !("current" in anchor) ? anchor : null;
@@ -96,9 +96,12 @@ export function Popover({
         enabled: isTop && !!onClose,
         outsidePress: (e) => {
             const t = e.target as HTMLElement | null;
-            // Nested popovers and portaled menus (ActionMenu/ContextMenu) live outside this
-            // element's DOM subtree — treat a press inside any of them as "inside".
-            return !t?.closest("[data-rk-popover],[data-rk-dropdown-portal]");
+            // Popovers opened from this one and portaled menus (ActionMenu/ContextMenu) live outside
+            // its DOM subtree, so a press in them is "inside". A press in a popover beneath it (the
+            // one it was opened from) is outside.
+            const popover = t?.closest<HTMLElement>("[data-rk-popover]");
+            if (popover) return Number(popover.dataset.rkPopover) < stackOffset;
+            return !t?.closest("[data-rk-dropdown-portal]");
         },
     });
     const {getFloatingProps} = useInteractions([dismiss]);
@@ -120,7 +123,7 @@ export function Popover({
     return <FloatingPortal>
         <div
             ref={refs.setFloating}
-            data-rk-popover
+            data-rk-popover={stackOffset}
             className={["rkPopover", className].filter(Boolean).join(" ")}
             style={{...floatingStyles, zIndex: "var(--rk-z-popover)", ...style}}
             {...getFloatingProps()}
