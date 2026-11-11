@@ -151,22 +151,24 @@ export function Grid<T extends { id: string | number }, Q>({
         setFilter((f) => f ? {...f, limit: resetPage ? [0, rowsPerCall] as [number, number] : f.limit} : f);
     }
 
-    // Sets the finished array straight through useAsyncState's value path: updateData would
-    // wrap it in a promise, costing a LOADING frame that flashes the spinner row.
+    // A synchronous updater: no LOADING frame (an async one would flash the spinner row), and it
+    // builds on React's queued rows, so two updates answered in one tick both stay. While a load
+    // is in flight there are no rows, and the load's are fresher than the patch.
     const patchRow = (id: T["id"], next: T | undefined) => {
-        const rows = data!;
-        const i = rows.findIndex((e) => String(e.id) === String(id));
-        if (i === -1) {
-            return;
-        }
-        const copy = [...rows];
-        if (next === undefined) {
-            copy.splice(i, 1);
-        } else {
-            copy[i] = next;
-        }
-        onData?.(copy);
-        setData(copy);
+        setData((rows: T[] | undefined) => {
+            const i = rows?.findIndex((e) => String(e.id) === String(id)) ?? -1;
+            if (!rows || i === -1) {
+                return rows;
+            }
+            const copy = [...rows];
+            if (next === undefined) {
+                copy.splice(i, 1);
+            } else {
+                copy[i] = next;
+            }
+            onData?.(copy);
+            return copy;
+        });
     }
 
     const [F] = useAsyncForm({
