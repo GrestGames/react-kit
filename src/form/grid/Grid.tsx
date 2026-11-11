@@ -152,9 +152,10 @@ export function Grid<T extends { id: string | number }, Q>({
     }
 
     // Sets the finished array straight through useAsyncState's value path: updateData would
-    // wrap it in a promise, costing a LOADING frame that flashes the spinner row.
+    // wrap it in a promise, costing a LOADING frame that flashes the spinner row. Builds on the
+    // last patch, not this render's rows, so two updates answered before a re-render both stay.
     const patchRow = (id: T["id"], next: T | undefined) => {
-        const rows = data!;
+        const rows = lastRowsRef.current!;
         const i = rows.findIndex((e) => String(e.id) === String(id));
         if (i === -1) {
             return;
@@ -165,6 +166,7 @@ export function Grid<T extends { id: string | number }, Q>({
         } else {
             copy[i] = next;
         }
+        lastRowsRef.current = copy;
         onData?.(copy);
         setData(copy);
     }

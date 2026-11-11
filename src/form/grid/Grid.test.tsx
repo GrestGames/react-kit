@@ -71,6 +71,19 @@ describe("Grid tracker ops", () => {
         expect(g.load).toHaveBeenLastCalledWith(expect.objectContaining({id: "img-b", limit: [0, 1]}));
     });
 
+    it("two updates answered before a re-render both stay", async () => {
+        const g = setup(rows);
+        await loaded(g);
+        g.setTable([{id: "img-a", name: "Alpha renamed"}, {id: "img-b", name: "Beta renamed"}, rows[2]]);
+
+        await act(async () => {
+            g.tracker.update("img-a");
+            g.tracker.update("img-b");
+        });
+
+        await waitFor(() => expect(g.names()).toEqual(["Alpha renamed", "Beta renamed", "Gamma"]));
+    });
+
     it("update keeps the grid's active filters", async () => {
         const g = setup(rows, {scope: "cloud-1"});
         await loaded(g);
