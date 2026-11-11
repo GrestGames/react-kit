@@ -85,13 +85,14 @@
 }
 
 /* ── Side layout ───────────────────────────────────── */
+/* Child combinators: a top-layout Tabs nested in a side one keeps its own layout. */
 
 .tabsArea.tabsSide {
     display: flex;
     min-height: var(--rk-tabs-side-min-height, 440px);
 }
 
-.tabsArea.tabsSide .tabsMenu {
+.tabsArea.tabsSide > .tabsMenu {
     flex: 0 0 var(--rk-tabs-side-width, 164px);
     display: flex;
     flex-direction: column;
@@ -102,13 +103,13 @@
     font-size: var(--rk-font-size-normal);
 }
 
-.tabsArea.tabsSide .tabsList {
+.tabsArea.tabsSide > .tabsMenu > .tabsList {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-.tabsArea.tabsSide .tabsFilter {
+.tabsArea.tabsSide > .tabsMenu > .tabsFilter {
     font: inherit;
     margin: 0 0 6px;
     padding: 3px 8px;
@@ -118,8 +119,8 @@
     color: var(--rk-text);
 }
 
-.tabsArea.tabsSide .tabsMenu .tab,
-.tabsArea.tabsSide .tabsMenu .tabSelected {
+.tabsArea.tabsSide > .tabsMenu .tab,
+.tabsArea.tabsSide > .tabsMenu .tabSelected {
     top: 0;
     display: block;
     width: 100%;
@@ -136,18 +137,18 @@
     transition: none;
 }
 
-.tabsArea.tabsSide .tabsMenu .tab:hover {
+.tabsArea.tabsSide > .tabsMenu .tab:hover {
     background-color: var(--rk-bg-hover);
 }
 
-.tabsArea.tabsSide .tabsMenu .tabSelected,
-.tabsArea.tabsSide .tabsMenu .tabSelected:hover {
+.tabsArea.tabsSide > .tabsMenu .tabSelected,
+.tabsArea.tabsSide > .tabsMenu .tabSelected:hover {
     background-color: var(--rk-info-soft) !important;
     color: var(--rk-text-bright);
     font-weight: 600;
 }
 
-.tabsArea.tabsSide .tabsGroup {
+.tabsArea.tabsSide > .tabsMenu .tabsGroup {
     font-size: var(--rk-font-size-micro);
     font-weight: 600;
     text-transform: uppercase;
@@ -156,22 +157,22 @@
     padding: 9px 8px 2px;
 }
 
-.tabsArea.tabsSide .tabsGroup:first-child {
+.tabsArea.tabsSide > .tabsMenu .tabsGroup:first-child {
     padding-top: 0;
 }
 
-.tabsArea.tabsSide .tabsSpacer {
+.tabsArea.tabsSide > .tabsMenu .tabsSpacer {
     flex: 1;
     min-height: 12px;
 }
 
-.tabsArea.tabsSide .tabsContent {
+.tabsArea.tabsSide > .tabsContent {
     flex: 1;
     min-width: 0;
     padding-left: 16px;
 }
 
-.tabsArea.tabsSide .tabsTitleRow {
+.tabsArea.tabsSide > .tabsContent > .tabsTitleRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -180,14 +181,14 @@
 }
 
 /* Zero height: actions centre on the title line without making it taller than a title-only tab's. */
-.tabsArea.tabsSide .tabsTitleActions {
+.tabsArea.tabsSide > .tabsContent > .tabsTitleRow > .tabsTitleActions {
     display: flex;
     align-items: center;
     gap: 8px;
     height: 0;
 }
 
-.tabsArea.tabsSide .tabsTitle {
+.tabsArea.tabsSide > .tabsContent > .tabsTitleRow > .tabsTitle {
     font-size: var(--rk-font-size-huge);
     font-weight: 600;
     margin: 0;
@@ -199,30 +200,30 @@
         min-height: 0;
     }
 
-    .tabsArea.tabsSide .tabsMenu {
+    .tabsArea.tabsSide > .tabsMenu {
         flex: none;
         border-right: none;
         border-bottom: 1px solid var(--rk-border);
         padding: 0 0 6px;
     }
 
-    .tabsArea.tabsSide .tabsList {
+    .tabsArea.tabsSide > .tabsMenu > .tabsList {
         flex-direction: row;
         overflow-x: auto;
     }
 
-    .tabsArea.tabsSide .tabsGroup,
-    .tabsArea.tabsSide .tabsSpacer {
+    .tabsArea.tabsSide > .tabsMenu .tabsGroup,
+    .tabsArea.tabsSide > .tabsMenu .tabsSpacer {
         display: none;
     }
 
-    .tabsArea.tabsSide .tabsMenu .tab {
+    .tabsArea.tabsSide > .tabsMenu .tab {
         width: auto;
         flex-shrink: 0;
         padding: 5px 10px;
     }
 
-    .tabsArea.tabsSide .tabsContent {
+    .tabsArea.tabsSide > .tabsContent {
         padding: 12px 0 0;
     }
 }
