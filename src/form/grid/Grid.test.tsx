@@ -278,3 +278,38 @@ describe("Grid cursor paging", () => {
         expect(g.footer()).toBe("No more rows. Found 3 row(s)!");
     });
 });
+
+describe("Grid colSpan", () => {
+    it("a spanning cell takes the columns after it, only on its row", async () => {
+        const view = render(<Grid<Row, any>
+            load={async () => ({rows})}
+            hideFooter
+            fields={[
+                {title: "Name", value: r => r.name, colSpan: r => r.id === "img-b" ? 2 : 1},
+                {title: "Id", value: r => r.id},
+            ]}
+        />);
+        const cells = () => Array.from(view.container.querySelectorAll("table.grid tr")).slice(1)
+            .map(tr => Array.from(tr.querySelectorAll("td")).map(td => [td.textContent, td.colSpan]));
+        await waitFor(() => expect(cells()).toEqual([
+            [["Alpha", 1], ["img-a", 1]],
+            [["Beta", 2]],
+            [["Gamma", 1], ["img-c", 1]],
+        ]));
+    });
+
+    it("a spanning cell next to a rowSpan column keeps later rows aligned", async () => {
+        const view = render(<Grid<Row, any>
+            load={async () => ({rows})}
+            hideFooter
+            fields={[
+                {title: "Group", value: () => "all", rowSpan: (_r, no) => no === 0 ? 3 : 1},
+                {title: "Name", value: r => r.name, colSpan: r => r.id === "img-b" ? 2 : 1},
+                {title: "Id", value: r => r.id},
+            ]}
+        />);
+        const cells = () => Array.from(view.container.querySelectorAll("table.grid tr")).slice(1)
+            .map(tr => Array.from(tr.querySelectorAll("td")).map(td => td.textContent));
+        await waitFor(() => expect(cells()).toEqual([["all", "Alpha", "img-a"], ["Beta"], ["Gamma", "img-c"]]));
+    });
+});

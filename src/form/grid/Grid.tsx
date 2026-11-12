@@ -67,6 +67,8 @@ export interface GridField<T> {
     sortOnlyOneWay?: boolean
     width?: number;
     rowSpan?: "sameId" | keyof T | ((row: T, no: number, data: T[]) => number)
+    /** Columns this cell takes in the desktop table; the fields it covers aren't rendered for that row. */
+    colSpan?: (row: T, no: number, data: T[]) => number
     title?: string | ReactNode | ReactNode[];
     value: keyof T | ((row: T, no: number, data: T[]) => string | ReactNode | ReactNode[]);
     align?: "left" | "center" | "right";
@@ -405,9 +407,14 @@ export function Grid<T extends { id: string | number }, Q>({
                         })}
                     </tr>
                     {displayData?.map((row: any, i) => {
+                        let colSpanSkip = 0;
                         return <tr key={i}>{fields.map((f, s) => {
                             if (rowSpanCounts[s] > 1) {
                                 rowSpanCounts[s]--;
+                                return undefined;
+                            }
+                            if (colSpanSkip > 0) {
+                                colSpanSkip--;
                                 return undefined;
                             }
                             let rowSpan: ((a: any, b: any, c: any) => number) | undefined = undefined;
@@ -423,9 +430,12 @@ export function Grid<T extends { id: string | number }, Q>({
                                 rowSpanCounts[s] = rowSpanValue;
                             }
 
+                            const colSpanValue = f.colSpan?.(row, i, displayData);
+                            if (colSpanValue !== undefined && colSpanValue > 1) colSpanSkip = colSpanValue - 1;
+
                             const style: CSSProperties = {whiteSpace: f.wrap ? "normal" : "nowrap", ...f.style}
                             const value = getValue(f, i, row, displayData);
-                            return <td key={s} rowSpan={rowSpanValue} align={f.align} style={style} className={f.wrap === "words" ? "gridWrapWords" : undefined}>
+                            return <td key={s} rowSpan={rowSpanValue} colSpan={colSpanValue} align={f.align} style={style} className={f.wrap === "words" ? "gridWrapWords" : undefined}>
                                 {f.truncate ? <ToolTip message={value} anchor="target" overflowOnly display="block" className="gridTruncate" style={{maxWidth: f.truncate}}>{value}</ToolTip> : value}
                             </td>
                         })}</tr>
