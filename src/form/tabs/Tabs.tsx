@@ -16,6 +16,8 @@ export interface Props {
 export interface Tab {
     urlKey: string;
     title: string;
+    /** Shown before the title; sized by the caller (16px suits the side layout). */
+    icon?: ReactNode;
     isVisible?: boolean
     /** Side layout: heading over consecutive tabs with the same group. */
     group?: string;
@@ -109,7 +111,10 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
         return <button key={"tab-" + val.urlKey} type="button" role="tab" id={tabId(val.urlKey)}
                        aria-selected={selected} aria-controls={`${baseId}-panel`} tabIndex={val.urlKey === focusKey ? 0 : -1}
                        className={"tab" + (selected ? " tabSelected" : "") + (val.danger ? " tabDanger" : "")}
-                       onClick={() => selectTab(val.urlKey)}>{val.title}</button>
+                       onClick={() => selectTab(val.urlKey)}>
+            {val.icon && <span className="tabIcon" aria-hidden>{val.icon}</span>}
+            <span className="tabLabel">{val.title}</span>
+        </button>
     }
     const body = <div id={`${baseId}-panel`} role="tabpanel" aria-labelledby={tabId(current)}
                       className={(ready ? "tabsContentLoaded" : "tabsContentInit") + " tabsContent"}>
