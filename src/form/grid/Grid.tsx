@@ -134,7 +134,7 @@ export function Grid<T extends { id: string | number }, Q>({
         lastRowsRef.current = data;
     }
 
-    const updateData = (rows: undefined | ((data: T[]) => T[]) | ((data: T[]) => Promise<T[]>)): void => {
+    const updateData = (rows: undefined | ((data: T[] | undefined) => T[] | Promise<T[]>)): void => {
         if (rows === undefined) {
             setData(undefined);
         } else {
