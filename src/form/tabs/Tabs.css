@@ -156,6 +156,11 @@
     color: inherit;
 }
 
+.tabsArea:not(.tabsSide) .tabIcon {
+    margin-right: 6px;
+    vertical-align: -3px;
+}
+
 .tabsArea.tabsSide > .tabsMenu .tab:hover {
     background-color: var(--rk-bg-hover);
 }
@@ -245,9 +250,4 @@
     .tabsArea.tabsSide > .tabsContent {
         padding: 12px 0 0;
     }
-}
-
-.tabsArea:not(.tabsSide) .tabIcon {
-    margin-right: 6px;
-    vertical-align: -3px;
 }
