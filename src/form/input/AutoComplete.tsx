@@ -15,12 +15,18 @@ export type AutoCompleteProps<K> = AnyInputElement<K> & {
     allowCustom?: boolean;
     options?: ValueType<K>[] | (() => ValueType<K>[]) | (() => Promise<ValueType<K>[]>)
     dependencies?: DependencyList
+    /** Server-side search: gets the typed text; `options` (an array) are then shown as given, unfiltered. */
+    onSearch?: (text: string) => void
 }
 
 
 export function AutoComplete<K>(props: AutoCompleteProps<K>) {
 
-    const [options, setOptions, setOptionsState] = useAsyncState<ValueType<K>[]>(Array.isArray(props.options) ? props.options : [], {disableErrorAutoHandling: true});
+    const [loadedOptions, setOptions, setOptionsState] = useAsyncState<ValueType<K>[]>(Array.isArray(props.options) ? props.options : [], {disableErrorAutoHandling: true});
+    // Searched options change on every keystroke: through the async state they'd swap the input for "Loading..." each time.
+    const searched = props.onSearch && Array.isArray(props.options) ? props.options : undefined;
+    const options = searched ?? loadedOptions;
+    const optionsState = searched ? AsyncState.OK : setOptionsState.state;
     const [searchString, setSearchString] = useState("")
     const [matches, setMatches] = useState<ValueType<K>[]>([]);
     // The displayed text only narrows the dropdown after the user TYPES —
@@ -84,7 +90,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
 
     useEffect(() => {
         const filter = isFiltering ? searchString : "";
-        const res = searchOptions(options || [], filter);
+        const res = searched ? [...searched] : searchOptions(options || [], filter);
         if (props.addEmpty && !filter) {
             res.unshift({id: undefined as K, name: ""})
         }
@@ -124,10 +130,10 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
 
     return <div className="formItem">
         {data.validationError ? <div className="validationErrorMsg">{data.validationError.msg}</div> : ""}
-        {(setOptionsState.state === AsyncState.LOADING || setOptionsState.state === AsyncState.INIT) &&
+        {(optionsState === AsyncState.LOADING || optionsState === AsyncState.INIT) &&
             <input type="text" value="Loading..." disabled={true} style={props.style} className={"rkInput " + props.className + inlineClass}/>}
-        {setOptionsState.state === AsyncState.ERROR && <input type="text" value="Failed to load options!" disabled={true} style={props.style} className={"rkInput error " + props.className + inlineClass}/>}
-        {setOptionsState.state === AsyncState.OK && <>
+        {optionsState === AsyncState.ERROR && <input type="text" value="Failed to load options!" disabled={true} style={props.style} className={"rkInput error " + props.className + inlineClass}/>}
+        {optionsState === AsyncState.OK && <>
             <input type="text" ref={refs.setReference}
                    autoComplete="off"
                    style={props.style}
@@ -145,6 +151,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
                            // the committed value stays (and shows as the
                            // placeholder below); blur re-syncs the display.
                            setSearchString("");
+                           props.onSearch?.("");
                        }
                    }}
                    onBlur={() => { if (!props.readOnly && !data.readOnly) setIsFocused(false) }}
@@ -152,6 +159,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
                        if (!props.readOnly && !data.readOnly) {
                            setSearchString(e.target.value)
                            setIsFiltering(true)
+                           props.onSearch?.(e.target.value)
                            data.onChange?.(props.allowCustom ? (e.target.value as K) : (undefined as K))
                        }
                    }}/>
@@ -160,7 +168,7 @@ export function AutoComplete<K>(props: AutoCompleteProps<K>) {
                      style={{...floatingStyles, zIndex: "var(--rk-z-menu)"}}
                      onMouseEnter={() => setIsMouseOver(true)}
                      onMouseLeave={() => setIsMouseOver(false)}>
-                    {matches.length === 0 && <div className="autocompleteEmpty">No matches</div>}
+                    {matches.length === 0 && <div className="autocompleteEmpty">{props.onSearch && !searchString ? "Type to search" : "No matches"}</div>}
                     {matches.map((e, index) =>
                         <div key={e.id === undefined ? "____" : String(e.id)}
                              className={index === activeIndex ? "selected" : ""}
