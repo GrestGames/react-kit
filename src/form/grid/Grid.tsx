@@ -409,12 +409,12 @@ export function Grid<T extends { id: string | number }, Q>({
                     {displayData?.map((row: any, i) => {
                         let colSpanSkip = 0;
                         return <tr key={i}>{fields.map((f, s) => {
-                            if (colSpanSkip > 0) {
-                                colSpanSkip--;
-                                return undefined;
-                            }
                             if (rowSpanCounts[s] > 1) {
                                 rowSpanCounts[s]--;
+                                return undefined;
+                            }
+                            if (colSpanSkip > 0) {
+                                colSpanSkip--;
                                 return undefined;
                             }
                             let rowSpan: ((a: any, b: any, c: any) => number) | undefined = undefined;

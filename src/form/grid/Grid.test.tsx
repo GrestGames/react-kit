@@ -297,4 +297,19 @@ describe("Grid colSpan", () => {
             [["Gamma", 1], ["img-c", 1]],
         ]));
     });
+
+    it("a spanning cell next to a rowSpan column keeps later rows aligned", async () => {
+        const view = render(<Grid<Row, any>
+            load={async () => ({rows})}
+            hideFooter
+            fields={[
+                {title: "Group", value: () => "all", rowSpan: (_r, no) => no === 0 ? 3 : 1},
+                {title: "Name", value: r => r.name, colSpan: r => r.id === "img-b" ? 2 : 1},
+                {title: "Id", value: r => r.id},
+            ]}
+        />);
+        const cells = () => Array.from(view.container.querySelectorAll("table.grid tr")).slice(1)
+            .map(tr => Array.from(tr.querySelectorAll("td")).map(td => td.textContent));
+        await waitFor(() => expect(cells()).toEqual([["all", "Alpha", "img-a"], ["Beta"], ["Gamma", "img-c"]]));
+    });
 });
