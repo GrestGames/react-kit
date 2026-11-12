@@ -41,7 +41,7 @@ export function useAsyncForm<T>(props: Props<T>, dependencies: DependencyList): 
     ]
 }
 
-export type FormObject<T> = Access<T> & ([T] extends [(infer R)[]] ? FormArray<R> : { [P in keyof T]: FormObject<T[P]> });
+export type FormObject<T> = Access<T> & ([T] extends [(infer R)[]] ? FormArray<R> : { [P in keyof T]-?: FormObject<T[P]> });
 
 type FormArray<Element> = Access<Element[]> & {
     forEach: (call: (element: FormObject<Element>, index: number, arr: FormArray<Element>) => void) => void;
