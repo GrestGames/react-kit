@@ -1,5 +1,7 @@
 import type {ReactNode} from "react";
-import {AnyInputElement, useInputData} from "./StandardFormElementProps";
+import {AnyFormElement, AnyInputElement, useInputData} from "./StandardFormElementProps";
+import type {FormObject} from "../useAsyncForm";
+import type {FormValidationErrors} from "../../ApiError";
 import "./checkbox.css";
 
 type ExtraProps = { id?: string, isChanged?: boolean, afterText?: ReactNode };
@@ -8,7 +10,13 @@ export function Checkbox01(props: AnyInputElement<0 | 1> & ExtraProps) {
     return InternalCheckbox(props as AnyInputElement<boolean | 0 | 1> & ExtraProps, true);
 }
 
-export function Checkbox(props: AnyInputElement<boolean> & ExtraProps) {
+/** An unset value reads as unchecked, so an optional boolean binds as it is; the box only ever emits a boolean. */
+type CheckboxProps = AnyFormElement & ExtraProps & {onChange?: (newVal: boolean) => void} & (
+    | {prop: FormObject<boolean> | FormObject<boolean | undefined>}
+    | {value: boolean | undefined, validationError?: FormValidationErrors<boolean>}
+)
+
+export function Checkbox(props: CheckboxProps) {
     return InternalCheckbox(props as AnyInputElement<boolean | 0 | 1> & ExtraProps, false);
 }
 

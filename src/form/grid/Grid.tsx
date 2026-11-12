@@ -261,11 +261,11 @@ export function Grid<T extends { id: string | number }, Q>({
     }
 
     // Registered once — it must not re-subscribe on every filter change, and its cleanup
-    // owns the URL keys — so the listener calls through a ref that each render refreshes.
+    // owns the URL keys — so the listener calls through a ref. It is refreshed during render, not in
+    // an effect: effects run after paint, and an op landing in between would see the previous
+    // render's closure (rows on screen, but `data` still undefined) and reload instead of patching.
     const onTrackedRef = useRef(onTracked);
-    useEffect(() => {
-        onTrackedRef.current = onTracked;
-    });
+    onTrackedRef.current = onTracked;
     useEffect(() => {
         const unregister = tracker?.listen((id, operation) => onTrackedRef.current(id, operation));
         return () => {
