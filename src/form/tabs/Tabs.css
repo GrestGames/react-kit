@@ -92,7 +92,7 @@
 }
 
 .tabsArea.tabsSide > .tabsMenu {
-    flex: 0 0 var(--rk-tabs-side-width, 164px);
+    flex: 0 0 var(--rk-tabs-side-width, 196px);
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -121,19 +121,44 @@
 .tabsArea.tabsSide > .tabsMenu .tab,
 .tabsArea.tabsSide > .tabsMenu .tabSelected {
     top: 0;
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100%;
     text-align: left;
-    margin: 0;
-    padding: 3px 8px;
-    line-height: 18px;
+    margin: 0 0 2px;
+    padding: 6px 10px;
+    line-height: 20px;
     border: none;
-    border-radius: 3px;
+    border-radius: var(--rk-radius-sm);
     background: none;
     white-space: nowrap;
+    transition: none;
+}
+
+.tabsArea.tabsSide > .tabsMenu .tabLabel {
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: none;
+}
+
+.tabIcon {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: var(--rk-text-muted);
+}
+
+.tabSelected .tabIcon {
+    color: var(--rk-accent);
+}
+
+.tabDanger .tabIcon {
+    color: inherit;
+}
+
+.tabsArea:not(.tabsSide) > .tabsMenu .tabIcon {
+    margin-right: 6px;
+    vertical-align: -3px;
 }
 
 .tabsArea.tabsSide > .tabsMenu .tab:hover {
@@ -153,7 +178,7 @@
     text-transform: uppercase;
     letter-spacing: .05em;
     color: var(--rk-text-muted);
-    padding: 9px 8px 2px;
+    padding: 16px 10px 6px;
 }
 
 .tabsArea.tabsSide > .tabsMenu .tabsGroup:first-child {
