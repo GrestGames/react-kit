@@ -10,7 +10,7 @@ import {Button} from "../buttons/Button";
 export interface Props<T> {
     prop: FormObject<T>
     objectName?: string;
-    onDelete: () => void;
+    onDelete: () => void | Promise<unknown>;
 }
 
 export function DeleteObjectSection<T>({objectName, prop, onDelete}: Props<T>) {

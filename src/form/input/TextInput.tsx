@@ -12,11 +12,14 @@ export type InputProps<T> = AnyInputElement<T> & {
     placeholder?: string;
 }
 
-type BasicInputProps2<T> = InputProps<T> & {
+/** An emptied box emits `null` (`TextParser.toOutput`), so text inputs hand `onChange` a `T | null`. */
+export type TextInputProps<T> = InputProps<T> & {onChange?: (newVal: T | null) => void}
+
+type BasicInputProps2<T> = TextInputProps<T> & {
     type: "text" | "date" | "email" | "tel" | "password"
 }
 
-export function TextArea<T>(props: InputProps<T> & { autoResize?: boolean, rows?: number }) {
+export function TextArea<T>(props: TextInputProps<T> & { autoResize?: boolean, rows?: number }) {
     const data = useInputData(props);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -128,19 +131,19 @@ function InternalTextInput<T>(props: BasicInputProps2<T>) {
     />;
 }
 
-export function TextInput<T extends string>(props: InputProps<T>) {
+export function TextInput<T extends string>(props: TextInputProps<T>) {
     return <InternalTextInput type="text" {...props} />
 }
 
-export function PhoneInput(props: InputProps<string>) {
+export function PhoneInput(props: TextInputProps<string>) {
     return <InternalTextInput type="tel" {...props} />
 }
 
-export function EmailInput<T extends string>(props: InputProps<T>) {
+export function EmailInput<T extends string>(props: TextInputProps<T>) {
     return <InternalTextInput type="email" {...props} />
 }
 
-export function PasswordInput(props: InputProps<string>) {
+export function PasswordInput(props: TextInputProps<string>) {
     return <InternalTextInput type="password" {...props} />
 }
 

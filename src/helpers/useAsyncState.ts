@@ -1,11 +1,13 @@
-import {Dispatch, useState} from "react";
+import {Dispatch, useCallback, useRef, useState} from "react";
 import {useErrorTracker} from "../ErrorTracker";
 import {ApiErrors} from "../ApiError";
 import {useOnlyLatestResult} from "./useOnlyLatestResult";
 import {isPromise} from "../util/isPromise";
 import {ERROR} from "@grest-ts/schema";
 
-export type SetStateType<S> = ((prevState: S) => Promise<S> | S) | Promise<S> | S;
+/** A function setter gets the current state, which is `undefined` until the first value lands, and may
+ *  return `undefined` to clear it. */
+export type SetStateType<S> = ((prevState: S | undefined) => Promise<S> | S | undefined) | Promise<S> | S;
 
 export interface useAsyncStateState {
     state: AsyncState
@@ -40,7 +42,10 @@ export function useAsyncState<S = undefined>(initialState: S | undefined = undef
     const onlyLatest = useOnlyLatestResult<S>();
     const autoHandleErrors = !options?.disableErrorAutoHandling;
 
-    const asyncSetState = async (input: SetStateType<S> | undefined) => {
+    // Stable across renders, so callers can list it as an effect/memo dependency; it reads the latest
+    // handlePromise (which closes over the error tracker and options) through a ref.
+    const handlePromiseRef = useRef<(input: Promise<S>) => void>(() => {});
+    const asyncSetState = useCallback((input: SetStateType<S> | undefined) => {
         if (input === undefined) {
             setData(undefined);
             setState({state: AsyncState.OK});
@@ -48,7 +53,7 @@ export function useAsyncState<S = undefined>(initialState: S | undefined = undef
             setData((data) => {
                 const funcResult = (input as any)(data);
                 if (isPromise(funcResult)) {
-                    handlePromise(funcResult)
+                    handlePromiseRef.current(funcResult)
                     return data;
                 } else {
                     return funcResult;
@@ -56,13 +61,13 @@ export function useAsyncState<S = undefined>(initialState: S | undefined = undef
             });
         } else {
             if (isPromise(input)) {
-                handlePromise(input)
+                handlePromiseRef.current(input)
             } else {
                 setData(input as any);
                 setState({state: AsyncState.OK});
             }
         }
-    };
+    }, []);
 
     const handlePromise = (input: Promise<S>) => {
         setState({state: AsyncState.LOADING});
@@ -86,6 +91,8 @@ export function useAsyncState<S = undefined>(initialState: S | undefined = undef
                 }
             })
     }
+
+    handlePromiseRef.current = handlePromise;
 
     return [data, asyncSetState, state];
 }
