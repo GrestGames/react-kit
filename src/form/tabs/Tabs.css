@@ -156,7 +156,7 @@
     color: inherit;
 }
 
-.tabsArea:not(.tabsSide) .tabIcon {
+.tabsArea:not(.tabsSide) > .tabsMenu .tabIcon {
     margin-right: 6px;
     vertical-align: -3px;
 }
