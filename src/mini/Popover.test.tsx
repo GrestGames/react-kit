@@ -1,7 +1,8 @@
 import {describe, it, expect, vi} from "vitest";
 import {act, fireEvent, render, screen} from "@testing-library/react";
-import {useRef, useState} from "react";
+import {useRef, useState, type ReactNode} from "react";
 import {Popover} from "./Popover";
+import {OverlayOrderContext, useOverlaySlot} from "./OverlayStack";
 
 function Nested({onParentClose, onChildClose}: {onParentClose: () => void; onChildClose: () => void}) {
     const anchor = useRef<HTMLButtonElement>(null);
@@ -48,5 +49,30 @@ describe("nested Popover dismissal", () => {
         const {onChildClose} = await setup();
         fireEvent.pointerDown(screen.getByTestId("page"));
         expect(onChildClose).toHaveBeenCalledTimes(1);
+    });
+});
+
+function PanelAt({order, children}: {order: number; children: ReactNode}) {
+    useOverlaySlot("panel-under-test", "panel", order, true);
+    return <OverlayOrderContext.Provider value={order}>{children}</OverlayOrderContext.Provider>;
+}
+
+describe("Popover inside a routed popup panel", () => {
+    it("is the top overlay, so a press outside closes it", async () => {
+        const onClose = vi.fn();
+        function InPanel() {
+            const anchor = useRef<HTMLButtonElement>(null);
+            const [open, setOpen] = useState(false);
+            return <PanelAt order={2}>
+                <button ref={anchor} data-testid="open" onClick={() => setOpen(true)}>anchor</button>
+                <div data-testid="panel-body">panel</div>
+                {open && <Popover anchor={anchor} onClose={onClose}><div>picker</div></Popover>}
+            </PanelAt>;
+        }
+        render(<InPanel />);
+        fireEvent.click(screen.getByTestId("open"));
+        await act(() => new Promise(r => setTimeout(r, 0)));
+        fireEvent.pointerDown(screen.getByTestId("panel-body"));
+        expect(onClose).toHaveBeenCalledTimes(1);
     });
 });

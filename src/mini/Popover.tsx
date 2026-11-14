@@ -11,7 +11,7 @@ import {
     useFloating,
     useInteractions,
 } from "@floating-ui/react";
-import {useOverlaySlot} from "./OverlayStack";
+import {useOverlayOrder, useOverlaySlot} from "./OverlayStack";
 import {overOffset, type OverlayPlacement} from "./overlayPlacement";
 import "./Popover.css";
 
@@ -49,7 +49,8 @@ export function Popover({
     closeOnWindowBlur = false, style, className,
 }: PopoverProps) {
     const id = useId();
-    const {offset: stackOffset, isTop} = useOverlaySlot(id, "panel", 0);
+    // At its popup's order, so it ranks above the panel it was opened in (order 0 would sort it under any later popup).
+    const {offset: stackOffset, isTop} = useOverlaySlot(id, "panel", useOverlayOrder() ?? 0);
 
     const refEl = anchor && "current" in anchor ? anchor.current : null;
     const rect = anchor && !("current" in anchor) ? anchor : null;
