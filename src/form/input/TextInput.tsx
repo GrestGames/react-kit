@@ -22,12 +22,16 @@ type BasicInputProps2<T> = TextInputProps<T> & {
 export function TextArea<T>(props: TextInputProps<T> & { autoResize?: boolean, rows?: number }) {
     const data = useInputData(props);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const textareaStyle = props.fullWidth
+        ? {width: "100%", marginLeft: 0, marginRight: 0, ...props.style}
+        : props.style;
 
     const adjustHeight = useCallback(() => {
         const el = textareaRef.current;
         if (!el || !props.autoResize) return;
         el.style.height = "auto";
-        el.style.height = el.scrollHeight + "px";
+        // scrollHeight leaves out the border, which a border-box height includes.
+        el.style.height = el.scrollHeight + el.offsetHeight - el.clientHeight + "px";
     }, [props.autoResize]);
 
     useEffect(() => {
@@ -44,10 +48,12 @@ export function TextArea<T>(props: TextInputProps<T> & { autoResize?: boolean, r
         readOnly={props.readOnly || data.readOnly}
         changed={data.isChanged}
         renderInput={(opts) =>
-            <div className="formItem">
+            <div className="formItem" style={props.fullWidth ? {display: "block", width: "100%"} : undefined}>
                 {!opts && data.validationError && <div className="validationErrorMsg">{data.validationError.msg}</div>}
                 <textarea
                     ref={opts ? (el) => { (textareaRef as any).current = el; opts.inputRef(el); } : textareaRef}
+                    autoFocus={props.autoFocus}
+                    placeholder={props.placeholder}
                     name={data.name}
                     value={TextParser.toInput(data.value)}
                     readOnly={opts ? undefined : (props.readOnly || data.readOnly)}
@@ -67,7 +73,7 @@ export function TextArea<T>(props: TextInputProps<T> & { autoResize?: boolean, r
                         if (e.key === "Escape") { opts.onCancel(); props.onInlineEditCancel?.(); }
                     } : undefined}
                     className={"rkTextarea " + (props.className ? props.className : "") + " " + (data.isChanged ? "changed" : "") + " " + (data.validationError ? "error" : "")}
-                    style={opts ? {...props.style, overflow: "hidden", resize: "none"} : props.style}
+                    style={opts ? {...props.style, overflow: "hidden", resize: "none"} : textareaStyle}
                     rows={opts ? 1 : props.rows}
                 />
             </div>
