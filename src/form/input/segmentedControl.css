@@ -10,6 +10,7 @@
     background: var(--rk-bg-surface);
     max-width: 100%;
     overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .rkSegmented.fullWidth {
