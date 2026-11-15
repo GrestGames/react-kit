@@ -44,11 +44,12 @@ export function UsersList() {
       const s = q.search?.trim().toLowerCase();
       return { rows: USERS.filter(u => (!s || u.email === s || u.id === s) && (q.show !== 'roleHolders' || u.roles.length > 0)) };
     }}
-    filtersForm={(F: FormObject<UserFilters>) => <>
+    searchForm={(F: FormObject<UserFilters>) => <>
       <TextInput prop={F.search} placeholder="Exact email or user ID" />
-      <Select prop={F.show} options={[{ id: 'all', name: 'All users' }, { id: 'roleHolders', name: 'Platform role holders' }]} />
       <Button onClick={() => F.getForm().submit()}>Find</Button>
     </>}
+    filtersForm={(F: FormObject<UserFilters>) =>
+      <Select prop={F.show} onChange={() => F.getForm().submit()} options={[{ id: 'all', name: 'All users' }, { id: 'roleHolders', name: 'Platform role holders' }]} />}
     fields={[
       { title: 'No', list: 'hide', style: { textAlign: 'center' }, width: 40, value: (r, no) => no + 1 },
       { title: 'Name', list: 'title', value: u => <><a onClick={() => open(u.name)}>{u.name}</a>{u.deactivated && <> <Tag intent="neutral">Deactivated</Tag></>}</> },
@@ -134,7 +135,7 @@ export function AuditLogList() {
       return { rows: rows.slice(start, end), nextCursor: end < rows.length ? String(end) : undefined };
     }}
     filtersForm={(F: FormObject<AuditFilters>) => {
-      const apply = () => queueMicrotask(() => F.getForm().submit());
+      const apply = () => F.getForm().submit();
       return <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <SegmentedControl aria-label="Category" size="small" prop={F.category} onChange={apply} options={[{ id: 'all', name: 'All' }, ...CATEGORIES]} />
         <SegmentedControl aria-label="Actor" size="small" prop={F.actor} onChange={apply} options={[{ id: 'all', name: 'All' }, { id: 'user', name: 'User' }, { id: 'system', name: 'System' }]} />

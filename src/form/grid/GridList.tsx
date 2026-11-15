@@ -1,4 +1,4 @@
-import {Fragment, ReactNode, useId} from "react";
+import {Fragment, MouseEvent, ReactNode, useId} from "react";
 import type {GridField, GridOrderBy} from "./Grid";
 import "./GridList.css";
 
@@ -15,6 +15,19 @@ export const isEmpty = (v: unknown) => v === undefined || v === null || v === ""
 export const headerAction = (f: GridField<any>): ReactNode =>
     (listSlot(f) === "actions" || listSlot(f) === "hide") && hasTitle(f.title) && typeof f.title !== "string" ? f.title : undefined;
 
+const CONTROLS = "a, button, input, select, textarea, label, summary, [tabindex], [role=button], [role=link], [role=checkbox], [role=switch], [role=menuitem]";
+
+/** A row's click handler that leaves clicks on the row's own controls, and drags that selected its text, alone. */
+export const rowClick = <T,>(onRowClick: (row: T) => void, row: T) => (e: MouseEvent<HTMLElement>) => {
+    const row$ = e.currentTarget, target = e.target as Element;
+    const control = target.closest(CONTROLS);
+    const selection = window.getSelection();
+    // Portalled popups bubble through the React tree, so the target can be outside the row.
+    if (!row$.contains(target) || (control && control !== row$ && row$.contains(control))) return;
+    if (selection && !selection.isCollapsed && row$.contains(selection.anchorNode)) return;
+    onRowClick(row);
+};
+
 export function GridListRows<T extends { id: string | number }>({fields, rows, cell, onRowClick, card}: {
     fields: GridField<T>[]
     rows: T[]
@@ -30,7 +43,8 @@ export function GridListRows<T extends { id: string | number }>({fields, rows, c
     return <ul className="gridList" role="list" style={{"--grid-list-label": labelWidth} as React.CSSProperties}>
         {rows.map((row, i) => {
             const clickable = onRowClick ? " gridListClickable" : "";
-            if (card) return <li key={row.id ?? i} className={"gridListRow gridListCustom" + clickable}>
+            const onClick = onRowClick && rowClick(onRowClick, row);
+            if (card) return <li key={row.id ?? i} className={"gridListRow gridListCustom" + clickable} onClick={onClick}>
                 {hit(row, `${id}-${i}-c`)}
                 <div id={`${id}-${i}-c`}>{card(row, i)}</div>
             </li>;
@@ -40,7 +54,7 @@ export function GridListRows<T extends { id: string | number }>({fields, rows, c
                 .filter(({v}) => !isEmpty(v));
             const titles = by("title"), subtitles = by("subtitle"), details = by("detail"), trailing = by("trailing"), actions = by("actions");
             const headId = `${id}-${i}-h`, detailsId = `${id}-${i}-d`;
-            return <li key={row.id ?? i} className={"gridListRow" + clickable}>
+            return <li key={row.id ?? i} className={"gridListRow" + clickable} onClick={onClick}>
                 {hit(row, titles.length || subtitles.length ? headId : details.length ? detailsId : undefined)}
                 <div className="gridListHead" id={headId}>
                     {titles.length > 0 && <div className="gridListTitle">{titles.map(({v}, s) => <Fragment key={s}>{s > 0 && " "}{v}</Fragment>)}</div>}

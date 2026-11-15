@@ -1,4 +1,4 @@
-import {CSSProperties, Fragment, KeyboardEvent, MouseEvent, ReactNode, useEffect, useRef, useState} from "react";
+import {CSSProperties, Fragment, KeyboardEvent, ReactNode, useEffect, useRef, useState} from "react";
 import "../css/grid.css"
 import {Tracker, TrackerOperation} from "../../EntityTracker";
 import {ApiErrors} from "../../ApiError";
@@ -8,7 +8,7 @@ import {FormObject, useAsyncForm} from "../useAsyncForm";
 import {VALIDATION_ERROR} from "@grest-ts/schema";
 import {Form} from "../Form";
 import {useNarrowerThan} from "../../responsive/useResponsive";
-import {GridListRows, GridListSlot, GridListSort, headerAction, isEmpty as isEmptyValue} from "./GridList";
+import {GridListRows, GridListSlot, GridListSort, headerAction, isEmpty as isEmptyValue, rowClick} from "./GridList";
 import {ButtonAppearanceContext} from "../buttons/buttonAppearance";
 import {ToolTip} from "../../mini/ToolTip";
 import {Button} from "../buttons/Button";
@@ -31,6 +31,9 @@ export interface Props<T extends { id: string | number }, Q> {
     defaultOrderBy?: GridOrderBy;
     defaultFilters?: Partial<Q>;
     filtersForm?: (F: FormObject<Q>) => ReactNode | ReactNode[]
+    /** Filter inputs that stay visible in the list layout, where `filtersForm` folds behind a Filters button.
+     *  The table renders them in front of `filtersForm`. */
+    searchForm?: (F: FormObject<Q>) => ReactNode | ReactNode[]
     summaryForm?: () => ReactNode | ReactNode[]
     tracker?: Tracker<T["id"]>
     rowsPerCall?: number;
@@ -93,6 +96,7 @@ export interface GridField<T> {
 export function Grid<T extends { id: string | number }, Q>({
                                                                            load,
                                                                            filtersForm,
+                                                                           searchForm,
                                                                            summaryForm,
                                                                            onData,
                                                                            filtersUrlKeyName,
@@ -353,16 +357,9 @@ export function Grid<T extends { id: string | number }, Q>({
     /* ── Render ────────────────────────────────────────────────── */
 
     const filtersActive = hasActiveFilters(filter, defaultFilters);
-    const showFilters = !!filtersForm && (!listMode || !!filtersOpen);
+    const showFilters = !!(listMode ? filtersForm && filtersOpen : filtersForm || searchForm);
     const headerActions = listMode ? fields.map(headerAction).filter(a => a !== undefined) : [];
 
-    const onRowActivate = (row: T) => (e: MouseEvent<HTMLTableRowElement>) => {
-        const target = e.target as Element;
-        // Portalled popups bubble through the React tree; a drag that selected text isn't a click.
-        const control = target.closest("a, button, input, select, textarea, label, summary, [tabindex], [role=button], [role=link], [role=checkbox], [role=switch], [role=menuitem]");
-        if (!e.currentTarget.contains(target) || (control && control !== e.currentTarget && e.currentTarget.contains(control)) || window.getSelection()?.toString()) return;
-        onRowClick!(row);
-    };
     const onRowKey = (row: T) => (e: KeyboardEvent<HTMLTableRowElement>) => {
         if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
             e.preventDefault();
@@ -374,6 +371,11 @@ export function Grid<T extends { id: string | number }, Q>({
 
     const rowSpanCounts: number[] = new Array(fields.length).fill(1);
     return <div className="rkGrid" ref={measureRef}>
+        {listMode && searchForm && <div className="area gridFilters gridListSearch">
+            <Form prop={F}>
+                <div>{searchForm(F as any)}</div>
+            </Form>
+        </div>}
         {listMode && (filtersForm || headerActions.length > 0 || fields.some(f => f.sortName)) && <ButtonAppearanceContext.Provider value="outline"><div className="gridListToolbar">
             {filtersForm && <Button active={showFilters} onClick={() => setFiltersOpen(!showFilters)}>
                 Filters{filtersActive && <span className="gridListBadge"><span className="gridListSrOnly"> (active)</span></span>}
@@ -384,7 +386,8 @@ export function Grid<T extends { id: string | number }, Q>({
         {showFilters && <div className="area gridFilters" style={{zIndex: 1}}>
             <Form prop={F}>
                 <div>
-                    {filtersForm!(F as any)}
+                    {!listMode && searchForm?.(F as any)}
+                    {filtersForm?.(F as any)}
                 </div>
             </Form>
         </div>}
@@ -446,7 +449,7 @@ export function Grid<T extends { id: string | number }, Q>({
                     </tr>
                     {displayData?.map((row: any, i) => {
                         let colSpanSkip = 0;
-                        return <tr key={i} {...onRowClick && {className: "gridRowClickable", tabIndex: 0, onClick: onRowActivate(row), onKeyDown: onRowKey(row)}}>{fields.map((f, s) => {
+                        return <tr key={i} {...onRowClick && {className: "gridRowClickable", tabIndex: 0, onClick: rowClick(onRowClick, row), onKeyDown: onRowKey(row)}}>{fields.map((f, s) => {
                             if (rowSpanCounts[s] > 1) {
                                 rowSpanCounts[s]--;
                                 return undefined;

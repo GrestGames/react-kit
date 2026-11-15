@@ -57,6 +57,17 @@
 
 /* ── Rows ──────────────────────────────────────────── */
 
+.area.gridListSearch form > div {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.area.gridListSearch .formItem {
+    flex: 1;
+    margin: 0 !important;
+}
+
 .area.gridListArea {
     padding: 0;
     overflow: hidden;
@@ -170,7 +181,23 @@
     min-width: 40px;
 }
 
-/* Clickable row: a full-row button sits under the content; only the content's own controls take taps. */
+/* Clickable row: the row takes clicks on its text; a full-row button under the content gives keyboard and
+   screen readers a target and catches taps between the content's boxes. */
+
+.gridListClickable {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.gridListClickable:active {
+    background: var(--rk-bg-active);
+}
+
+@media (hover: hover) {
+    .gridListClickable:hover {
+        background: var(--rk-bg-hover);
+    }
+}
 
 .gridListHit {
     position: absolute;
@@ -182,17 +209,6 @@
     border: 0;
     background: transparent;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.gridListHit:active {
-    background: var(--rk-bg-active);
-}
-
-@media (hover: hover) {
-    .gridListHit:hover {
-        background: var(--rk-bg-hover);
-    }
 }
 
 .gridListHit:focus-visible {
@@ -203,11 +219,6 @@
 .gridListClickable > :not(.gridListHit) {
     position: relative;
     z-index: 1;
-    pointer-events: none;
-}
-
-.gridListClickable :is(a, button, input, select, textarea, label, [role=button], [tabindex]) {
-    pointer-events: auto;
 }
 
 .gridListCustom {
@@ -285,4 +296,8 @@
 .gridListClickable .gridListTitle a {
     color: inherit;
     text-decoration: none;
+}
+
+.area.gridListSearch button {
+    margin: 0;
 }
