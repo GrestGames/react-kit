@@ -464,7 +464,7 @@ describe("Grid list layout", () => {
         const load = vi.fn(async () => ({rows: users}));
         render(<Grid<U, any> load={load} hideFooter fields={[{title: "Name", value: "name", sortName: "name"}]}/>);
         await screen.findByText("Ann");
-        fireEvent.change(screen.getByLabelText("Sort by"), {target: {value: "name:desc"}});
+        fireEvent.change(screen.getByLabelText("Sort by"), {target: {value: "1"}});
         await waitFor(() => expect(load).toHaveBeenLastCalledWith(expect.objectContaining({orderBy: {field: "name", dir: "desc"}})));
     });
 });

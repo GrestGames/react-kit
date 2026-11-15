@@ -109,19 +109,18 @@ function GridListSort<T>({fields, orderBy, onSort}: {
     const options = fields.filter(f => f.sortName).flatMap(f => {
         const label = typeof f.title === "string" && f.title ? f.title : String(f.sortName);
         const dirs: ("asc" | "desc")[] = f.sortOnlyOneWay ? [f.sortDir || "asc"] : f.sortDir === "desc" ? ["desc", "asc"] : ["asc", "desc"];
-        return dirs.map(dir => ({value: `${String(f.sortName)}:${dir}`, label: `${label} ${dir === "asc" ? "↓" : "↑"}`}));
+        return dirs.map(dir => ({field: String(f.sortName), dir, label: `${label} ${dir === "asc" ? "↓" : "↑"}`}));
     });
     if (options.length === 0) return null;
-    const current = orderBy?.field ? `${orderBy.field}:${orderBy.dir || "asc"}` : "";
-    const known = options.some(o => o.value === current);
+    const current = options.findIndex(o => o.field === orderBy?.field && o.dir === (orderBy?.dir || "asc"));
     return <label className="gridListSort">
         <span aria-hidden="true">⇅</span>
-        <select aria-label="Sort by" value={known ? current : ""} onChange={(e) => {
-            const [field, dir] = e.target.value.split(":");
-            if (field) onSort(field, dir as "asc" | "desc");
+        <select aria-label="Sort by" value={current} onChange={(e) => {
+            const o = options[Number(e.target.value)];
+            if (o) onSort(o.field, o.dir);
         }}>
-            {!known && <option value="">Sort</option>}
-            {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            {current === -1 && <option value={-1}>Sort</option>}
+            {options.map((o, i) => <option key={i} value={i}>{o.label}</option>)}
         </select>
     </label>;
 }

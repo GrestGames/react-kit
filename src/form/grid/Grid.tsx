@@ -494,8 +494,9 @@ export function Grid<T extends { id: string | number }, Q>({
 }
 
 function hasActiveFilters(filter: GridQuery, defaults: object | undefined): boolean {
-    return Object.entries(filter).some(([k, v]) => !["id", "orderBy", "limit", "cursor"].includes(k) && !isEmptyValue(v)
-        && String(v) !== String((defaults as Record<string, unknown> | undefined)?.[k] ?? ""));
+    const text = (v: unknown) => isEmptyValue(v) ? "" : String(v);
+    return Object.entries(filter).some(([k, v]) => !["id", "orderBy", "limit", "cursor"].includes(k)
+        && text(v) !== text((defaults as Record<string, unknown> | undefined)?.[k]));
 }
 
 function parseFromUrl(urlKey: string): Partial<GridQuery> {
