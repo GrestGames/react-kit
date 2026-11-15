@@ -1,4 +1,4 @@
-import {CSSProperties, isValidElement, ReactNode, useEffect, useRef, useState} from "react";
+import {CSSProperties, Fragment, KeyboardEvent, MouseEvent, ReactNode, useEffect, useRef, useState} from "react";
 import "../css/grid.css"
 import {Tracker, TrackerOperation} from "../../EntityTracker";
 import {ApiErrors} from "../../ApiError";
@@ -7,12 +7,16 @@ import {AsyncState, useAsyncState} from "../../helpers/useAsyncState";
 import {FormObject, useAsyncForm} from "../useAsyncForm";
 import {VALIDATION_ERROR} from "@grest-ts/schema";
 import {Form} from "../Form";
-import {useIsMobile} from "../../responsive/useResponsive";
-import {MobileSortBar} from "./GridCards";
+import {useNarrowerThan} from "../../responsive/useResponsive";
+import {GridListRows, GridListSlot, GridListSort, headerAction} from "./GridList";
 import {ButtonAppearanceContext} from "../buttons/buttonAppearance";
 import {ToolTip} from "../../mini/ToolTip";
+import {Button} from "../buttons/Button";
 
 type FilterState<Q> = Q & GridQuery;
+
+/** Below this width of its own the grid renders as a list. */
+const LIST_BELOW_PX = 600;
 
 export interface Props<T extends { id: string | number }, Q> {
     fields: GridField<T>[]
@@ -35,7 +39,11 @@ export interface Props<T extends { id: string | number }, Q> {
     /** Compact headers: allows text wrapping and puts sort arrows on a separate line. */
     compact?: boolean;
 
-    /** Custom mobile card renderer. When provided, replaces the auto-generated card layout. */
+    /** `auto` renders a list when the grid itself is narrower than 600px, a table otherwise. */
+    layout?: "auto" | "table" | "list";
+    /** Makes the whole row the tap target; the row's own buttons and links keep their clicks. */
+    onRowClick?: (row: T) => void;
+    /** Renders each list-layout row itself instead of placing fields by their `list` hint. */
     mobileCard?: (row: T, index: number) => ReactNode;
 
     /** Alternative blocks/card view renderer. When provided and viewMode is "blocks", renders this instead of the table. */
@@ -77,10 +85,9 @@ export interface GridField<T> {
     /** Max cell width in px: content stays on one line, cut with an ellipsis, full value in a tooltip. */
     truncate?: number;
     style?: CSSProperties
-    /** @deprecated Use mobileCard prop on Grid instead. Kept for backwards compatibility. */
-    mobile?: string;
-    /** @deprecated Use mobileCard prop on Grid instead. Kept for backwards compatibility. */
-    mobileOrder?: number;
+    /** Place in the list layout. Untagged fields are `label value` lines; untitled ones default to `actions`,
+     *  and a control as an `actions` or `hide` column's title moves to the list toolbar. */
+    list?: GridListSlot;
 }
 
 export function Grid<T extends { id: string | number }, Q>({
@@ -96,6 +103,8 @@ export function Grid<T extends { id: string | number }, Q>({
                                                                            tracker,
                                                                            hideFooter,
                                                                            compact,
+                                                                           layout,
+                                                                           onRowClick,
                                                                            mobileCard,
                                                                            blocksView,
                                                                            viewMode,
@@ -105,7 +114,9 @@ export function Grid<T extends { id: string | number }, Q>({
     filtersUrlKeyName = filtersUrlKeyName || "grid"
     fields = fields.filter((e) => e !== undefined);
 
-    const isMobile = useIsMobile();
+    const [measureRef, narrow] = useNarrowerThan<HTMLDivElement>(LIST_BELOW_PX);
+    const listMode = layout === "list" || (layout !== "table" && narrow === true);
+    const [filtersOpen, setFiltersOpen] = useState<boolean>();
 
     const sameIdRowSpan = (field: keyof T, row: T, no: number, data: T[]) => {
         let i = 1;
@@ -288,7 +299,7 @@ export function Grid<T extends { id: string | number }, Q>({
                 observer.unobserve(containerRef.current);
             }
         };
-    }, [data, filter]);
+    }, [data, filter, listMode]);
 
     const loadMore = () => {
         setFilter((filter) => {
@@ -307,24 +318,6 @@ export function Grid<T extends { id: string | number }, Q>({
         }
     }
 
-    /** A field's cells as label/value pairs; a cell under an untitled or action column is an action, right-aligned on its own line. */
-    const autoCard = (row: T, i: number, data: T[]) => {
-        let colSpanSkip = 0;
-        return fields.map((f, s) => {
-            if (colSpanSkip > 0) {
-                colSpanSkip--;
-                return undefined;
-            }
-            const colSpanValue = f.colSpan?.(row, i, data);
-            if (colSpanValue !== undefined && colSpanValue > 1) colSpanSkip = colSpanValue - 1;
-            const value = getValue(f, i, row, data);
-            if (value === undefined || value === null || value === "" || value === false || (Array.isArray(value) && value.length === 0)) return undefined;
-            return f.title && !isHeaderAction(f.title)
-                ? <div key={s} className="gridAutoCardRow"><span className="gridAutoCardLabel">{f.title}</span><span>{value}</span></div>
-                : <div key={s} className="gridAutoCardAction">{value}</div>;
-        });
-    }
-
     const applySort = (field: string, dir: "asc" | "desc") => {
         updateData(undefined);
         setFilter((filter) => {
@@ -335,7 +328,7 @@ export function Grid<T extends { id: string | number }, Q>({
     }
 
     if (!filter) {
-        return <></>
+        return <div className="rkGrid" ref={measureRef}/>
     }
 
     /* ── Footer status rows (shared between table and card modes) ── */
@@ -358,12 +351,42 @@ export function Grid<T extends { id: string | number }, Q>({
 
     /* ── Render ────────────────────────────────────────────────── */
 
+    const filterKeys = Object.keys(filter).filter(k => !["id", "orderBy", "limit", "cursor"].includes(k));
+    const filtersActive = filterKeys.some(k => {
+        const v = (filter as Record<string, unknown>)[k];
+        return v !== undefined && v !== null && v !== "" && String(v) !== String((defaultFilters as Record<string, unknown> | undefined)?.[k] ?? "");
+    });
+    const showFilters = !!filtersForm && (!listMode || (filtersOpen ?? filtersActive));
+    const headerActions = listMode ? fields.map(headerAction).filter(a => a !== undefined) : [];
+
+    const onRowActivate = (row: T) => (e: MouseEvent<HTMLTableRowElement>) => {
+        const target = e.target as Element;
+        // Portalled popups bubble through the React tree; a drag that selected text isn't a click.
+        if (!e.currentTarget.contains(target) || target.closest("a, button, input, select, textarea, label, [role=button]") || window.getSelection()?.toString()) return;
+        onRowClick!(row);
+    };
+    const onRowKey = (row: T) => (e: KeyboardEvent<HTMLTableRowElement>) => {
+        if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+            e.preventDefault();
+            onRowClick!(row);
+        }
+    };
+
+    /* ── Render ────────────────────────────────────────────────── */
+
     const rowSpanCounts: number[] = new Array(fields.length).fill(1);
-    return <>
-        {filtersForm && <div className="area gridFilters" style={{zIndex: 1}}>
+    return <div className="rkGrid" ref={measureRef}>
+        {listMode && (filtersForm || headerActions.length > 0 || fields.some(f => f.sortName)) && <ButtonAppearanceContext.Provider value="outline"><div className="gridListToolbar">
+            {filtersForm && <Button active={showFilters} onClick={() => setFiltersOpen(!showFilters)}>
+                Filters{filtersActive && <span className="gridListBadge"><span className="gridListSrOnly"> (active)</span></span>}
+            </Button>}
+            <GridListSort fields={fields} orderBy={filter.orderBy} onSort={applySort}/>
+            {headerActions.length > 0 && <div className="gridListToolbarActions">{headerActions.map((a, s) => <Fragment key={s}>{a}</Fragment>)}</div>}
+        </div></ButtonAppearanceContext.Provider>}
+        {showFilters && <div className="area gridFilters" style={{zIndex: 1}}>
             <Form prop={F}>
                 <div>
-                    {filtersForm(F as any)}
+                    {filtersForm!(F as any)}
                 </div>
             </Form>
         </div>}
@@ -374,29 +397,24 @@ export function Grid<T extends { id: string | number }, Q>({
         <ButtonAppearanceContext.Provider value="outline">
         {viewMode === "blocks" && blocksView ? <>
             {displayData && displayData.length > 0 && <div className={"gridReloadWrap" + (reloading ? " gridReloading" : "")}>{blocksView(displayData)}</div>}
-            {hasMore && <div className="area"><div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div></div>}
+            {hasMore && <div className="area"><button type="button" onClick={loadMore} ref={containerRef} className="gridListLoadMore">Load more</button></div>}
             {isEmpty && <div className="area"><TipBox intent="default">No entries found!</TipBox></div>}
-            {isLoading && <div className="area"><div className="gridCardsLoading"><div className="loader"></div></div></div>}
+            {isLoading && <div className="area"><div className="gridListLoading"><div className="loader"></div></div></div>}
             {isValidationError && <div className="area"><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></div>}
             {isOtherError && <div className="area"><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox></div>}
-        </> : isMobile ? (
-            /* ── Mobile: card view ─────────────────────────────── */
-            <div className="area">
+        </> : listMode ? (
+            <div className="area gridListArea">
                 {reloading && <div className="gridReloadBar"/>}
-                <MobileSortBar fields={fields} orderBy={filter.orderBy} onSort={applySort}>
-                    {fields.map((f, s) => isHeaderAction(f.title) ? <span key={s}>{f.title}</span> : undefined)}
-                </MobileSortBar>
-
-                {displayData && <div className={"gridCards" + (reloading ? " gridReloading" : "")}>{displayData.map((row, i) => mobileCard
-                    ? <div key={row.id ?? i} className="gridCard">{mobileCard(row, i)}</div>
-                    : <div key={row.id ?? i} className="gridCard gridAutoCard">{autoCard(row, i, displayData)}</div>)}</div>}
-
-                {hasMore && <div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div>}
-                {isEmpty && <TipBox intent="default">No entries found!</TipBox>}
-                {isLoading && <div className="gridCardsLoading"><div className="loader"></div></div>}
-                {showFooter && <div className="gridCardsFooter">No more rows. Found {displayData.length} row(s)!</div>}
-                {isValidationError && <TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox>}
-                {isOtherError && <TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox>}
+                {displayData && displayData.length > 0 && <div className={reloading ? "gridReloading" : undefined}>
+                    <GridListRows fields={fields} rows={displayData} onRowClick={onRowClick} card={mobileCard}
+                                  cell={(f, row, i) => getValue(f, i, row, displayData)}/>
+                </div>}
+                {hasMore && <button type="button" onClick={loadMore} ref={containerRef} className="gridListLoadMore">Load more</button>}
+                {isEmpty && <div className="gridListState"><TipBox intent="default">No entries found!</TipBox></div>}
+                {isLoading && <div className="gridListLoading"><div className="loader"></div></div>}
+                {showFooter && <div className="gridListFooter">No more rows. Found {displayData.length} row(s)!</div>}
+                {isValidationError && <div className="gridListState"><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></div>}
+                {isOtherError && <div className="gridListState"><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox></div>}
             </div>
         ) : (
             /* ── Desktop: table view ───────────────────────────── */
@@ -430,7 +448,7 @@ export function Grid<T extends { id: string | number }, Q>({
                     </tr>
                     {displayData?.map((row: any, i) => {
                         let colSpanSkip = 0;
-                        return <tr key={i}>{fields.map((f, s) => {
+                        return <tr key={i} {...onRowClick && {className: "gridRowClickable", tabIndex: 0, onClick: onRowActivate(row), onKeyDown: onRowKey(row)}}>{fields.map((f, s) => {
                             if (rowSpanCounts[s] > 1) {
                                 rowSpanCounts[s]--;
                                 return undefined;
@@ -487,12 +505,7 @@ export function Grid<T extends { id: string | number }, Q>({
             </div>
         )}
         </ButtonAppearanceContext.Provider>
-    </>
-}
-
-/** A column title that is a control (e.g. an `AddNewButton`) rather than a label; on cards it moves to the toolbar. */
-function isHeaderAction(title: GridField<unknown>["title"]): boolean {
-    return isValidElement<{ onClick?: unknown }>(title) && typeof title.props.onClick === "function";
+    </div>
 }
 
 function parseFromUrl(urlKey: string): Partial<GridQuery> {

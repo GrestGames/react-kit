@@ -226,3 +226,12 @@ a.mobileOnly {
         pointer-events: auto;
     }
 }
+
+table.grid tr.gridRowClickable {
+    cursor: pointer;
+}
+
+table.grid tr.gridRowClickable:focus-visible {
+    outline: 2px solid var(--rk-border-focus);
+    outline-offset: -2px;
+}
