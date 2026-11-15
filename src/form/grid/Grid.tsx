@@ -8,7 +8,7 @@ import {FormObject, useAsyncForm} from "../useAsyncForm";
 import {VALIDATION_ERROR} from "@grest-ts/schema";
 import {Form} from "../Form";
 import {useNarrowerThan} from "../../responsive/useResponsive";
-import {GridListRows, GridListSlot, GridListSort, headerAction} from "./GridList";
+import {GridListRows, GridListSlot, GridListSort, headerAction, isEmpty as isEmptyValue} from "./GridList";
 import {ButtonAppearanceContext} from "../buttons/buttonAppearance";
 import {ToolTip} from "../../mini/ToolTip";
 import {Button} from "../buttons/Button";
@@ -208,6 +208,7 @@ export function Grid<T extends { id: string | number }, Q>({
                 ...parseFromUrl(filtersUrlKeyName),
             } as FilterState<Q>;
             setFilter(startingFilter);
+            setFiltersOpen(hasActiveFilters(startingFilter, defaultFilters));
             return startingFilter;
         }
     }, [])
@@ -351,18 +352,15 @@ export function Grid<T extends { id: string | number }, Q>({
 
     /* ── Render ────────────────────────────────────────────────── */
 
-    const filterKeys = Object.keys(filter).filter(k => !["id", "orderBy", "limit", "cursor"].includes(k));
-    const filtersActive = filterKeys.some(k => {
-        const v = (filter as Record<string, unknown>)[k];
-        return v !== undefined && v !== null && v !== "" && String(v) !== String((defaultFilters as Record<string, unknown> | undefined)?.[k] ?? "");
-    });
-    const showFilters = !!filtersForm && (!listMode || (filtersOpen ?? filtersActive));
+    const filtersActive = hasActiveFilters(filter, defaultFilters);
+    const showFilters = !!filtersForm && (!listMode || !!filtersOpen);
     const headerActions = listMode ? fields.map(headerAction).filter(a => a !== undefined) : [];
 
     const onRowActivate = (row: T) => (e: MouseEvent<HTMLTableRowElement>) => {
         const target = e.target as Element;
         // Portalled popups bubble through the React tree; a drag that selected text isn't a click.
-        if (!e.currentTarget.contains(target) || target.closest("a, button, input, select, textarea, label, [role=button]") || window.getSelection()?.toString()) return;
+        const control = target.closest("a, button, input, select, textarea, label, summary, [tabindex], [role=button], [role=link], [role=checkbox], [role=switch], [role=menuitem]");
+        if (!e.currentTarget.contains(target) || (control && control !== e.currentTarget && e.currentTarget.contains(control)) || window.getSelection()?.toString()) return;
         onRowClick!(row);
     };
     const onRowKey = (row: T) => (e: KeyboardEvent<HTMLTableRowElement>) => {
@@ -506,6 +504,11 @@ export function Grid<T extends { id: string | number }, Q>({
         )}
         </ButtonAppearanceContext.Provider>
     </div>
+}
+
+function hasActiveFilters(filter: GridQuery, defaults: object | undefined): boolean {
+    return Object.entries(filter).some(([k, v]) => !["id", "orderBy", "limit", "cursor"].includes(k) && !isEmptyValue(v)
+        && String(v) !== String((defaults as Record<string, unknown> | undefined)?.[k] ?? ""));
 }
 
 function parseFromUrl(urlKey: string): Partial<GridQuery> {
