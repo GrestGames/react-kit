@@ -10,11 +10,13 @@ import IntentPage from './pages/IntentPage';
 import UtilsPage from './pages/UtilsPage';
 import WizardPage from './pages/WizardPage';
 import ButtonsPage from './pages/ButtonsPage';
+import GridListPage from './pages/GridListPage';
 
 const sections = [
   { key: 'inputs', label: 'Inputs', component: InputsPage },
   { key: 'buttons', label: 'Buttons', component: ButtonsPage },
   { key: 'form', label: 'Form & Grid', component: FormPage },
+  { key: 'grid-list', label: 'Grid – list layout', component: GridListPage },
   { key: 'layout', label: 'Layout & Nav', component: LayoutPage },
   { key: 'overlays', label: 'Overlays', component: OverlaysPage },
   { key: 'feedback', label: 'Feedback', component: FeedbackPage },
@@ -25,7 +27,7 @@ const sections = [
 ] as const;
 
 export default function App() {
-  const [active, setActive] = useState<string>('inputs');
+  const [active, setActive] = useState<string>(location.hash.slice(1) || 'inputs');
   const [dark, setDark] = useState(false);
   const Page = sections.find(s => s.key === active)?.component ?? InputsPage;
 
@@ -40,7 +42,7 @@ export default function App() {
         items={sections.map(s => ({
           title: s.label,
           isActive: active === s.key,
-          onClick: () => setActive(s.key),
+          onClick: () => { setActive(s.key); history.replaceState(null, '', '#' + s.key); },
         }))}
         rightItems={[{
           title: dark ? '☀' : '🌙',

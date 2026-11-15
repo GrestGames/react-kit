@@ -7,12 +7,15 @@ import {AsyncState, useAsyncState} from "../../helpers/useAsyncState";
 import {FormObject, useAsyncForm} from "../useAsyncForm";
 import {VALIDATION_ERROR} from "@grest-ts/schema";
 import {Form} from "../Form";
-import {useIsMobile} from "../../responsive/useResponsive";
-import {MobileSortBar} from "./GridCards";
+import {useNarrowerThan} from "../../responsive/useResponsive";
+import {GridListRows, GridListSlot, GridListToolbar, isEmpty as isEmptyValue, rowHandlers} from "./GridList";
 import {ButtonAppearanceContext} from "../buttons/buttonAppearance";
 import {ToolTip} from "../../mini/ToolTip";
 
 type FilterState<Q> = Q & GridQuery;
+
+/** Below this width of its own the grid renders as a list. */
+const LIST_BELOW_PX = 600;
 
 export interface Props<T extends { id: string | number }, Q> {
     fields: GridField<T>[]
@@ -27,6 +30,9 @@ export interface Props<T extends { id: string | number }, Q> {
     defaultOrderBy?: GridOrderBy;
     defaultFilters?: Partial<Q>;
     filtersForm?: (F: FormObject<Q>) => ReactNode | ReactNode[]
+    /** Filter inputs that stay visible in the list layout, where `filtersForm` folds behind a Filters button.
+     *  The table renders them in front of `filtersForm`. */
+    searchForm?: (F: FormObject<Q>) => ReactNode | ReactNode[]
     summaryForm?: () => ReactNode | ReactNode[]
     tracker?: Tracker<T["id"]>
     rowsPerCall?: number;
@@ -35,7 +41,11 @@ export interface Props<T extends { id: string | number }, Q> {
     /** Compact headers: allows text wrapping and puts sort arrows on a separate line. */
     compact?: boolean;
 
-    /** Custom mobile card renderer. When provided, replaces the auto-generated card layout. */
+    /** `auto` renders a list when the grid itself is narrower than 600px, a table otherwise. */
+    layout?: "auto" | "table" | "list";
+    /** Makes the whole row the tap target; the row's own buttons and links keep their clicks. */
+    onRowClick?: (row: T) => void;
+    /** Renders each list-layout row itself instead of placing fields by their `list` hint. */
     mobileCard?: (row: T, index: number) => ReactNode;
 
     /** Alternative blocks/card view renderer. When provided and viewMode is "blocks", renders this instead of the table. */
@@ -77,15 +87,15 @@ export interface GridField<T> {
     /** Max cell width in px: content stays on one line, cut with an ellipsis, full value in a tooltip. */
     truncate?: number;
     style?: CSSProperties
-    /** @deprecated Use mobileCard prop on Grid instead. Kept for backwards compatibility. */
-    mobile?: string;
-    /** @deprecated Use mobileCard prop on Grid instead. Kept for backwards compatibility. */
-    mobileOrder?: number;
+    /** Place in the list layout. Untagged fields are `label value` lines; untitled ones default to `actions`,
+     *  and a control as an `actions` or `hide` column's title moves to the list toolbar. */
+    list?: GridListSlot;
 }
 
 export function Grid<T extends { id: string | number }, Q>({
                                                                            load,
                                                                            filtersForm,
+                                                                           searchForm,
                                                                            summaryForm,
                                                                            onData,
                                                                            filtersUrlKeyName,
@@ -96,6 +106,8 @@ export function Grid<T extends { id: string | number }, Q>({
                                                                            tracker,
                                                                            hideFooter,
                                                                            compact,
+                                                                           layout,
+                                                                           onRowClick,
                                                                            mobileCard,
                                                                            blocksView,
                                                                            viewMode,
@@ -105,7 +117,9 @@ export function Grid<T extends { id: string | number }, Q>({
     filtersUrlKeyName = filtersUrlKeyName || "grid"
     fields = fields.filter((e) => e !== undefined);
 
-    const isMobile = useIsMobile();
+    const [measureRef, narrow] = useNarrowerThan<HTMLDivElement>(LIST_BELOW_PX);
+    const listMode = layout === "list" || (layout !== "table" && narrow === true);
+    const [filtersOpen, setFiltersOpen] = useState<boolean>();
 
     const sameIdRowSpan = (field: keyof T, row: T, no: number, data: T[]) => {
         let i = 1;
@@ -197,6 +211,7 @@ export function Grid<T extends { id: string | number }, Q>({
                 ...parseFromUrl(filtersUrlKeyName),
             } as FilterState<Q>;
             setFilter(startingFilter);
+            setFiltersOpen(hasActiveFilters(startingFilter, defaultFilters));
             return startingFilter;
         }
     }, [])
@@ -288,7 +303,7 @@ export function Grid<T extends { id: string | number }, Q>({
                 observer.unobserve(containerRef.current);
             }
         };
-    }, [data, filter]);
+    }, [data, filter, listMode]);
 
     const loadMore = () => {
         setFilter((filter) => {
@@ -317,7 +332,7 @@ export function Grid<T extends { id: string | number }, Q>({
     }
 
     if (!filter) {
-        return <></>
+        return <div className="rkGrid" ref={measureRef}/>
     }
 
     /* ── Footer status rows (shared between table and card modes) ── */
@@ -338,14 +353,25 @@ export function Grid<T extends { id: string | number }, Q>({
     const isValidationError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type === VALIDATION_ERROR.TYPE;
     const isOtherError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type !== VALIDATION_ERROR.TYPE;
 
+    const filtersActive = hasActiveFilters(filter, defaultFilters);
+    const showFilters = !!(listMode ? filtersForm && filtersOpen : filtersForm || searchForm);
+
     /* ── Render ────────────────────────────────────────────────── */
 
     const rowSpanCounts: number[] = new Array(fields.length).fill(1);
-    return <>
-        {filtersForm && <div className="area gridFilters" style={{zIndex: 1}}>
+    return <div className={"rkGrid" + (listMode ? " rkGridList" : "")} ref={measureRef}>
+        {listMode && searchForm && <div className="area gridFilters gridListSearch">
+            <Form prop={F}>
+                <div>{searchForm(F as any)}</div>
+            </Form>
+        </div>}
+        {listMode && <GridListToolbar fields={fields} orderBy={filter.orderBy} onSort={applySort}
+                                      filters={filtersForm && {open: showFilters, active: filtersActive, toggle: () => setFiltersOpen(!showFilters)}}/>}
+        {showFilters && <div className="area gridFilters" style={{zIndex: 1}}>
             <Form prop={F}>
                 <div>
-                    {filtersForm(F as any)}
+                    {!listMode && searchForm?.(F as any)}
+                    {filtersForm?.(F as any)}
                 </div>
             </Form>
         </div>}
@@ -356,25 +382,24 @@ export function Grid<T extends { id: string | number }, Q>({
         <ButtonAppearanceContext.Provider value="outline">
         {viewMode === "blocks" && blocksView ? <>
             {displayData && displayData.length > 0 && <div className={"gridReloadWrap" + (reloading ? " gridReloading" : "")}>{blocksView(displayData)}</div>}
-            {hasMore && <div className="area"><div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div></div>}
+            {hasMore && <div className="area"><button type="button" onClick={loadMore} ref={containerRef} className="gridListLoadMore">Load more</button></div>}
             {isEmpty && <div className="area"><TipBox intent="default">No entries found!</TipBox></div>}
-            {isLoading && <div className="area"><div className="gridCardsLoading"><div className="loader"></div></div></div>}
+            {isLoading && <div className="area"><div className="gridListLoading"><div className="loader"></div></div></div>}
             {isValidationError && <div className="area"><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></div>}
             {isOtherError && <div className="area"><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox></div>}
-        </> : isMobile && mobileCard ? (
-            /* ── Mobile: card view ─────────────────────────────── */
-            <div className="area">
+        </> : listMode ? (
+            <div className="area gridListArea">
                 {reloading && <div className="gridReloadBar"/>}
-                <MobileSortBar fields={fields} orderBy={filter.orderBy} onSort={applySort}/>
-
-                {displayData && <div className={"gridCards" + (reloading ? " gridReloading" : "")}>{displayData.map((row, i) => <div key={row.id ?? i} className="gridCard">{mobileCard(row, i)}</div>)}</div>}
-
-                {hasMore && <div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div>}
-                {isEmpty && <TipBox intent="default">No entries found!</TipBox>}
-                {isLoading && <div className="gridCardsLoading"><div className="loader"></div></div>}
-                {showFooter && <div className="gridCardsFooter">No more rows. Found {displayData.length} row(s)!</div>}
-                {isValidationError && <TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox>}
-                {isOtherError && <TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox>}
+                {displayData && displayData.length > 0 && <div className={reloading ? "gridReloading" : undefined}>
+                    <GridListRows fields={fields} rows={displayData} onRowClick={onRowClick} card={mobileCard}
+                                  cell={(f, row, i) => getValue(f, i, row, displayData)}/>
+                </div>}
+                {hasMore && <button type="button" onClick={loadMore} ref={containerRef} className="gridListLoadMore">Load more</button>}
+                {isEmpty && <div className="gridListState"><TipBox intent="default">No entries found!</TipBox></div>}
+                {isLoading && <div className="gridListLoading"><div className="loader"></div></div>}
+                {showFooter && <div className="gridListFooter">No more rows. Found {displayData.length} row(s)!</div>}
+                {isValidationError && <div className="gridListState"><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></div>}
+                {isOtherError && <div className="gridListState"><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox></div>}
             </div>
         ) : (
             /* ── Desktop: table view ───────────────────────────── */
@@ -408,7 +433,7 @@ export function Grid<T extends { id: string | number }, Q>({
                     </tr>
                     {displayData?.map((row: any, i) => {
                         let colSpanSkip = 0;
-                        return <tr key={i}>{fields.map((f, s) => {
+                        return <tr key={i} {...onRowClick && {className: "gridRowClickable", tabIndex: 0, ...rowHandlers(onRowClick, row)}}>{fields.map((f, s) => {
                             if (rowSpanCounts[s] > 1) {
                                 rowSpanCounts[s]--;
                                 return undefined;
@@ -465,7 +490,13 @@ export function Grid<T extends { id: string | number }, Q>({
             </div>
         )}
         </ButtonAppearanceContext.Provider>
-    </>
+    </div>
+}
+
+function hasActiveFilters(filter: GridQuery, defaults: object | undefined): boolean {
+    const text = (v: unknown) => isEmptyValue(v) ? "" : String(v);
+    return Object.entries(filter).some(([k, v]) => !["id", "orderBy", "limit", "cursor"].includes(k)
+        && text(v) !== text((defaults as Record<string, unknown> | undefined)?.[k]));
 }
 
 function parseFromUrl(urlKey: string): Partial<GridQuery> {

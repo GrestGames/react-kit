@@ -54,7 +54,7 @@ export {ProgressBar, type ProgressBarProps} from "./form/other/ProgressBar";
 
 // Grid
 export {Grid, type GridQuery, type GridOrderBy, type GridField} from "./form/grid/Grid";
-export * from "./form/grid/GridCards";
+export {type GridListSlot} from "./form/grid/GridList";
 export {FileGrid, type ItemInfo} from "./form/grid/FileGrid";
 export * from "./form/grid/FileGridMini";
 
@@ -96,7 +96,7 @@ export {TopMenu, type TopMenuItem, type TopMenuSubItem, type TopMenuProps} from 
 export {ContextMenu, RkContextMenu, type ContextMenuProps} from "./menu/ContextMenu";
 
 // Responsive
-export {useResponsive, useIsMobile} from "./responsive/useResponsive";
+export {useResponsive, useIsMobile, useNarrowerThan} from "./responsive/useResponsive";
 
 // Helpers
 export * from "./helpers/useAsyncState";

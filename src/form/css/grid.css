@@ -167,76 +167,12 @@ a.mobileOnly {
     pointer-events: none;
 }
 
-/* ── Mobile: grid filter area ──────────────────────── */
+/* ── Phones: Add new in the flow, mobile-only links ── */
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     .gridAddNew {
         float: none !important;
-        position: absolute;
-        top: 6px;
-        right: 6px;
-        width: 32px !important;
-        height: 32px;
-        padding: 0;
-        font-size: 18px;
-        line-height: 32px;
-        text-align: center;
-        z-index: 2;
         touch-action: manipulation;
-        -webkit-touch-callout: none;
-        user-select: none;
-    }
-
-    .gridAddNew:active {
-        position: absolute !important;
-        top: 6px !important;
-        left: auto !important;
-    }
-
-    /* Multiple add buttons stack horizontally */
-    .gridAddNew + .gridAddNew {
-        right: 44px;
-    }
-
-    .gridFilters table {
-        display: block;
-        width: 100%;
-    }
-
-    .gridFilters table tbody {
-        display: block;
-    }
-
-    .gridFilters table tr {
-        display: block;
-    }
-
-    .gridFilters table td {
-        display: block;
-        text-align: left !important;
-        float: none !important;
-    }
-
-    .gridFilters button {
-        float: none !important;
-        margin-bottom: 4px;
-    }
-
-    .gridFilters .formItem {
-        display: block;
-        margin-bottom: 4px;
-    }
-
-    .gridFilters .formItemWithSuffix {
-        display: flex !important;
-        align-items: center;
-    }
-
-    .gridFilters label {
-        display: block;
-        font-size: var(--rk-font-size-mini);
-        color: var(--rk-text-muted);
-        margin-top: 4px;
     }
 
     a.mobileOnly {
@@ -244,4 +180,51 @@ a.mobileOnly {
         text-decoration: revert;
         pointer-events: auto;
     }
+}
+
+/* ── List layout: filters stack ───────────────────── */
+
+.rkGridList .gridFilters button {
+    float: none !important;
+    min-height: 40px;
+    margin-bottom: 4px;
+}
+
+.rkGridList .gridFilters table,
+.rkGridList .gridFilters table tbody,
+.rkGridList .gridFilters table tr {
+    display: block;
+    width: 100%;
+}
+
+.rkGridList .gridFilters table td {
+    display: block;
+    text-align: left !important;
+    float: none !important;
+}
+
+.rkGridList .gridFilters .formItem {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.rkGridList .gridFilters .formItemWithSuffix {
+    display: flex !important;
+    align-items: center;
+}
+
+.rkGridList .gridFilters label {
+    display: block;
+    font-size: var(--rk-font-size-mini);
+    color: var(--rk-text-muted);
+    margin-top: 4px;
+}
+
+table.grid tr.gridRowClickable {
+    cursor: pointer;
+}
+
+table.grid tr.gridRowClickable:focus-visible {
+    outline: 2px solid var(--rk-border-focus);
+    outline-offset: -2px;
 }

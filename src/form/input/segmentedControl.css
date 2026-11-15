@@ -8,7 +8,9 @@
     border: 1px solid var(--rk-border-strong);
     border-radius: var(--rk-radius);
     background: var(--rk-bg-surface);
-    overflow: hidden;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .rkSegmented.fullWidth {
