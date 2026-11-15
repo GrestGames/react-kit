@@ -1,4 +1,4 @@
-import {describe, it, expect, vi} from "vitest";
+import {describe, it, expect, vi, beforeEach, afterEach} from "vitest";
 import {render, screen, act, waitFor, fireEvent} from "@testing-library/react";
 import {Grid} from "./Grid";
 import {Tracker} from "../../EntityTracker";
@@ -311,5 +311,160 @@ describe("Grid colSpan", () => {
         const cells = () => Array.from(view.container.querySelectorAll("table.grid tr")).slice(1)
             .map(tr => Array.from(tr.querySelectorAll("td")).map(td => td.textContent));
         await waitFor(() => expect(cells()).toEqual([["all", "Alpha", "img-a"], ["Beta"], ["Gamma", "img-c"]]));
+    });
+});
+
+describe("Grid list layout", () => {
+    let width = 390;
+    let resize: (() => void) | undefined;
+    beforeEach(() => {
+        width = 390;
+        vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
+            return {width: this.classList.contains("rkGrid") ? width : 0} as DOMRect;
+        });
+        globalThis.ResizeObserver = class {
+            constructor(cb: () => void) { resize = cb }
+            observe() {}
+            disconnect() {}
+        } as unknown as typeof ResizeObserver;
+    });
+    afterEach(() => {
+        vi.restoreAllMocks();
+        delete (globalThis as any).ResizeObserver;
+        window.history.replaceState(null, "", "/");
+    });
+
+    type U = {id: string, name: string, email: string, role: string, note?: string}
+    const users: U[] = [
+        {id: "u1", name: "Ann", email: "ann@x", role: "admin", note: "vip"},
+        {id: "u2", name: "Bob", email: "bob@x", role: ""},
+    ];
+    const isList = (c: HTMLElement) => !!c.querySelector("ul.gridList") && !c.querySelector("table.grid");
+    const rowTexts = (c: HTMLElement) => Array.from(c.querySelectorAll(".gridListRow")).map(li =>
+        Array.from(li.querySelectorAll(".gridListTitle, .gridListSubtitle, .gridListTrailing, .gridListLabel, .gridListValue, .gridListActions"))
+            .map(e => e.className.replace("gridList", "") + ":" + e.textContent));
+
+    it("switches with the grid's own width, with hysteresis on the way back", async () => {
+        const view = render(<Grid<U, any> load={async () => ({rows: users})} hideFooter fields={[{title: "Name", value: "name"}]}/>);
+        await screen.findByText("Ann");
+        expect(isList(view.container)).toBe(true);
+        width = 620;
+        act(() => resize!());
+        expect(isList(view.container)).toBe(true);
+        width = 650;
+        act(() => resize!());
+        expect(isList(view.container)).toBe(false);
+        width = 590;
+        act(() => resize!());
+        expect(isList(view.container)).toBe(true);
+    });
+
+    it("layout forces table or list regardless of width", async () => {
+        const table = render(<Grid<U, any> layout="table" load={async () => ({rows: users})} hideFooter fields={[{title: "Name", value: "name"}]}/>);
+        await waitFor(() => expect(table.container.querySelector("table.grid td")).not.toBeNull());
+        expect(isList(table.container)).toBe(false);
+        table.unmount();
+        width = 1200;
+        const list = render(<Grid<U, any> layout="list" load={async () => ({rows: users})} hideFooter fields={[{title: "Name", value: "name"}]}/>);
+        await screen.findByText("Ann");
+        expect(isList(list.container)).toBe(true);
+    });
+
+    it("places fields by hint, joins subtitles, skips empty values, untitled fields are actions", async () => {
+        const view = render(<Grid<U, any> load={async () => ({rows: users})} hideFooter fields={[
+            {title: "No", list: "hide", value: (r, no) => no + 1},
+            {title: "Name", list: "title", value: "name"},
+            {title: "Email", list: "subtitle", value: "email"},
+            {title: "Role", list: "subtitle", value: "role"},
+            {title: "Note", list: "trailing", value: r => r.note},
+            {title: "Id", value: "id"},
+            {value: r => <button>Edit {r.name}</button>},
+        ]}/>);
+        await screen.findByText("Ann");
+        expect(rowTexts(view.container)).toEqual([
+            ["Title:Ann", "Subtitle:ann@x · admin", "Trailing:vip", "Label:Id", "Value:u1", "Actions:Edit Ann"],
+            ["Title:Bob", "Subtitle:bob@x", "Label:Id", "Value:u2", "Actions:Edit Bob"],
+        ]);
+    });
+
+    it("without hints renders every titled field as a label/value line", async () => {
+        const view = render(<Grid<U, any> load={async () => ({rows: users.slice(0, 1)})} hideFooter fields={[
+            {title: "Name", value: "name"},
+            {title: "Email", value: "email"},
+        ]}/>);
+        await screen.findByText("Ann");
+        expect(rowTexts(view.container)).toEqual([["Label:Name", "Value:Ann", "Label:Email", "Value:ann@x"]]);
+    });
+
+    it("moves a control used as an actions/hide column title to the toolbar", async () => {
+        const view = render(<Grid<U, any> load={async () => ({rows: users})} hideFooter fields={[
+            {title: "Name", list: "title", value: "name"},
+            {title: <button onClick={() => {}}>Invite</button>, list: "hide", value: () => <button>View</button>},
+        ]}/>);
+        await screen.findByText("Ann");
+        expect(screen.getByRole("button", {name: "Invite"}).closest(".gridListToolbarActions")).not.toBeNull();
+        expect(screen.queryByRole("button", {name: "View"})).toBeNull();
+    });
+
+    it("onRowClick fires once from the row, the row button and Enter on it, never from an inner control", async () => {
+        const onRowClick = vi.fn();
+        const inner = vi.fn();
+        render(<Grid<U, any> load={async () => ({rows: users})} hideFooter onRowClick={onRowClick} fields={[
+            {title: "Name", list: "title", value: "name"},
+            {title: "Email", list: "subtitle", value: "email"},
+            {value: r => <button onClick={inner}>Edit {r.name}</button>},
+        ]}/>);
+        fireEvent.click(await screen.findByText("ann@x"));
+        expect(onRowClick.mock.calls).toEqual([[users[0]]]);
+        fireEvent.click(screen.getByRole("button", {name: "Edit Bob"}));
+        expect(inner).toHaveBeenCalledTimes(1);
+        expect(onRowClick).toHaveBeenCalledTimes(1);
+        const target = screen.getByRole("button", {name: "Bob bob@x"});
+        target.focus();
+        fireEvent.click(target);
+        expect(onRowClick.mock.calls).toEqual([[users[0]], [users[1]]]);
+    });
+
+    it("onRowClick on the table: row click and Enter fire, inner buttons don't", async () => {
+        width = 1200;
+        const onRowClick = vi.fn();
+        const inner = vi.fn();
+        const view = render(<Grid<U, any> load={async () => ({rows: users})} hideFooter onRowClick={onRowClick} fields={[
+            {title: "Name", value: "name"},
+            {value: r => <button onClick={inner}>Edit {r.name}</button>},
+        ]}/>);
+        fireEvent.click(await screen.findByText("Ann"));
+        fireEvent.click(screen.getByRole("button", {name: "Edit Bob"}));
+        const row = view.container.querySelectorAll("tr.gridRowClickable")[1];
+        fireEvent.keyDown(row, {key: "Enter"});
+        expect(onRowClick.mock.calls).toEqual([[users[0]], [users[1]]]);
+        expect(inner).toHaveBeenCalledTimes(1);
+    });
+
+    it("folds filtersForm behind Filters, keeps searchForm visible, and opens with a badge when the URL carries a filter", async () => {
+        const fields = [{title: "Name", value: "name" as const}];
+        const view = render(<Grid<U, any> load={async () => ({rows: users})} hideFooter defaultFilters={{show: "all"}} fields={fields}
+            searchForm={() => <input placeholder="Search"/>} filtersForm={() => <input placeholder="Show"/>}/>);
+        await screen.findByText("Ann");
+        expect(screen.getByPlaceholderText("Search")).toBeTruthy();
+        expect(screen.queryByPlaceholderText("Show")).toBeNull();
+        fireEvent.click(screen.getByRole("button", {name: "Filters"}));
+        expect(screen.getByPlaceholderText("Show")).toBeTruthy();
+        view.unmount();
+
+        window.history.replaceState(null, "", "/?grid.show=mine");
+        render(<Grid<U, any> load={async () => ({rows: users})} hideFooter defaultFilters={{show: "all"}} fields={fields}
+            filtersForm={() => <input placeholder="Show"/>}/>);
+        await screen.findByText("Ann");
+        expect(screen.getByPlaceholderText("Show")).toBeTruthy();
+        expect(screen.getByRole("button", {name: /^Filters\s*\(active\)$/})).toBeTruthy();
+    });
+
+    it("sorts from the toolbar select", async () => {
+        const load = vi.fn(async () => ({rows: users}));
+        render(<Grid<U, any> load={load} hideFooter fields={[{title: "Name", value: "name", sortName: "name"}]}/>);
+        await screen.findByText("Ann");
+        fireEvent.change(screen.getByLabelText("Sort by"), {target: {value: "name:desc"}});
+        await waitFor(() => expect(load).toHaveBeenLastCalledWith(expect.objectContaining({orderBy: {field: "name", dir: "desc"}})));
     });
 });
