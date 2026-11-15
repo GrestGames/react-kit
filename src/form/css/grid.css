@@ -169,12 +169,14 @@ a.mobileOnly {
 
 /* ── Mobile: grid filter area ──────────────────────── */
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     .gridAddNew {
         float: none !important;
-        min-width: 40px;
-        height: 40px;
         touch-action: manipulation;
+    }
+
+    .gridFilters button {
+        min-height: 40px;
     }
 
     .gridFilters table {

@@ -331,18 +331,23 @@ describe("Grid on mobile", () => {
         const cards = () => Array.from(view.container.querySelectorAll(".gridAutoCard"))
             .map(card => Array.from(card.children).map(c => c.className + ":" + c.textContent));
         await waitFor(() => expect(cards()).toEqual([
-            ["gridAutoCardRow:NameAlpha", "gridAutoCardRow:Notefirst", "gridAutoCardFull:Open img-a"],
-            ["gridAutoCardRow:NameBeta", "gridAutoCardFull:Open img-b"],
+            ["gridAutoCardRow:NameAlpha", "gridAutoCardRow:Notefirst", "gridAutoCardAction:Open img-a"],
+            ["gridAutoCardRow:NameBeta", "gridAutoCardAction:Open img-b"],
         ]));
         expect(view.container.querySelector("table.grid")).toBeNull();
     });
 
-    it("moves a column title that is an action into the card toolbar", async () => {
+    it("moves a column title that is a control into the card toolbar; other titles stay labels", async () => {
         render(<Grid<Row, any>
             load={async () => ({rows})}
             hideFooter
-            fields={[{title: "Name", value: r => r.name}, {title: <button>Invite</button>, value: () => "x"}]}
+            fields={[
+                {title: "Name", value: r => r.name},
+                {title: <span>Ref</span>, value: r => r.id},
+                {title: <button onClick={() => {}}>Invite</button>, value: () => "x"},
+            ]}
         />);
-        expect(await screen.findByRole("button", {name: "Invite"})).toBeTruthy();
+        expect((await screen.findByRole("button", {name: "Invite"})).closest(".gridMobileActions")).toBeTruthy();
+        expect((await screen.findAllByText("Ref"))[0].closest(".gridAutoCardLabel")).toBeTruthy();
     });
 });

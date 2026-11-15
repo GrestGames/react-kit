@@ -24,13 +24,13 @@
     width: 40px;
     height: 40px;
     padding: 0;
-    font-size: 16px;
+    font-size: var(--rk-font-size-huge);
     line-height: 1;
     text-align: center;
     color: inherit;
     background: var(--rk-bg-surface);
     border: 1px solid var(--rk-border);
-    border-radius: 5px;
+    border-radius: var(--rk-radius);
     cursor: pointer;
 }
 
@@ -55,7 +55,7 @@
 
 .gridAutoCard {
     display: grid;
-    grid-template-columns: max-content minmax(0, 1fr);
+    grid-template-columns: fit-content(40%) minmax(0, 1fr);
     gap: 4px 12px;
     align-items: baseline;
 }
@@ -72,12 +72,17 @@
     color: var(--rk-text-muted);
 }
 
-.gridAutoCardRow > :last-child, .gridAutoCardFull {
+.gridAutoCardRow > :last-child {
     overflow-wrap: anywhere;
 }
 
-.gridAutoCardFull {
+.gridAutoCardAction {
     grid-column: 1 / -1;
+    justify-self: end;
+}
+
+.gridCard button {
+    min-height: 40px;
 }
 
 /* ── Card title ────────────────────────────────────── */

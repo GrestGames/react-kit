@@ -2,7 +2,6 @@ import "./button.css";
 import {CSSProperties, ReactNode, useContext, useState} from "react";
 import {FormObject} from "../useAsyncForm";
 import {useForm} from "../Form";
-import {useIsMobile} from "../../responsive/useResponsive";
 import {ButtonAppearance, ButtonAppearanceContext} from "./buttonAppearance";
 import {ButtonPrimitive, PrimitiveButtonProps} from "./ButtonPrimitive";
 
@@ -102,11 +101,10 @@ export function ArrayRemoveButton<T>({prop, ...props}: { prop: FormObject<T>, st
 }
 
 export function AddNewButton({onClick, children}: {onClick: () => void, children?: ReactNode}) {
-    const isMobile = useIsMobile();
     return AnyButton({
         type: "button",
         className: "gridAddNew",
-        children: isMobile ? "+" : (children || "Add new"),
+        children: children || "Add new",
         onClick
     });
 }

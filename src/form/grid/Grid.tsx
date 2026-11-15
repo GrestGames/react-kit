@@ -1,4 +1,4 @@
-import {CSSProperties, ReactNode, useEffect, useRef, useState} from "react";
+import {CSSProperties, isValidElement, ReactNode, useEffect, useRef, useState} from "react";
 import "../css/grid.css"
 import {Tracker, TrackerOperation} from "../../EntityTracker";
 import {ApiErrors} from "../../ApiError";
@@ -307,7 +307,7 @@ export function Grid<T extends { id: string | number }, Q>({
         }
     }
 
-    /** A field's cells as label/value pairs; untitled fields (actions) and colSpan cells take the full width. */
+    /** A field's cells as label/value pairs; a cell under an untitled or action column is an action, right-aligned on its own line. */
     const autoCard = (row: T, i: number, data: T[]) => {
         let colSpanSkip = 0;
         return fields.map((f, s) => {
@@ -318,10 +318,10 @@ export function Grid<T extends { id: string | number }, Q>({
             const colSpanValue = f.colSpan?.(row, i, data);
             if (colSpanValue !== undefined && colSpanValue > 1) colSpanSkip = colSpanValue - 1;
             const value = getValue(f, i, row, data);
-            if (value === undefined || value === null || value === "" || value === false) return undefined;
-            return typeof f.title === "string" && f.title && !colSpanSkip
+            if (value === undefined || value === null || value === "" || value === false || (Array.isArray(value) && value.length === 0)) return undefined;
+            return f.title && !isHeaderAction(f.title)
                 ? <div key={s} className="gridAutoCardRow"><span className="gridAutoCardLabel">{f.title}</span><span>{value}</span></div>
-                : <div key={s} className="gridAutoCardFull">{value}</div>;
+                : <div key={s} className="gridAutoCardAction">{value}</div>;
         });
     }
 
@@ -384,7 +384,7 @@ export function Grid<T extends { id: string | number }, Q>({
             <div className="area">
                 {reloading && <div className="gridReloadBar"/>}
                 <MobileSortBar fields={fields} orderBy={filter.orderBy} onSort={applySort}>
-                    {fields.map((f, s) => f.title && typeof f.title !== "string" ? <span key={s}>{f.title}</span> : undefined)}
+                    {fields.map((f, s) => isHeaderAction(f.title) ? <span key={s}>{f.title}</span> : undefined)}
                 </MobileSortBar>
 
                 {displayData && <div className={"gridCards" + (reloading ? " gridReloading" : "")}>{displayData.map((row, i) => mobileCard
@@ -488,6 +488,11 @@ export function Grid<T extends { id: string | number }, Q>({
         )}
         </ButtonAppearanceContext.Provider>
     </>
+}
+
+/** A column title that is a control (e.g. an `AddNewButton`) rather than a label; on cards it moves to the toolbar. */
+function isHeaderAction(title: GridField<unknown>["title"]): boolean {
+    return isValidElement<{ onClick?: unknown }>(title) && typeof title.props.onClick === "function";
 }
 
 function parseFromUrl(urlKey: string): Partial<GridQuery> {
