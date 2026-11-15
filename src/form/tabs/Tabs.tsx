@@ -1,5 +1,6 @@
 import {Fragment, KeyboardEvent, ReactNode, useEffect, useId, useState} from "react";
 import {useRouter, useRouteKey} from "../../router";
+import {useIsMobile} from "../../responsive/useResponsive";
 import "./Tabs.css"
 
 /** The side layout gets a filter box above this many visible tabs. */
@@ -9,7 +10,8 @@ export interface Props {
     urlKey: string;
     tabs: Tab[]
     defaultTab?: string;
-    /** "side": a compact left nav with `group` headings and the selected tab's title above its body. */
+    /** "side": a compact left nav with `group` headings and the selected tab's title above its body.
+     *  On mobile it drills down instead: the nav full-width until a tab is picked, then that tab with a back row. */
     layout?: "top" | "side";
 }
 
@@ -34,6 +36,7 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
     const [ready, setReady] = useState(false);
     const [filter, setFilter] = useState("");
     const baseId = useId();
+    const isMobile = useIsMobile();
 
     // Scope this tab's url param to the route it lives under (e.g. a popup), so
     // closing that route also clears the tab param instead of orphaning it.
@@ -59,11 +62,13 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
         setReady(true)
     }, [selectedTab]);
 
+    const side = layout === "side"
+    const drill = side && isMobile
     const selectTab = (key: string) => {
-        if (selectedTab === key) {
+        if (selectedTab === key && !drill) {
             return;
         }
-        setReady(false);
+        if (selectedTab !== key) setReady(false);
         if (key) router.add({[urlKey]: key});
         else router.remove(urlKey);
     }
@@ -83,7 +88,6 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
 
     const current = tabsMap.has(selectedTab) ? selectedTab : defaultTab
     const visible = tabs.filter(t => t && t.isVisible)
-    const side = layout === "side"
     const needle = side && visible.length > SEARCH_FROM ? filter.trim().toLowerCase() : ""
     const shown = needle ? visible.filter(t => t.title.toLowerCase().includes(needle) || t.group?.toLowerCase().includes(needle)) : visible
     const main = side ? shown.filter(t => !t.danger) : shown
@@ -107,7 +111,7 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
     }
 
     const tabItem = (val: Tab) => {
-        const selected = val.urlKey === current
+        const selected = val.urlKey === current && !drill
         return <button key={"tab-" + val.urlKey} type="button" role="tab" id={tabId(val.urlKey)}
                        aria-selected={selected} aria-controls={`${baseId}-panel`} tabIndex={val.urlKey === focusKey ? 0 : -1}
                        className={"tab" + (selected ? " tabSelected" : "") + (val.danger ? " tabDanger" : "")}
@@ -126,7 +130,14 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
     </div>
 
     if (side) {
-        return <div className="tabsArea tabsSide">
+        // The url param, not `current`: on mobile the default tab must not hide the section list.
+        if (drill && tabsMap.has(router.get(urlKey) as string)) {
+            return <div className="tabsArea tabsSide tabsDrill">
+                <button type="button" className="tabsBack" onClick={() => router.remove(urlKey)}>‹ Back</button>
+                {body}
+            </div>
+        }
+        return <div className={"tabsArea tabsSide" + (drill ? " tabsDrill" : "")}>
             <nav className="tabsMenu">
                 {visible.length > SEARCH_FROM && <input className="tabsFilter" type="search" placeholder="Filter" aria-label="Filter sections"
                                                         value={filter} onChange={e => setFilter(e.target.value)}
@@ -140,7 +151,7 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
                     {danger.map(tabItem)}
                 </div>
             </nav>
-            {body}
+            {!drill && body}
         </div>
     }
 

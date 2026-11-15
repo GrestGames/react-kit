@@ -75,6 +75,25 @@ describe("Tabs side layout", () => {
     });
 });
 
+describe("Tabs side layout on mobile", () => {
+    const desktopWidth = window.innerWidth;
+    afterEach(() => { window.innerWidth = desktopWidth; });
+
+    it("lists the sections until one is picked, then shows it with a back row", async () => {
+        window.innerWidth = 390;
+        renderTabs(tabs);
+        expect(screen.queryByRole("tabpanel")).toBeNull();
+        expect(screen.getAllByRole("tab").filter(t => t.getAttribute("aria-selected") === "true")).toEqual([]);
+        await userEvent.click(screen.getByRole("tab", {name: "General"}));
+        expect(router.get("tab")).toBe("general");
+        expect(screen.queryByRole("tab")).toBeNull();
+        expect(screen.getByRole("tabpanel")).toHaveTextContent("general body");
+        await userEvent.click(screen.getByRole("button", {name: "‹ Back"}));
+        expect(router.get("tab")).toBeFalsy();
+        expect(screen.getAllByRole("tab")).toHaveLength(4);
+    });
+});
+
 describe("Tabs top layout", () => {
     it("is a horizontal tablist driven by left/right", async () => {
         renderTabs(tabs.filter(t => !t.danger), "top");

@@ -96,6 +96,8 @@ export function ToolTip({
 
     const hover = useHover(context, {
         enabled: !pinned,
+        // A tap fires emulated hover, which would leave the tooltip covering whatever the tap opened.
+        mouseOnly: true,
         move: anchor === "cursor",
         delay: {open: openDelay, close: closeDelay},
         handleClose: anchor === "target" ? safePolygon() : null,
