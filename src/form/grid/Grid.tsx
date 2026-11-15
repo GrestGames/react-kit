@@ -1,4 +1,4 @@
-import {CSSProperties, Fragment, KeyboardEvent, ReactNode, useEffect, useRef, useState} from "react";
+import {CSSProperties, ReactNode, useEffect, useRef, useState} from "react";
 import "../css/grid.css"
 import {Tracker, TrackerOperation} from "../../EntityTracker";
 import {ApiErrors} from "../../ApiError";
@@ -8,10 +8,9 @@ import {FormObject, useAsyncForm} from "../useAsyncForm";
 import {VALIDATION_ERROR} from "@grest-ts/schema";
 import {Form} from "../Form";
 import {useNarrowerThan} from "../../responsive/useResponsive";
-import {GridListRows, GridListSlot, GridListSort, headerAction, isEmpty as isEmptyValue, rowClick} from "./GridList";
+import {GridListRows, GridListSlot, GridListToolbar, isEmpty as isEmptyValue, rowHandlers} from "./GridList";
 import {ButtonAppearanceContext} from "../buttons/buttonAppearance";
 import {ToolTip} from "../../mini/ToolTip";
-import {Button} from "../buttons/Button";
 
 type FilterState<Q> = Q & GridQuery;
 
@@ -354,35 +353,20 @@ export function Grid<T extends { id: string | number }, Q>({
     const isValidationError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type === VALIDATION_ERROR.TYPE;
     const isOtherError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type !== VALIDATION_ERROR.TYPE;
 
-    /* ── Render ────────────────────────────────────────────────── */
-
     const filtersActive = hasActiveFilters(filter, defaultFilters);
     const showFilters = !!(listMode ? filtersForm && filtersOpen : filtersForm || searchForm);
-    const headerActions = listMode ? fields.map(headerAction).filter(a => a !== undefined) : [];
-
-    const onRowKey = (row: T) => (e: KeyboardEvent<HTMLTableRowElement>) => {
-        if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
-            e.preventDefault();
-            onRowClick!(row);
-        }
-    };
 
     /* ── Render ────────────────────────────────────────────────── */
 
     const rowSpanCounts: number[] = new Array(fields.length).fill(1);
-    return <div className="rkGrid" ref={measureRef}>
+    return <div className={"rkGrid" + (listMode ? " rkGridList" : "")} ref={measureRef}>
         {listMode && searchForm && <div className="area gridFilters gridListSearch">
             <Form prop={F}>
                 <div>{searchForm(F as any)}</div>
             </Form>
         </div>}
-        {listMode && (filtersForm || headerActions.length > 0 || fields.some(f => f.sortName)) && <ButtonAppearanceContext.Provider value="outline"><div className="gridListToolbar">
-            {filtersForm && <Button active={showFilters} onClick={() => setFiltersOpen(!showFilters)}>
-                Filters{filtersActive && <span className="gridListBadge"><span className="gridListSrOnly"> (active)</span></span>}
-            </Button>}
-            <GridListSort fields={fields} orderBy={filter.orderBy} onSort={applySort}/>
-            {headerActions.length > 0 && <div className="gridListToolbarActions">{headerActions.map((a, s) => <Fragment key={s}>{a}</Fragment>)}</div>}
-        </div></ButtonAppearanceContext.Provider>}
+        {listMode && <GridListToolbar fields={fields} orderBy={filter.orderBy} onSort={applySort}
+                                      filters={filtersForm && {open: showFilters, active: filtersActive, toggle: () => setFiltersOpen(!showFilters)}}/>}
         {showFilters && <div className="area gridFilters" style={{zIndex: 1}}>
             <Form prop={F}>
                 <div>
@@ -449,7 +433,7 @@ export function Grid<T extends { id: string | number }, Q>({
                     </tr>
                     {displayData?.map((row: any, i) => {
                         let colSpanSkip = 0;
-                        return <tr key={i} {...onRowClick && {className: "gridRowClickable", tabIndex: 0, onClick: rowClick(onRowClick, row), onKeyDown: onRowKey(row)}}>{fields.map((f, s) => {
+                        return <tr key={i} {...onRowClick && {className: "gridRowClickable", tabIndex: 0, ...rowHandlers(onRowClick, row)}}>{fields.map((f, s) => {
                             if (rowSpanCounts[s] > 1) {
                                 rowSpanCounts[s]--;
                                 return undefined;

@@ -167,7 +167,7 @@ a.mobileOnly {
     pointer-events: none;
 }
 
-/* ── Mobile: grid filter area ──────────────────────── */
+/* ── Phones: Add new in the flow, mobile-only links ── */
 
 @media (max-width: 767px) {
     .gridAddNew {
@@ -175,56 +175,49 @@ a.mobileOnly {
         touch-action: manipulation;
     }
 
-    .gridFilters button {
-        min-height: 40px;
-    }
-
-    .gridFilters table {
-        display: block;
-        width: 100%;
-    }
-
-    .gridFilters table tbody {
-        display: block;
-    }
-
-    .gridFilters table tr {
-        display: block;
-    }
-
-    .gridFilters table td {
-        display: block;
-        text-align: left !important;
-        float: none !important;
-    }
-
-    .gridFilters button {
-        float: none !important;
-        margin-bottom: 4px;
-    }
-
-    .gridFilters .formItem {
-        display: block;
-        margin-bottom: 4px;
-    }
-
-    .gridFilters .formItemWithSuffix {
-        display: flex !important;
-        align-items: center;
-    }
-
-    .gridFilters label {
-        display: block;
-        font-size: var(--rk-font-size-mini);
-        color: var(--rk-text-muted);
-        margin-top: 4px;
-    }
-
     a.mobileOnly {
         color: revert;
         text-decoration: revert;
         pointer-events: auto;
     }
+}
+
+/* ── List layout: filters stack ───────────────────── */
+
+.rkGridList .gridFilters button {
+    float: none !important;
+    min-height: 40px;
+    margin-bottom: 4px;
+}
+
+.rkGridList .gridFilters table,
+.rkGridList .gridFilters table tbody,
+.rkGridList .gridFilters table tr {
+    display: block;
+    width: 100%;
+}
+
+.rkGridList .gridFilters table td {
+    display: block;
+    text-align: left !important;
+    float: none !important;
+}
+
+.rkGridList .gridFilters .formItem {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.rkGridList .gridFilters .formItemWithSuffix {
+    display: flex !important;
+    align-items: center;
+}
+
+.rkGridList .gridFilters label {
+    display: block;
+    font-size: var(--rk-font-size-mini);
+    color: var(--rk-text-muted);
+    margin-top: 4px;
 }
 
 table.grid tr.gridRowClickable {
