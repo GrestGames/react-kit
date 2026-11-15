@@ -260,7 +260,7 @@
 
 .tabsArea.tabsDrill > .tabsContent > .tabsTitleRow {
     gap: 0;
-    margin: 0 0 10px -12px;
+    margin: 0 0 10px -8px;
 }
 
 .tabsArea.tabsDrill .tabsBack {

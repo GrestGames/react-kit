@@ -39,8 +39,9 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
     const baseId = useId();
     const isMobile = useIsMobile();
     const areaRef = useRef<HTMLDivElement>(null);
-    // The section opened from the mobile list: Back pops its history entry and refocuses its row.
-    const openedFrom = useRef<string | undefined>(undefined);
+    // The section opened from the mobile list and the history depth it was pushed at:
+    // Back pops that entry (if still on top) and refocuses the section's row.
+    const openedFrom = useRef<{key: string, depth: number} | undefined>(undefined);
 
     // Scope this tab's url param to the route it lives under (e.g. a popup), so
     // closing that route also clears the tab param instead of orphaning it.
@@ -76,7 +77,7 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
         if (drilled) {
             areaRef.current?.scrollIntoView({block: "start"});
         } else {
-            document.getElementById(tabId(openedFrom.current))?.focus();
+            if (drill) document.getElementById(tabId(openedFrom.current.key))?.focus();
             openedFrom.current = undefined;
         }
     }, [drilled]);
@@ -90,11 +91,12 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
         else router.remove(urlKey);
     }
     const openSection = (key: string) => {
-        openedFrom.current = key;
         router.add({[urlKey]: key});
+        openedFrom.current = {key, depth: window.history.length};
     }
     const back = () => {
-        if (openedFrom.current) window.history.back();
+        const opened = openedFrom.current
+        if (opened && opened.key === urlTab && opened.depth === window.history.length) window.history.back();
         else router.remove(urlKey);
     }
     const pick = drill ? openSection : selectTab

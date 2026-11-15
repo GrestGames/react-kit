@@ -1,5 +1,5 @@
 import {afterEach, describe, expect, it} from "vitest";
-import {render, screen, waitFor} from "@testing-library/react";
+import {act, render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {Router, RouterProvider} from "../../router";
 import {Tabs, type Props, type Tab} from "./Tabs";
@@ -102,6 +102,16 @@ describe("Tabs side layout on mobile", () => {
         await waitFor(() => expect(router.get("tab")).toBeFalsy());
         expect(window.location.search).toBe("");
         expect(window.history.length).toBe(depth + 1);
+    });
+
+    it("returns to the list when another section was pushed after the one opened from it", async () => {
+        window.innerWidth = 390;
+        renderTabs(tabs);
+        await userEvent.click(screen.getByRole("button", {name: "General"}));
+        act(() => router.add({tab: "clouds"}));
+        await userEvent.click(screen.getByRole("button", {name: "Back"}));
+        expect(router.get("tab")).toBeFalsy();
+        expect(screen.getByRole("button", {name: "Clouds"})).toBeInTheDocument();
     });
 
     it("opens a deep-linked section, whose back button returns to the list", async () => {
