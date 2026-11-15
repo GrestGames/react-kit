@@ -62,7 +62,7 @@
 
 /* ── Mobile ────────────────────────────────────────── */
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     .tabsArea .tabsMenu {
         display: flex;
         overflow-x: auto;
@@ -249,19 +249,34 @@
     padding-top: 4px;
 }
 
-.tabsArea.tabsDrill > .tabsBack {
-    font: inherit;
-    display: flex;
-    align-items: center;
+.tabsArea.tabsDrill > .tabsMenu .tabsFilter {
     min-height: 40px;
-    margin: 0 0 8px;
-    padding: 0 4px;
+    font-size: 16px;
+}
+
+.tabsArea.tabsDrill > .tabsContent {
+    position: relative;
+    padding: 0;
+}
+
+.tabsArea.tabsDrill > .tabsContent > .tabsTitleRow {
+    justify-content: flex-start;
+    gap: 0;
+    margin: 0 0 10px -12px;
+}
+
+.tabsArea.tabsDrill > .tabsContent > .tabsTitleRow > .tabsTitleActions {
+    margin-left: auto;
+}
+
+.tabsArea.tabsDrill .tabsBack {
+    font: inherit;
+    font-size: var(--rk-font-size-gigantic);
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
     border: none;
     background: none;
     color: var(--rk-accent);
     cursor: pointer;
-}
-
-.tabsArea.tabsDrill > .tabsContent {
-    padding: 0;
 }
