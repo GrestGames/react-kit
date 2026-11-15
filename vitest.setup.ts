@@ -6,3 +6,6 @@ globalThis.IntersectionObserver = class {
     unobserve() {}
     disconnect() {}
 } as unknown as typeof IntersectionObserver;
+
+// jsdom has no layout, so no scrollIntoView.
+Element.prototype.scrollIntoView = () => {};

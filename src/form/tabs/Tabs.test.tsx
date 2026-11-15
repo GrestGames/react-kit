@@ -1,5 +1,5 @@
 import {afterEach, describe, expect, it} from "vitest";
-import {render, screen} from "@testing-library/react";
+import {act, render, screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {Router, RouterProvider} from "../../router";
 import {Tabs, type Props, type Tab} from "./Tabs";
@@ -7,8 +7,8 @@ import {Tabs, type Props, type Tab} from "./Tabs";
 let router: Router;
 afterEach(() => router?.destroy());
 
-function renderTabs(tabs: Tab[], layout: Props["layout"] = "side") {
-    window.history.replaceState({}, "", "/");
+function renderTabs(tabs: Tab[], layout: Props["layout"] = "side", url = "/") {
+    window.history.replaceState({}, "", url);
     router = new Router({"tab=?": () => null}, "");
     return render(<RouterProvider router={router}><Tabs urlKey="tab" defaultTab="general" layout={layout} tabs={tabs}/></RouterProvider>);
 }
@@ -72,6 +72,55 @@ describe("Tabs side layout", () => {
     it("has no filter with 15 tabs or fewer", () => {
         renderTabs(tabs);
         expect(screen.queryByRole("searchbox")).toBeNull();
+    });
+});
+
+describe("Tabs side layout on mobile", () => {
+    const desktopWidth = window.innerWidth;
+    afterEach(() => { window.innerWidth = desktopWidth; });
+
+    it("lists the sections as plain buttons until one is picked, then shows it with a back button", async () => {
+        window.innerWidth = 390;
+        renderTabs(tabs);
+        expect(screen.queryByRole("tab")).toBeNull();
+        expect(screen.queryByRole("region")).toBeNull();
+        await userEvent.click(screen.getByRole("button", {name: "General"}));
+        expect(router.get("tab")).toBe("general");
+        expect(screen.queryByRole("button", {name: "Repositories"})).toBeNull();
+        expect(screen.getByRole("region", {name: "General"})).toHaveTextContent("general body");
+        await userEvent.click(screen.getByRole("button", {name: "Back"}));
+        await waitFor(() => expect(router.get("tab")).toBeFalsy());
+        expect(screen.getByRole("button", {name: "General"})).toHaveFocus();
+    });
+
+    it("goes back through history, so browser back after Back doesn't reopen the section", async () => {
+        window.innerWidth = 390;
+        renderTabs(tabs);
+        const depth = window.history.length;
+        await userEvent.click(screen.getByRole("button", {name: "Clouds"}));
+        await userEvent.click(screen.getByRole("button", {name: "Back"}));
+        await waitFor(() => expect(router.get("tab")).toBeFalsy());
+        expect(window.location.search).toBe("");
+        expect(window.history.length).toBe(depth + 1);
+    });
+
+    it("returns to the list when another section was pushed after the one opened from it", async () => {
+        window.innerWidth = 390;
+        renderTabs(tabs);
+        await userEvent.click(screen.getByRole("button", {name: "General"}));
+        act(() => router.add({tab: "clouds"}));
+        await userEvent.click(screen.getByRole("button", {name: "Back"}));
+        expect(router.get("tab")).toBeFalsy();
+        expect(screen.getByRole("button", {name: "Clouds"})).toBeInTheDocument();
+    });
+
+    it("opens a deep-linked section, whose back button returns to the list", async () => {
+        window.innerWidth = 390;
+        renderTabs(tabs, "side", "/?tab=clouds");
+        expect(screen.getByRole("region", {name: "Clouds"})).toHaveTextContent("clouds body");
+        await userEvent.click(screen.getByRole("button", {name: "Back"}));
+        expect(router.get("tab")).toBeFalsy();
+        expect(screen.getByRole("button", {name: "Clouds"})).toBeInTheDocument();
     });
 });
 

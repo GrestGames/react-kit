@@ -1,5 +1,7 @@
-import {Fragment, KeyboardEvent, ReactNode, useEffect, useId, useState} from "react";
+import {Fragment, KeyboardEvent, ReactNode, useEffect, useId, useRef, useState} from "react";
 import {useRouter, useRouteKey} from "../../router";
+import {useIsMobile} from "../../responsive/useResponsive";
+import {IconButton} from "../buttons/IconButton";
 import "./Tabs.css"
 
 /** The side layout gets a filter box above this many visible tabs. */
@@ -9,7 +11,8 @@ export interface Props {
     urlKey: string;
     tabs: Tab[]
     defaultTab?: string;
-    /** "side": a compact left nav with `group` headings and the selected tab's title above its body. */
+    /** "side": a compact left nav with `group` headings and the selected tab's title above its body.
+     *  On mobile it drills down instead: the nav full-width until a tab is picked, then that tab with a back row. */
     layout?: "top" | "side";
 }
 
@@ -34,6 +37,11 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
     const [ready, setReady] = useState(false);
     const [filter, setFilter] = useState("");
     const baseId = useId();
+    const isMobile = useIsMobile();
+    const areaRef = useRef<HTMLDivElement>(null);
+    // The section opened from the mobile list and the history depth it was pushed at:
+    // Back pops that entry (if still on top) and refocuses the section's row.
+    const openedFrom = useRef<{key: string, depth: number} | undefined>(undefined);
 
     // Scope this tab's url param to the route it lives under (e.g. a popup), so
     // closing that route also clears the tab param instead of orphaning it.
@@ -53,11 +61,26 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
         }
     })
 
-    const selectedTab = (router.get(urlKey) as string) || defaultTab;
+    const urlTab: string | undefined = router.get(urlKey);
+    const selectedTab = urlTab || defaultTab;
+    const side = layout === "side"
+    const drill = side && isMobile
+    // The url param, not `selectedTab`: on mobile the default tab must not hide the section list.
+    const drilled = drill && !!urlTab && tabsMap.has(urlTab)
 
     useEffect(() => {
         setReady(true)
     }, [selectedTab]);
+
+    useEffect(() => {
+        if (!openedFrom.current) return;
+        if (drilled) {
+            areaRef.current?.scrollIntoView({block: "start"});
+        } else {
+            if (drill) document.getElementById(tabId(openedFrom.current.key))?.focus();
+            openedFrom.current = undefined;
+        }
+    }, [drilled]);
 
     const selectTab = (key: string) => {
         if (selectedTab === key) {
@@ -67,6 +90,16 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
         if (key) router.add({[urlKey]: key});
         else router.remove(urlKey);
     }
+    const openSection = (key: string) => {
+        router.add({[urlKey]: key});
+        openedFrom.current = {key, depth: window.history.length};
+    }
+    const back = () => {
+        const opened = openedFrom.current
+        if (opened && opened.key === urlTab && opened.depth === window.history.length) window.history.back();
+        else router.remove(urlKey);
+    }
+    const pick = drill ? openSection : selectTab
 
     function getTabBody() {
         try {
@@ -83,7 +116,6 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
 
     const current = tabsMap.has(selectedTab) ? selectedTab : defaultTab
     const visible = tabs.filter(t => t && t.isVisible)
-    const side = layout === "side"
     const needle = side && visible.length > SEARCH_FROM ? filter.trim().toLowerCase() : ""
     const shown = needle ? visible.filter(t => t.title.toLowerCase().includes(needle) || t.group?.toLowerCase().includes(needle)) : visible
     const main = side ? shown.filter(t => !t.danger) : shown
@@ -107,31 +139,37 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
     }
 
     const tabItem = (val: Tab) => {
-        const selected = val.urlKey === current
-        return <button key={"tab-" + val.urlKey} type="button" role="tab" id={tabId(val.urlKey)}
-                       aria-selected={selected} aria-controls={`${baseId}-panel`} tabIndex={val.urlKey === focusKey ? 0 : -1}
+        const selected = val.urlKey === current && !drill
+        const tabProps = drill ? {} : {role: "tab", "aria-selected": selected, "aria-controls": `${baseId}-panel`, tabIndex: val.urlKey === focusKey ? 0 : -1}
+        return <button key={"tab-" + val.urlKey} type="button" id={tabId(val.urlKey)} {...tabProps}
                        className={"tab" + (selected ? " tabSelected" : "") + (val.danger ? " tabDanger" : "")}
-                       onClick={() => selectTab(val.urlKey)}>
+                       onClick={() => pick(val.urlKey)}>
             {val.icon && <span className="tabIcon" aria-hidden>{val.icon}</span>}
             <span className="tabLabel">{val.title}</span>
         </button>
     }
-    const body = <div id={`${baseId}-panel`} role="tabpanel" aria-labelledby={tabId(current)}
+    const currentTab = tabsMap.get(current)
+    const listProps = drill ? {} : {role: "tablist", "aria-orientation": "vertical" as const, onKeyDown}
+    const body = <div id={`${baseId}-panel`} role={drilled ? "region" : "tabpanel"} aria-labelledby={drilled ? `${baseId}-title` : tabId(current)}
                       className={(ready ? "tabsContentLoaded" : "tabsContentInit") + " tabsContent"}>
         {side && <div className="tabsTitleRow">
-            <h2 className="tabsTitle">{tabsMap.get(current)?.title}</h2>
-            <div className="tabsTitleActions">{tabsMap.get(current)?.actions?.()}</div>
+            {drilled && <IconButton icon="‹" title="Back" size={22} className="tabsBack" onClick={back}/>}
+            <h2 id={`${baseId}-title`} className="tabsTitle">{currentTab?.title}</h2>
+            <div className="tabsTitleActions">{currentTab?.actions?.()}</div>
         </div>}
         {getTabBody()}
     </div>
 
     if (side) {
-        return <div className="tabsArea tabsSide">
+        if (drilled) {
+            return <div ref={areaRef} className="tabsArea tabsSide tabsDrill">{body}</div>
+        }
+        return <div className={"tabsArea tabsSide" + (drill ? " tabsDrill" : "")}>
             <nav className="tabsMenu">
                 {visible.length > SEARCH_FROM && <input className="tabsFilter" type="search" placeholder="Filter" aria-label="Filter sections"
                                                         value={filter} onChange={e => setFilter(e.target.value)}
-                                                        onKeyDown={e => { if (e.key === "Enter" && order[0]) { e.preventDefault(); selectTab(order[0].urlKey) } }}/>}
-                <div role="tablist" aria-orientation="vertical" className="tabsList" onKeyDown={onKeyDown}>
+                                                        onKeyDown={e => { if (e.key === "Enter" && order[0]) { e.preventDefault(); pick(order[0].urlKey) } }}/>}
+                <div className="tabsList" {...listProps}>
                     {main.map((t, i) => <Fragment key={"tab-" + t.urlKey}>
                         {t.group && t.group !== main[i - 1]?.group && <div className="tabsGroup" role="presentation">{t.group}</div>}
                         {tabItem(t)}
@@ -140,7 +178,7 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
                     {danger.map(tabItem)}
                 </div>
             </nav>
-            {body}
+            {!drill && body}
         </div>
     }
 
