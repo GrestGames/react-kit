@@ -62,8 +62,8 @@
 
 /* ── Mobile ────────────────────────────────────────── */
 
-@media (max-width: 767px) {
-    .tabsArea .tabsMenu {
+@media (max-width: 768px) {
+    .tabsArea:not(.tabsSide) > .tabsMenu {
         display: flex;
         overflow-x: auto;
         overflow-y: hidden;
@@ -74,7 +74,7 @@
         scrollbar-width: thin;
     }
 
-    .tabsArea .tabsMenu .tab {
+    .tabsArea:not(.tabsSide) > .tabsMenu .tab {
         flex-shrink: 0;
         font-size: var(--rk-font-size-small);
         padding: 6px 10px;
@@ -199,7 +199,6 @@
 .tabsArea.tabsSide > .tabsContent > .tabsTitleRow {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 8px;
     margin: 0 0 10px;
 }
@@ -210,6 +209,7 @@
     align-items: center;
     gap: 8px;
     height: 0;
+    margin-left: auto;
 }
 
 .tabsArea.tabsSide > .tabsContent > .tabsTitleRow > .tabsTitle {
@@ -233,7 +233,6 @@
 .tabsArea.tabsDrill > .tabsMenu .tab {
     min-height: 44px;
     padding: 10px 12px;
-    font-size: var(--rk-font-size-normal);
     border-bottom: 1px solid var(--rk-border);
     border-radius: 0;
 }
@@ -260,23 +259,13 @@
 }
 
 .tabsArea.tabsDrill > .tabsContent > .tabsTitleRow {
-    justify-content: flex-start;
     gap: 0;
     margin: 0 0 10px -12px;
 }
 
-.tabsArea.tabsDrill > .tabsContent > .tabsTitleRow > .tabsTitleActions {
-    margin-left: auto;
-}
-
 .tabsArea.tabsDrill .tabsBack {
-    font: inherit;
-    font-size: var(--rk-font-size-gigantic);
     flex-shrink: 0;
     width: 44px;
     height: 44px;
-    border: none;
-    background: none;
     color: var(--rk-accent);
-    cursor: pointer;
 }

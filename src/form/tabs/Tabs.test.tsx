@@ -77,7 +77,6 @@ describe("Tabs side layout", () => {
 
 describe("Tabs side layout on mobile", () => {
     const desktopWidth = window.innerWidth;
-    Element.prototype.scrollIntoView = () => {};
     afterEach(() => { window.innerWidth = desktopWidth; });
 
     it("lists the sections as plain buttons until one is picked, then shows it with a back button", async () => {

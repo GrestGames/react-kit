@@ -1,6 +1,7 @@
 import {Fragment, KeyboardEvent, ReactNode, useEffect, useId, useRef, useState} from "react";
 import {useRouter, useRouteKey} from "../../router";
 import {useIsMobile} from "../../responsive/useResponsive";
+import {IconButton} from "../buttons/IconButton";
 import "./Tabs.css"
 
 /** The side layout gets a filter box above this many visible tabs. */
@@ -145,12 +146,14 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
             <span className="tabLabel">{val.title}</span>
         </button>
     }
+    const currentTab = tabsMap.get(current)
+    const listProps = drill ? {} : {role: "tablist", "aria-orientation": "vertical" as const, onKeyDown}
     const body = <div id={`${baseId}-panel`} role={drilled ? "region" : "tabpanel"} aria-labelledby={drilled ? `${baseId}-title` : tabId(current)}
                       className={(ready ? "tabsContentLoaded" : "tabsContentInit") + " tabsContent"}>
         {side && <div className="tabsTitleRow">
-            {drilled && <button type="button" className="tabsBack" aria-label="Back" onClick={back}>‹</button>}
-            <h2 id={`${baseId}-title`} className="tabsTitle">{tabsMap.get(current)?.title}</h2>
-            <div className="tabsTitleActions">{tabsMap.get(current)?.actions?.()}</div>
+            {drilled && <IconButton icon="‹" title="Back" size={22} className="tabsBack" onClick={back}/>}
+            <h2 id={`${baseId}-title`} className="tabsTitle">{currentTab?.title}</h2>
+            <div className="tabsTitleActions">{currentTab?.actions?.()}</div>
         </div>}
         {getTabBody()}
     </div>
@@ -164,7 +167,7 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
                 {visible.length > SEARCH_FROM && <input className="tabsFilter" type="search" placeholder="Filter" aria-label="Filter sections"
                                                         value={filter} onChange={e => setFilter(e.target.value)}
                                                         onKeyDown={e => { if (e.key === "Enter" && order[0]) { e.preventDefault(); pick(order[0].urlKey) } }}/>}
-                <div role={drill ? undefined : "tablist"} aria-orientation={drill ? undefined : "vertical"} className="tabsList" onKeyDown={drill ? undefined : onKeyDown}>
+                <div className="tabsList" {...listProps}>
                     {main.map((t, i) => <Fragment key={"tab-" + t.urlKey}>
                         {t.group && t.group !== main[i - 1]?.group && <div className="tabsGroup" role="presentation">{t.group}</div>}
                         {tabItem(t)}
