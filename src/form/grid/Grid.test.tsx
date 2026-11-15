@@ -1,4 +1,4 @@
-import {describe, it, expect, vi} from "vitest";
+import {describe, it, expect, vi, beforeEach, afterEach} from "vitest";
 import {render, screen, act, waitFor, fireEvent} from "@testing-library/react";
 import {Grid} from "./Grid";
 import {Tracker} from "../../EntityTracker";
@@ -311,5 +311,38 @@ describe("Grid colSpan", () => {
         const cells = () => Array.from(view.container.querySelectorAll("table.grid tr")).slice(1)
             .map(tr => Array.from(tr.querySelectorAll("td")).map(td => td.textContent));
         await waitFor(() => expect(cells()).toEqual([["all", "Alpha", "img-a"], ["Beta"], ["Gamma", "img-c"]]));
+    });
+});
+
+describe("Grid on mobile", () => {
+    beforeEach(() => { window.innerWidth = 390 });
+    afterEach(() => { window.innerWidth = 1024 });
+
+    it("renders each row as a card of label/value lines, skipping empty values", async () => {
+        const view = render(<Grid<Row, any>
+            load={async () => ({rows: rows.slice(0, 2)})}
+            hideFooter
+            fields={[
+                {title: "Name", value: r => r.name},
+                {title: "Note", value: r => r.id === "img-a" ? "first" : ""},
+                {title: "", value: r => <button>Open {r.id}</button>},
+            ]}
+        />);
+        const cards = () => Array.from(view.container.querySelectorAll(".gridAutoCard"))
+            .map(card => Array.from(card.children).map(c => c.className + ":" + c.textContent));
+        await waitFor(() => expect(cards()).toEqual([
+            ["gridAutoCardRow:NameAlpha", "gridAutoCardRow:Notefirst", "gridAutoCardFull:Open img-a"],
+            ["gridAutoCardRow:NameBeta", "gridAutoCardFull:Open img-b"],
+        ]));
+        expect(view.container.querySelector("table.grid")).toBeNull();
+    });
+
+    it("moves a column title that is an action into the card toolbar", async () => {
+        render(<Grid<Row, any>
+            load={async () => ({rows})}
+            hideFooter
+            fields={[{title: "Name", value: r => r.name}, {title: <button>Invite</button>, value: () => "x"}]}
+        />);
+        expect(await screen.findByRole("button", {name: "Invite"})).toBeTruthy();
     });
 });

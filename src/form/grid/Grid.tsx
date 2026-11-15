@@ -307,6 +307,24 @@ export function Grid<T extends { id: string | number }, Q>({
         }
     }
 
+    /** A field's cells as label/value pairs; untitled fields (actions) and colSpan cells take the full width. */
+    const autoCard = (row: T, i: number, data: T[]) => {
+        let colSpanSkip = 0;
+        return fields.map((f, s) => {
+            if (colSpanSkip > 0) {
+                colSpanSkip--;
+                return undefined;
+            }
+            const colSpanValue = f.colSpan?.(row, i, data);
+            if (colSpanValue !== undefined && colSpanValue > 1) colSpanSkip = colSpanValue - 1;
+            const value = getValue(f, i, row, data);
+            if (value === undefined || value === null || value === "" || value === false) return undefined;
+            return typeof f.title === "string" && f.title && !colSpanSkip
+                ? <div key={s} className="gridAutoCardRow"><span className="gridAutoCardLabel">{f.title}</span><span>{value}</span></div>
+                : <div key={s} className="gridAutoCardFull">{value}</div>;
+        });
+    }
+
     const applySort = (field: string, dir: "asc" | "desc") => {
         updateData(undefined);
         setFilter((filter) => {
@@ -361,13 +379,17 @@ export function Grid<T extends { id: string | number }, Q>({
             {isLoading && <div className="area"><div className="gridCardsLoading"><div className="loader"></div></div></div>}
             {isValidationError && <div className="area"><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></div>}
             {isOtherError && <div className="area"><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox></div>}
-        </> : isMobile && mobileCard ? (
+        </> : isMobile ? (
             /* ── Mobile: card view ─────────────────────────────── */
             <div className="area">
                 {reloading && <div className="gridReloadBar"/>}
-                <MobileSortBar fields={fields} orderBy={filter.orderBy} onSort={applySort}/>
+                <MobileSortBar fields={fields} orderBy={filter.orderBy} onSort={applySort}>
+                    {fields.map((f, s) => f.title && typeof f.title !== "string" ? <span key={s}>{f.title}</span> : undefined)}
+                </MobileSortBar>
 
-                {displayData && <div className={"gridCards" + (reloading ? " gridReloading" : "")}>{displayData.map((row, i) => <div key={row.id ?? i} className="gridCard">{mobileCard(row, i)}</div>)}</div>}
+                {displayData && <div className={"gridCards" + (reloading ? " gridReloading" : "")}>{displayData.map((row, i) => mobileCard
+                    ? <div key={row.id ?? i} className="gridCard">{mobileCard(row, i)}</div>
+                    : <div key={row.id ?? i} className="gridCard gridAutoCard">{autoCard(row, i, displayData)}</div>)}</div>}
 
                 {hasMore && <div onClick={loadMore} ref={containerRef} className="gridCardsLoadMore">Load more</div>}
                 {isEmpty && <TipBox intent="default">No entries found!</TipBox>}

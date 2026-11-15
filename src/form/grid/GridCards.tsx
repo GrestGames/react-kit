@@ -1,3 +1,4 @@
+import {Children, ReactNode} from "react";
 import {GridField, GridOrderBy} from "./Grid";
 import "./GridCards.css";
 
@@ -7,14 +8,17 @@ interface MobileSortBarProps<T> {
     fields: GridField<T>[];
     orderBy: GridOrderBy | undefined;
     onSort: (field: string, dir: "asc" | "desc") => void;
+    /** Header-cell actions (e.g. an add button in a column title) that have no column on a card. */
+    children?: ReactNode;
 }
 
-export function MobileSortBar<T>({fields, orderBy, onSort}: MobileSortBarProps<T>) {
+export function MobileSortBar<T>({fields, orderBy, onSort, children}: MobileSortBarProps<T>) {
     const sortable = fields.filter(f => f.sortName);
-    if (sortable.length === 0) return null;
+    const hasActions = Children.toArray(children).length > 0;
+    if (sortable.length === 0 && !hasActions) return null;
 
     return <div className="gridMobileSort">
-        <select
+        {sortable.length > 0 && <select
             className="rkSelect"
             value={orderBy?.field || ""}
             onChange={(e) => {
@@ -30,7 +34,7 @@ export function MobileSortBar<T>({fields, orderBy, onSort}: MobileSortBarProps<T
                 const label = typeof f.title === "string" ? f.title : String(f.sortName);
                 return <option key={String(f.sortName)} value={String(f.sortName)}>{label}</option>;
             })}
-        </select>
+        </select>}
         {orderBy?.field && <button
             type="button"
             className="gridMobileSortDir"
@@ -38,5 +42,6 @@ export function MobileSortBar<T>({fields, orderBy, onSort}: MobileSortBarProps<T
         >
             {orderBy.dir === "asc" ? "↑" : "↓"}
         </button>}
+        {hasActions && <div className="gridMobileActions">{children}</div>}
     </div>;
 }

@@ -11,12 +11,18 @@
 
 .gridMobileSort select {
     flex: 1;
-    height: 32px;
+    height: 40px;
+}
+
+.gridMobileActions {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
 }
 
 .gridMobileSortDir {
-    width: 36px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     padding: 0;
     font-size: 16px;
     line-height: 1;
@@ -43,6 +49,35 @@
 
 .gridCard:nth-child(even) {
     background-color: var(--rk-bg-subtle);
+}
+
+/* ── Auto card: one label/value line per titled field ── */
+
+.gridAutoCard {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 4px 12px;
+    align-items: baseline;
+}
+
+.gridAutoCardRow {
+    display: contents;
+}
+
+.gridAutoCardLabel {
+    font-size: var(--rk-font-size-mini);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--rk-text-muted);
+}
+
+.gridAutoCardRow > :last-child, .gridAutoCardFull {
+    overflow-wrap: anywhere;
+}
+
+.gridAutoCardFull {
+    grid-column: 1 / -1;
 }
 
 /* ── Card title ────────────────────────────────────── */
