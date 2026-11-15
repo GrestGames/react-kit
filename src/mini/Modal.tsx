@@ -16,11 +16,13 @@ interface ModalProps {
     onDismiss?: (event?: Event) => void;
     lockScroll?: boolean;
     focusTrap?: boolean;
-    initialFocus?: number;
+    /** "dialog" focuses the dialog container itself: focus moves in without ringing any control. */
+    initialFocus?: number | "dialog";
+    labelledBy?: string;
     children: ReactNode;
 }
 
-export function Modal({band, order, onDismiss, lockScroll = true, focusTrap = true, initialFocus, children}: ModalProps) {
+export function Modal({band, order, onDismiss, lockScroll = true, focusTrap = true, initialFocus, labelledBy, children}: ModalProps) {
     const id = useId();
     const {offset, isTop, isTopModal} = useOverlaySlot(id, band, order ?? 0, true);
     const z = overlayZ(band, offset);
@@ -32,8 +34,8 @@ export function Modal({band, order, onDismiss, lockScroll = true, focusTrap = tr
 
     return <FloatingPortal>
         <FloatingOverlay lockScroll={lockScroll && isTop} style={{zIndex: z, background: "var(--rk-scrim)"}}/>
-        <FloatingFocusManager context={context} modal initialFocus={initialFocus} disabled={!isTopModal || !focusTrap}>
-            <div ref={refs.setFloating} {...getFloatingProps()} style={{position: "relative", zIndex: z}}>
+        <FloatingFocusManager context={context} modal initialFocus={initialFocus === "dialog" ? refs.floating : initialFocus} disabled={!isTopModal || !focusTrap}>
+            <div ref={refs.setFloating} {...getFloatingProps()} aria-labelledby={labelledBy} style={{position: "relative", zIndex: z, outline: "none"}}>
                 {children}
             </div>
         </FloatingFocusManager>

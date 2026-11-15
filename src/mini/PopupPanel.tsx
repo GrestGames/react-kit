@@ -2,7 +2,8 @@ import {Panel} from "./Panel";
 import {Modal} from "./Modal";
 import {Button} from "../form/buttons/Button";
 import {useOverlayOrder} from "./OverlayStack";
-import {createContext, CSSProperties, ReactNode, useCallback, useRef, useState} from "react";
+import {lastInputWasKeyboard} from "../helpers/inputModality";
+import {createContext, CSSProperties, ReactNode, useCallback, useId, useRef, useState} from "react";
 
 type CloseGuardFn = () => boolean;
 
@@ -48,14 +49,16 @@ export function PopupPanel({title, subTitle, width, onClickTitle, onClose, style
     }, [onClose]);
 
     const order = useOverlayOrder();
+    const titleId = useId();
 
     // Panel already scroll-locks via useDisableMainPage; FloatingOverlay's lockScroll would
     // double-lock and add a spurious body padding-right (the app forces html overflow-y:scroll,
     // so its scrollbar never disappears), shifting the page left and forcing a horizontal scrollbar.
-    // initialFocus 1 skips the close button (first tabbable) so focus starts in the content.
-    return <Modal band="panel" order={order} onDismiss={tryClose} lockScroll={false} initialFocus={1}>
+    // Script focus can match :focus-visible (e.g. deep-link opens), ringing the first control as if selected;
+    // only keyboard users get focus on it (1 skips the close button), others get the dialog itself.
+    return <Modal band="panel" order={order} onDismiss={tryClose} lockScroll={false} initialFocus={lastInputWasKeyboard() ? 1 : "dialog"} labelledBy={title ? titleId : undefined}>
         <CloseGuardContext.Provider value={{register: registerGuard}}>
-            <Panel title={title} subTitle={subTitle} style={style} width={width} onClickTitle={onClickTitle} onClose={tryClose}>
+            <Panel titleId={titleId} title={title} subTitle={subTitle} style={style} width={width} onClickTitle={onClickTitle} onClose={tryClose}>
                 {children}
             </Panel>
         </CloseGuardContext.Provider>

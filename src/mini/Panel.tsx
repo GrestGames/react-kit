@@ -8,13 +8,14 @@ export interface Props {
     width?: string | number,
     children: ReactNode | ReactNode[],
     onClose?: () => void;
+    titleId?: string;
     onClickTitle?: () => void
     zIndex?: number | string,
     style?: CSSProperties,
     className?: string
 }
 
-export function Panel({children, title, subTitle, width, zIndex, style, className, onClose, onClickTitle}: Props) {
+export function Panel({children, title, subTitle, width, zIndex, style, className, onClose, onClickTitle, titleId}: Props) {
     const [isDrawnOnce, setIsDrawnOnce] = React.useState(false);
     useEffect(() => {
         setTimeout(() => {
@@ -28,7 +29,7 @@ export function Panel({children, title, subTitle, width, zIndex, style, classNam
 
         <div className="panelTop">
             {title && <div className="panelTitleArea" onClick={onClickTitle} style={{cursor: onClickTitle ? "pointer" : undefined}}>
-                <span className="panelTitle">{title}</span>
+                <span id={titleId} className="panelTitle">{title}</span>
                 {subTitle && <><br/><span className="panelSubTitle">{subTitle}</span></>}
             </div>}
 
