@@ -46,7 +46,7 @@ export interface Props<T extends { id: string | number }, Q> {
     /** Makes the whole row the tap target; the row's own buttons and links keep their clicks. */
     onRowClick?: (row: T) => void;
     /** Renders each list-layout row itself instead of placing fields by their `list` hint. */
-    mobileCard?: (row: T, index: number) => ReactNode;
+    listRow?: (row: T, index: number) => ReactNode;
 
     /** Alternative blocks/card view renderer. When provided and viewMode is "blocks", renders this instead of the table. */
     blocksView?: (rows: T[]) => ReactNode;
@@ -87,8 +87,8 @@ export interface GridField<T> {
     /** Max cell width in px: content stays on one line, cut with an ellipsis, full value in a tooltip. */
     truncate?: number;
     style?: CSSProperties
-    /** Place in the list layout. Untagged fields are `label value` lines; untitled ones default to `actions`,
-     *  and a control as an `actions` or `hide` column's title moves to the list toolbar. */
+    /** Place in the list layout. Untagged fields are `label value` lines (just the value when untitled).
+     *  A control as an `actions` or `hide` column's title (an `AddNewButton`) shows in the list toolbar. */
     list?: GridListSlot;
 }
 
@@ -108,7 +108,7 @@ export function Grid<T extends { id: string | number }, Q>({
                                                                            compact,
                                                                            layout,
                                                                            onRowClick,
-                                                                           mobileCard,
+                                                                           listRow,
                                                                            blocksView,
                                                                            viewMode,
                                                                            reloadKey,
@@ -353,6 +353,8 @@ export function Grid<T extends { id: string | number }, Q>({
     const isValidationError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type === VALIDATION_ERROR.TYPE;
     const isOtherError = dataState.state === AsyncState.ERROR && dataState.error && dataState.error.type !== VALIDATION_ERROR.TYPE;
 
+    // F also carries the grid's own limit/orderBy; the form callbacks only see the caller's filters.
+    const filterF = F as unknown as FormObject<Q>;
     const filtersActive = hasActiveFilters(filter, defaultFilters);
     const showFilters = !!(listMode ? filtersForm && filtersOpen : filtersForm || searchForm);
 
@@ -362,7 +364,7 @@ export function Grid<T extends { id: string | number }, Q>({
     return <div className={"rkGrid" + (listMode ? " rkGridList" : "")} ref={measureRef}>
         {listMode && searchForm && <div className="area gridFilters gridListSearch">
             <Form prop={F}>
-                <div>{searchForm(F as any)}</div>
+                <div>{searchForm(filterF)}</div>
             </Form>
         </div>}
         {listMode && <GridListToolbar fields={fields} orderBy={filter.orderBy} onSort={applySort}
@@ -370,8 +372,8 @@ export function Grid<T extends { id: string | number }, Q>({
         {showFilters && <div className="area gridFilters" style={{zIndex: 1}}>
             <Form prop={F}>
                 <div>
-                    {!listMode && searchForm?.(F as any)}
-                    {filtersForm?.(F as any)}
+                    {!listMode && searchForm?.(filterF)}
+                    {filtersForm?.(filterF)}
                 </div>
             </Form>
         </div>}
@@ -391,7 +393,7 @@ export function Grid<T extends { id: string | number }, Q>({
             <div className="area gridListArea">
                 {reloading && <div className="gridReloadBar"/>}
                 {displayData && displayData.length > 0 && <div className={reloading ? "gridReloading" : undefined}>
-                    <GridListRows fields={fields} rows={displayData} onRowClick={onRowClick} card={mobileCard}
+                    <GridListRows fields={fields} rows={displayData} onRowClick={onRowClick} card={listRow}
                                   cell={(f, row, i) => getValue(f, i, row, displayData)}/>
                 </div>}
                 {hasMore && <button type="button" onClick={loadMore} ref={containerRef} className="gridListLoadMore">Load more</button>}

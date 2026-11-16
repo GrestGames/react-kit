@@ -4,13 +4,13 @@ import {Button} from "../buttons/Button";
 import {ButtonAppearanceContext} from "../buttons/buttonAppearance";
 import "./GridList.css";
 
-/** Where a field goes in the list layout. Untagged fields with a title are `label value` detail lines. */
+/** Where a field goes in the list layout. Untagged fields are detail lines: `label value`, or just the value when untitled. */
 export type GridListSlot = "title" | "subtitle" | "trailing" | "actions" | "hide";
 type Slot = GridListSlot | "detail";
 
 export const isEmpty = (v: unknown) => v === undefined || v === null || v === "" || v === false || (Array.isArray(v) && v.length === 0);
 
-const listSlot = (f: GridField<any>): Slot => f.list ?? (isEmpty(f.title) ? "actions" : "detail");
+const listSlot = (f: GridField<any>): Slot => f.list ?? "detail";
 
 /** A control as an `actions` or `hide` column's title (an `AddNewButton`), shown in the list toolbar instead. */
 const headerAction = (f: GridField<any>): ReactNode => {
@@ -91,9 +91,9 @@ export function GridListRows<T extends { id: string | number }>({fields, rows, c
                     {subtitles.length > 0 && <div className="gridListSubtitle">{subtitles.map(({v}, s) => <Fragment key={s}>{s > 0 && " · "}{v}</Fragment>)}</div>}
                 </div>
                 {trailing.length > 0 && <div className="gridListTrailing">{trailing.map(({v}, s) => <div key={s}>{v}</div>)}</div>}
-                {details.length > 0 && <div className="gridListDetails" id={detailsId}>{details.map(({f, v}, s) => <Fragment key={s}>
-                    <span className="gridListLabel">{f.title}</span><span className="gridListValue">{v}</span>
-                </Fragment>)}</div>}
+                {details.length > 0 && <div className="gridListDetails" id={detailsId}>{details.map(({f, v}, s) => isEmpty(f.title)
+                    ? <span key={s} className="gridListValue gridListWide">{v}</span>
+                    : <Fragment key={s}><span className="gridListLabel">{f.title}</span><span className="gridListValue">{v}</span></Fragment>)}</div>}
                 {actions.length > 0 ? <div className="gridListActions">{actions.map(({v}, s) => <Fragment key={s}>{v}</Fragment>)}</div>
                     : onRowClick && <span className="gridListChevron" aria-hidden="true">›</span>}
             </li>;

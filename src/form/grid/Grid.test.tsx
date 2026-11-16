@@ -342,7 +342,7 @@ describe("Grid list layout", () => {
     const isList = (c: HTMLElement) => !!c.querySelector("ul.gridList") && !c.querySelector("table.grid");
     const rowTexts = (c: HTMLElement) => Array.from(c.querySelectorAll(".gridListRow")).map(li =>
         Array.from(li.querySelectorAll(".gridListTitle, .gridListSubtitle, .gridListTrailing, .gridListLabel, .gridListValue, .gridListActions"))
-            .map(e => e.className.replace("gridList", "") + ":" + e.textContent));
+            .map(e => e.classList[0].replace("gridList", "") + ":" + e.textContent));
 
     it("switches with the grid's own width, with hysteresis on the way back", async () => {
         const view = render(<Grid<U, any> load={async () => ({rows: users})} hideFooter fields={[{title: "Name", value: "name"}]}/>);
@@ -370,7 +370,7 @@ describe("Grid list layout", () => {
         expect(isList(list.container)).toBe(true);
     });
 
-    it("places fields by hint, joins subtitles, skips empty values, untitled fields are actions", async () => {
+    it("places fields by hint, joins subtitles, skips empty values", async () => {
         const view = render(<Grid<U, any> load={async () => ({rows: users})} hideFooter fields={[
             {title: "No", list: "hide", value: (r, no) => no + 1},
             {title: "Name", list: "title", value: "name"},
@@ -378,12 +378,13 @@ describe("Grid list layout", () => {
             {title: "Role", list: "subtitle", value: "role"},
             {title: "Note", list: "trailing", value: r => r.note},
             {title: "Id", value: "id"},
-            {value: r => <button>Edit {r.name}</button>},
+            {value: r => r.name.toLowerCase()},
+            {list: "actions", value: r => <button>Edit {r.name}</button>},
         ]}/>);
         await screen.findByText("Ann");
         expect(rowTexts(view.container)).toEqual([
-            ["Title:Ann", "Subtitle:ann@x · admin", "Trailing:vip", "Label:Id", "Value:u1", "Actions:Edit Ann"],
-            ["Title:Bob", "Subtitle:bob@x", "Label:Id", "Value:u2", "Actions:Edit Bob"],
+            ["Title:Ann", "Subtitle:ann@x · admin", "Trailing:vip", "Label:Id", "Value:u1", "Value:ann", "Actions:Edit Ann"],
+            ["Title:Bob", "Subtitle:bob@x", "Label:Id", "Value:u2", "Value:bob", "Actions:Edit Bob"],
         ]);
     });
 
@@ -412,7 +413,7 @@ describe("Grid list layout", () => {
         render(<Grid<U, any> load={async () => ({rows: users})} hideFooter onRowClick={onRowClick} fields={[
             {title: "Name", list: "title", value: "name"},
             {title: "Email", list: "subtitle", value: "email"},
-            {value: r => <button onClick={inner}>Edit {r.name}</button>},
+            {list: "actions", value: r => <button onClick={inner}>Edit {r.name}</button>},
         ]}/>);
         fireEvent.click(await screen.findByText("ann@x"));
         expect(onRowClick.mock.calls).toEqual([[users[0]]]);
