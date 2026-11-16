@@ -370,6 +370,18 @@ describe("Grid list layout", () => {
         expect(isList(list.container)).toBe(true);
     });
 
+    it("table: hide keeps a field in the list but out of the table", async () => {
+        const fields = [{title: "Name", list: "title" as const, value: "name" as const},
+            {title: "Summary", list: "subtitle" as const, table: "hide" as const, value: (r: U) => `${r.email} (${r.role})`}];
+        const table = render(<Grid<U, any> layout="table" load={async () => ({rows: users})} hideFooter fields={fields}/>);
+        await waitFor(() => expect(table.container.querySelector("table.grid td")).not.toBeNull());
+        expect(table.container.textContent).not.toContain("Summary");
+        expect(table.container.textContent).not.toContain("ann@x (admin)");
+        table.unmount();
+        render(<Grid<U, any> layout="list" load={async () => ({rows: users})} hideFooter fields={fields}/>);
+        expect(await screen.findByText("ann@x (admin)")).toBeTruthy();
+    });
+
     it("places fields by hint, joins subtitles, skips empty values", async () => {
         const view = render(<Grid<U, any> load={async () => ({rows: users})} hideFooter fields={[
             {title: "No", list: "hide", value: (r, no) => no + 1},

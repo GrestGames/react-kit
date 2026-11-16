@@ -90,6 +90,8 @@ export interface GridField<T> {
     /** Place in the list layout. Untagged fields are `label value` lines (just the value when untitled).
      *  A control as an `actions` or `hide` column's title (an `AddNewButton`) shows in the list toolbar. */
     list?: GridListSlot;
+    /** `"hide"` keeps the field out of the table, for a line that only the list layout needs. */
+    table?: "hide";
 }
 
 export function Grid<T extends { id: string | number }, Q>({
@@ -360,7 +362,8 @@ export function Grid<T extends { id: string | number }, Q>({
 
     /* ── Render ────────────────────────────────────────────────── */
 
-    const rowSpanCounts: number[] = new Array(fields.length).fill(1);
+    const tableFields = fields.filter(f => f.table !== "hide");
+    const rowSpanCounts: number[] = new Array(tableFields.length).fill(1);
     return <div className={"rkGrid" + (listMode ? " rkGridList" : "")} ref={measureRef}>
         {listMode && searchForm && <div className="area gridFilters gridListSearch">
             <Form prop={F}>
@@ -410,7 +413,7 @@ export function Grid<T extends { id: string | number }, Q>({
                 <table className={"list grid" + (reloading ? " gridReloading" : "")}>
                     <tbody>
                     <tr>
-                        {fields.map((f, s) => {
+                        {tableFields.map((f, s) => {
                             let onClick: (() => void) | undefined = undefined;
                             const isSortable = !!f.sortName;
                             if (isSortable) {
@@ -435,7 +438,7 @@ export function Grid<T extends { id: string | number }, Q>({
                     </tr>
                     {displayData?.map((row: any, i) => {
                         let colSpanSkip = 0;
-                        return <tr key={i} {...onRowClick && {className: "gridRowClickable", tabIndex: 0, ...rowHandlers(onRowClick, row)}}>{fields.map((f, s) => {
+                        return <tr key={i} {...onRowClick && {className: "gridRowClickable", tabIndex: 0, ...rowHandlers(onRowClick, row)}}>{tableFields.map((f, s) => {
                             if (rowSpanCounts[s] > 1) {
                                 rowSpanCounts[s]--;
                                 return undefined;
@@ -468,24 +471,24 @@ export function Grid<T extends { id: string | number }, Q>({
                         })}</tr>
                     })}
                     {hasMore && <tr>
-                        <td colSpan={fields.length + 1} onClick={loadMore} ref={containerRef} className="lastRow">Load more</td>
+                        <td colSpan={tableFields.length + 1} onClick={loadMore} ref={containerRef} className="lastRow">Load more</td>
                     </tr>}
                     {isEmpty && <tr>
-                        <td colSpan={fields.length + 1}><TipBox intent="default">No entries found!</TipBox></td>
+                        <td colSpan={tableFields.length + 1}><TipBox intent="default">No entries found!</TipBox></td>
                     </tr>}
                     {isLoading && <tr>
-                        <td colSpan={fields.length + 1} className="loadingRows">
+                        <td colSpan={tableFields.length + 1} className="loadingRows">
                             <div className="loader"></div>
                         </td>
                     </tr>}
                     {showFooter && <tr>
-                        <td colSpan={fields.length + 1} className="noMoreRows">No more rows. Found {displayData.length} row(s)!</td>
+                        <td colSpan={tableFields.length + 1} className="noMoreRows">No more rows. Found {displayData.length} row(s)!</td>
                     </tr>}
                     {isValidationError && <tr>
-                        <td colSpan={fields.length + 1}><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></td>
+                        <td colSpan={tableFields.length + 1}><TipBox intent="warning" iconLetter="!">Check filters, some of the filters are invalid!</TipBox></td>
                     </tr>}
                     {isOtherError && <tr>
-                        <td colSpan={fields.length + 1}><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox></td>
+                        <td colSpan={tableFields.length + 1}><TipBox intent="danger" iconLetter="!">{ApiErrors.getDisplayMessage(dataState.error!)}</TipBox></td>
                     </tr>}
                     </tbody>
                 </table>
