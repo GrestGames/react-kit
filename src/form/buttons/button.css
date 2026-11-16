@@ -180,10 +180,13 @@ table.grid .rkBtn {
 /* ── Mobile ────────────────────────────────────────── */
 
 @media (max-width: 768px) {
-    .rkBtn {
+    .rkBtn, .rkBtn.rkBtn-size-normal {
         min-height: 36px;
         padding: 8px 12px;
     }
+
+    .rkBtn.rkBtn-size-small { min-height: 32px; padding: 6px 10px; }
+    .rkBtn.rkBtn-size-micro { min-height: 28px; padding: 4px 10px; font-size: var(--rk-font-size-small); }
 
     .rkBtn.addRowButton {
         width: 100%;
