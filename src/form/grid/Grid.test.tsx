@@ -342,7 +342,7 @@ describe("Grid list layout", () => {
     const isList = (c: HTMLElement) => !!c.querySelector("ul.gridList") && !c.querySelector("table.grid");
     const rowTexts = (c: HTMLElement) => Array.from(c.querySelectorAll(".gridListRow")).map(li =>
         Array.from(li.querySelectorAll(".gridListTitle, .gridListSubtitle, .gridListTrailing, .gridListLabel, .gridListValue, .gridListActions"))
-            .map(e => e.className.replace("gridList", "") + ":" + e.textContent));
+            .map(e => e.classList[0].replace("gridList", "") + ":" + e.textContent));
 
     it("switches with the grid's own width, with hysteresis on the way back", async () => {
         const view = render(<Grid<U, any> load={async () => ({rows: users})} hideFooter fields={[{title: "Name", value: "name"}]}/>);
@@ -370,7 +370,19 @@ describe("Grid list layout", () => {
         expect(isList(list.container)).toBe(true);
     });
 
-    it("places fields by hint, joins subtitles, skips empty values, untitled fields are actions", async () => {
+    it("table: hide keeps a field in the list but out of the table", async () => {
+        const fields = [{title: "Name", list: "title" as const, value: "name" as const},
+            {title: "Summary", list: "subtitle" as const, table: "hide" as const, value: (r: U) => `${r.email} (${r.role})`}];
+        const table = render(<Grid<U, any> layout="table" load={async () => ({rows: users})} hideFooter fields={fields}/>);
+        await waitFor(() => expect(table.container.querySelector("table.grid td")).not.toBeNull());
+        expect(table.container.textContent).not.toContain("Summary");
+        expect(table.container.textContent).not.toContain("ann@x (admin)");
+        table.unmount();
+        render(<Grid<U, any> layout="list" load={async () => ({rows: users})} hideFooter fields={fields}/>);
+        expect(await screen.findByText("ann@x (admin)")).toBeTruthy();
+    });
+
+    it("places fields by hint, joins subtitles, skips empty values", async () => {
         const view = render(<Grid<U, any> load={async () => ({rows: users})} hideFooter fields={[
             {title: "No", list: "hide", value: (r, no) => no + 1},
             {title: "Name", list: "title", value: "name"},
@@ -378,12 +390,13 @@ describe("Grid list layout", () => {
             {title: "Role", list: "subtitle", value: "role"},
             {title: "Note", list: "trailing", value: r => r.note},
             {title: "Id", value: "id"},
-            {value: r => <button>Edit {r.name}</button>},
+            {value: r => r.name.toLowerCase()},
+            {list: "actions", value: r => <button>Edit {r.name}</button>},
         ]}/>);
         await screen.findByText("Ann");
         expect(rowTexts(view.container)).toEqual([
-            ["Title:Ann", "Subtitle:ann@x · admin", "Trailing:vip", "Label:Id", "Value:u1", "Actions:Edit Ann"],
-            ["Title:Bob", "Subtitle:bob@x", "Label:Id", "Value:u2", "Actions:Edit Bob"],
+            ["Title:Ann", "Subtitle:ann@x · admin", "Trailing:vip", "Label:Id", "Value:u1", "Value:ann", "Actions:Edit Ann"],
+            ["Title:Bob", "Subtitle:bob@x", "Label:Id", "Value:u2", "Value:bob", "Actions:Edit Bob"],
         ]);
     });
 
@@ -412,7 +425,7 @@ describe("Grid list layout", () => {
         render(<Grid<U, any> load={async () => ({rows: users})} hideFooter onRowClick={onRowClick} fields={[
             {title: "Name", list: "title", value: "name"},
             {title: "Email", list: "subtitle", value: "email"},
-            {value: r => <button onClick={inner}>Edit {r.name}</button>},
+            {list: "actions", value: r => <button onClick={inner}>Edit {r.name}</button>},
         ]}/>);
         fireEvent.click(await screen.findByText("ann@x"));
         expect(onRowClick.mock.calls).toEqual([[users[0]]]);
@@ -422,6 +435,18 @@ describe("Grid list layout", () => {
         const target = screen.getByRole("button", {name: "Bob bob@x"});
         target.focus();
         fireEvent.click(target);
+        expect(onRowClick.mock.calls).toEqual([[users[0]], [users[1]]]);
+    });
+
+    it("listRow replaces the slots and keeps the row click, named by its content", async () => {
+        const onRowClick = vi.fn();
+        render(<Grid<U, any> load={async () => ({rows: users})} hideFooter onRowClick={onRowClick}
+                             listRow={r => <b>{r.name} custom</b>}
+                             fields={[{title: "Name", list: "title", value: "name"}]}/>);
+        fireEvent.click(await screen.findByText("Ann custom"));
+        expect(onRowClick.mock.calls).toEqual([[users[0]]]);
+        expect(document.querySelector(".gridListTitle")).toBeNull();
+        fireEvent.click(screen.getByRole("button", {name: "Bob custom"}));
         expect(onRowClick.mock.calls).toEqual([[users[0]], [users[1]]]);
     });
 

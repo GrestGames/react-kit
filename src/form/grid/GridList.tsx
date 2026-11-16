@@ -4,13 +4,13 @@ import {Button} from "../buttons/Button";
 import {ButtonAppearanceContext} from "../buttons/buttonAppearance";
 import "./GridList.css";
 
-/** Where a field goes in the list layout. Untagged fields with a title are `label value` detail lines. */
+/** Where a field goes in the list layout. Untagged fields are detail lines: `label value`, or just the value when untitled. */
 export type GridListSlot = "title" | "subtitle" | "trailing" | "actions" | "hide";
 type Slot = GridListSlot | "detail";
 
 export const isEmpty = (v: unknown) => v === undefined || v === null || v === "" || v === false || (Array.isArray(v) && v.length === 0);
 
-const listSlot = (f: GridField<any>): Slot => f.list ?? (isEmpty(f.title) ? "actions" : "detail");
+const listSlot = (f: GridField<any>): Slot => f.list ?? "detail";
 
 /** A control as an `actions` or `hide` column's title (an `AddNewButton`), shown in the list toolbar instead. */
 const headerAction = (f: GridField<any>): ReactNode => {
@@ -59,17 +59,17 @@ export function GridListToolbar<T>({fields, orderBy, onSort, filters}: {
     </ButtonAppearanceContext.Provider>;
 }
 
-export function GridListRows<T extends { id: string | number }>({fields, rows, cell, onRowClick, card}: {
+export function GridListRows<T extends { id: string | number }>({fields, rows, cell, onRowClick, listRow}: {
     fields: GridField<T>[]
     rows: T[]
     cell: (f: GridField<T>, row: T, i: number) => ReactNode
     onRowClick?: (row: T) => void
-    card?: (row: T, i: number) => ReactNode
+    listRow?: (row: T, i: number) => ReactNode
 }) {
     const id = useId();
     const bySlot = (slot: Slot) => fields.filter(f => listSlot(f) === slot);
     const slots = {title: bySlot("title"), subtitle: bySlot("subtitle"), detail: bySlot("detail"), trailing: bySlot("trailing"), actions: bySlot("actions")};
-    const labels = slots.detail.flatMap(f => typeof f.title === "string" ? [f.title.length] : []);
+    const labels = slots.detail.flatMap(f => typeof f.title === "string" && f.title ? [f.title.length] : []);
     const labelWidth = labels.length ? Math.min(14, Math.max(5, ...labels)) + 1 + "ch" : undefined;
     const hit = (row: T, labelledBy: string | undefined) => onRowClick &&
         <button type="button" className="gridListHit" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : "Open"} onClick={() => onRowClick(row)}/>;
@@ -77,9 +77,9 @@ export function GridListRows<T extends { id: string | number }>({fields, rows, c
         {rows.map((row, i) => {
             const clickable = onRowClick ? " gridListClickable" : "";
             const onClick = onRowClick && rowHandlers(onRowClick, row).onClick;
-            if (card) return <li key={row.id ?? i} className={"gridListRow" + clickable} onClick={onClick}>
+            if (listRow) return <li key={row.id ?? i} className={"gridListRow" + clickable} onClick={onClick}>
                 {hit(row, `${id}-${i}-c`)}
-                <div id={`${id}-${i}-c`}>{card(row, i)}</div>
+                <div id={`${id}-${i}-c`}>{listRow(row, i)}</div>
             </li>;
             const values = (slot: keyof typeof slots) => slots[slot].map(f => ({f, v: cell(f, row, i)})).filter(({v}) => !isEmpty(v));
             const titles = values("title"), subtitles = values("subtitle"), details = values("detail"), trailing = values("trailing"), actions = values("actions");
@@ -92,7 +92,8 @@ export function GridListRows<T extends { id: string | number }>({fields, rows, c
                 </div>
                 {trailing.length > 0 && <div className="gridListTrailing">{trailing.map(({v}, s) => <div key={s}>{v}</div>)}</div>}
                 {details.length > 0 && <div className="gridListDetails" id={detailsId}>{details.map(({f, v}, s) => <Fragment key={s}>
-                    <span className="gridListLabel">{f.title}</span><span className="gridListValue">{v}</span>
+                    {!isEmpty(f.title) && <span className="gridListLabel">{f.title}</span>}
+                    <span className={"gridListValue" + (isEmpty(f.title) ? " gridListWide" : "")}>{v}</span>
                 </Fragment>)}</div>}
                 {actions.length > 0 ? <div className="gridListActions">{actions.map(({v}, s) => <Fragment key={s}>{v}</Fragment>)}</div>
                     : onRowClick && <span className="gridListChevron" aria-hidden="true">›</span>}

@@ -238,7 +238,7 @@ export function McpServersList() {
       { title: 'URL', list: 'subtitle', style: { width: '100%', maxWidth: 0 }, value: r => <div title={r.url} style={{ fontFamily: 'var(--rk-font-mono)', fontSize: 'var(--rk-font-size-small)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.url}</div> },
       { title: 'Use', value: r => r.use },
       { title: 'Client', value: r => r.client },
-      { title: '', width: 70, align: 'right', value: r => <Button size="small" appearance="outline" onClick={() => open('edit ' + r.name)}>Edit</Button> },
+      { title: '', list: 'actions', width: 70, align: 'right', value: r => <Button size="small" appearance="outline" onClick={() => open('edit ' + r.name)}>Edit</Button> },
     ]} />;
 }
 
@@ -265,6 +265,6 @@ export function UntaggedList() {
       { title: 'Email', value: 'email' },
       { title: 'Role', value: 'role', sortName: 'role' },
       { title: 'Score', value: 'score', sortName: 'score', sortDir: 'desc', align: 'right' },
-      { title: '', value: r => <Button onClick={() => open(r.name)}>View</Button> },
+      { title: '', list: 'actions', value: r => <Button onClick={() => open(r.name)}>View</Button> },
     ]} />;
 }
