@@ -265,6 +265,6 @@ export function UntaggedList() {
       { title: 'Email', value: 'email' },
       { title: 'Role', value: 'role', sortName: 'role' },
       { title: 'Score', value: 'score', sortName: 'score', sortDir: 'desc', align: 'right' },
-      { title: '', value: r => <Button onClick={() => open(r.name)}>View</Button> },
+      { title: '', list: 'actions', value: r => <Button onClick={() => open(r.name)}>View</Button> },
     ]} />;
 }

@@ -426,6 +426,18 @@ describe("Grid list layout", () => {
         expect(onRowClick.mock.calls).toEqual([[users[0]], [users[1]]]);
     });
 
+    it("listRow replaces the slots and keeps the row click, named by its content", async () => {
+        const onRowClick = vi.fn();
+        render(<Grid<U, any> load={async () => ({rows: users})} hideFooter onRowClick={onRowClick}
+                             listRow={r => <b>{r.name} custom</b>}
+                             fields={[{title: "Name", list: "title", value: "name"}]}/>);
+        fireEvent.click(await screen.findByText("Ann custom"));
+        expect(onRowClick.mock.calls).toEqual([[users[0]]]);
+        expect(document.querySelector(".gridListTitle")).toBeNull();
+        fireEvent.click(screen.getByRole("button", {name: "Bob custom"}));
+        expect(onRowClick.mock.calls).toEqual([[users[0]], [users[1]]]);
+    });
+
     it("onRowClick on the table: row click and Enter fire, inner buttons don't", async () => {
         width = 1200;
         const onRowClick = vi.fn();

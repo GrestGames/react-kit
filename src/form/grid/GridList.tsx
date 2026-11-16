@@ -69,7 +69,7 @@ export function GridListRows<T extends { id: string | number }>({fields, rows, c
     const id = useId();
     const bySlot = (slot: Slot) => fields.filter(f => listSlot(f) === slot);
     const slots = {title: bySlot("title"), subtitle: bySlot("subtitle"), detail: bySlot("detail"), trailing: bySlot("trailing"), actions: bySlot("actions")};
-    const labels = slots.detail.flatMap(f => typeof f.title === "string" ? [f.title.length] : []);
+    const labels = slots.detail.flatMap(f => typeof f.title === "string" && f.title ? [f.title.length] : []);
     const labelWidth = labels.length ? Math.min(14, Math.max(5, ...labels)) + 1 + "ch" : undefined;
     const hit = (row: T, labelledBy: string | undefined) => onRowClick &&
         <button type="button" className="gridListHit" aria-labelledby={labelledBy} aria-label={labelledBy ? undefined : "Open"} onClick={() => onRowClick(row)}/>;
