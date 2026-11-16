@@ -393,7 +393,7 @@ export function Grid<T extends { id: string | number }, Q>({
             <div className="area gridListArea">
                 {reloading && <div className="gridReloadBar"/>}
                 {displayData && displayData.length > 0 && <div className={reloading ? "gridReloading" : undefined}>
-                    <GridListRows fields={fields} rows={displayData} onRowClick={onRowClick} card={listRow}
+                    <GridListRows fields={fields} rows={displayData} onRowClick={onRowClick} listRow={listRow}
                                   cell={(f, row, i) => getValue(f, i, row, displayData)}/>
                 </div>}
                 {hasMore && <button type="button" onClick={loadMore} ref={containerRef} className="gridListLoadMore">Load more</button>}

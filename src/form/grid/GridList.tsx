@@ -59,12 +59,12 @@ export function GridListToolbar<T>({fields, orderBy, onSort, filters}: {
     </ButtonAppearanceContext.Provider>;
 }
 
-export function GridListRows<T extends { id: string | number }>({fields, rows, cell, onRowClick, card}: {
+export function GridListRows<T extends { id: string | number }>({fields, rows, cell, onRowClick, listRow}: {
     fields: GridField<T>[]
     rows: T[]
     cell: (f: GridField<T>, row: T, i: number) => ReactNode
     onRowClick?: (row: T) => void
-    card?: (row: T, i: number) => ReactNode
+    listRow?: (row: T, i: number) => ReactNode
 }) {
     const id = useId();
     const bySlot = (slot: Slot) => fields.filter(f => listSlot(f) === slot);
@@ -77,9 +77,9 @@ export function GridListRows<T extends { id: string | number }>({fields, rows, c
         {rows.map((row, i) => {
             const clickable = onRowClick ? " gridListClickable" : "";
             const onClick = onRowClick && rowHandlers(onRowClick, row).onClick;
-            if (card) return <li key={row.id ?? i} className={"gridListRow" + clickable} onClick={onClick}>
+            if (listRow) return <li key={row.id ?? i} className={"gridListRow" + clickable} onClick={onClick}>
                 {hit(row, `${id}-${i}-c`)}
-                <div id={`${id}-${i}-c`}>{card(row, i)}</div>
+                <div id={`${id}-${i}-c`}>{listRow(row, i)}</div>
             </li>;
             const values = (slot: keyof typeof slots) => slots[slot].map(f => ({f, v: cell(f, row, i)})).filter(({v}) => !isEmpty(v));
             const titles = values("title"), subtitles = values("subtitle"), details = values("detail"), trailing = values("trailing"), actions = values("actions");
@@ -91,9 +91,10 @@ export function GridListRows<T extends { id: string | number }>({fields, rows, c
                     {subtitles.length > 0 && <div className="gridListSubtitle">{subtitles.map(({v}, s) => <Fragment key={s}>{s > 0 && " · "}{v}</Fragment>)}</div>}
                 </div>
                 {trailing.length > 0 && <div className="gridListTrailing">{trailing.map(({v}, s) => <div key={s}>{v}</div>)}</div>}
-                {details.length > 0 && <div className="gridListDetails" id={detailsId}>{details.map(({f, v}, s) => isEmpty(f.title)
-                    ? <span key={s} className="gridListValue gridListWide">{v}</span>
-                    : <Fragment key={s}><span className="gridListLabel">{f.title}</span><span className="gridListValue">{v}</span></Fragment>)}</div>}
+                {details.length > 0 && <div className="gridListDetails" id={detailsId}>{details.map(({f, v}, s) => <Fragment key={s}>
+                    {!isEmpty(f.title) && <span className="gridListLabel">{f.title}</span>}
+                    <span className={"gridListValue" + (isEmpty(f.title) ? " gridListWide" : "")}>{v}</span>
+                </Fragment>)}</div>}
                 {actions.length > 0 ? <div className="gridListActions">{actions.map(({v}, s) => <Fragment key={s}>{v}</Fragment>)}</div>
                     : onRowClick && <span className="gridListChevron" aria-hidden="true">›</span>}
             </li>;
