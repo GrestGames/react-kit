@@ -16,6 +16,10 @@
     --rk-font-size-huge: 15px;
     --rk-font-size-gigantic: 22px;
 
+    /* Long text people read (descriptions, documents); the size scale above is for UI chrome. */
+    --rk-font-reading: var(--rk-font);
+    --rk-font-size-reading: 16px;
+
     --rk-bg-body: #F1F4F9;
     --rk-bg-surface: #ffffff;
     --rk-bg-subtle: #fafbfc;

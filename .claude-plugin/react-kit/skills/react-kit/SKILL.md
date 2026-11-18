@@ -69,6 +69,7 @@ Reach for these before hand-rolling. Exact props live in the source files / `exa
 
 - **Intent vocabulary** (status meaning, not raw color): `default · neutral · info · cool · success · warning · danger · critical`. Pass as `intent="…"` to buttons, `TipBox`, etc.
 - **Tokens**: everything draws from `--rk-*` in `src/css/theme.css` (colors, sizes, shadows). Style with tokens, not hardcoded hex. For a one-off button color keep `<Button>` and override `--btn-bg`/`--btn-bg-hover` inline (e.g. `var(--rk-purple)`) rather than dropping to a raw `<button>`.
+- **Font sizes**: the app default is `--rk-font-size-normal`; use it for ordinary UI text and go smaller only for genuinely secondary bits (`small` for meta lines, `mini`/`micro` only for badges, tags and counters). Long text people read (descriptions, rendered markdown, documents) gets the `reading` class (`--rk-font-reading` + `--rk-font-size-reading`), never a hand-picked size.
 - **Dark mode**: add the `.rk-dark` class to a subtree.
 
 ## Anti-patterns — never generate these
@@ -83,6 +84,7 @@ Reach for these before hand-rolling. Exact props live in the source files / `exa
 // ✅ @floating-ui via ToolTip/ContextMenu/useAnchoredPopup
 // ❌ Hardcoded overlay z-index (e.g. 10001)        ✅ var(--rk-z-overlay)
 // ❌ Hardcoded hex colors                            ✅ --rk-* tokens / intent
+// ❌ px font sizes, or small/mini for prose          ✅ --rk-font-size-* tokens; class="reading" for long text
 // ❌ Per-field "required" via .refine on orUndefined ✅ see form-README.md
 // ❌ Silently building a custom component when no match — ✅ ask: compose / extend react-kit / custom?
 ```
