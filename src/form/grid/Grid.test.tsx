@@ -509,3 +509,40 @@ describe("Grid list layout", () => {
         await waitFor(() => expect(load).toHaveBeenLastCalledWith(expect.objectContaining({orderBy: {field: "name", dir: "desc"}})));
     });
 });
+
+describe("Grid expand", () => {
+    const open = (layout: "table" | "list") => render(<Grid<Row, any>
+        layout={layout}
+        load={async () => ({rows})}
+        hideFooter
+        fields={[{title: "Name", value: r => r.name}]}
+        expand={r => <span>more about {r.name}</span>}
+    />);
+
+    it("a row's click opens it under the row, another row's moves it, a second click closes it", async () => {
+        const view = open("table");
+        await waitFor(() => expect(view.getByText("Alpha")).toBeTruthy());
+
+        fireEvent.click(view.getByText("Alpha"));
+        expect(view.getByText("more about Alpha").closest("tr")?.previousElementSibling?.textContent).toBe("Alpha");
+
+        fireEvent.click(view.getByText("Beta"));
+        expect(view.queryByText("more about Alpha")).toBeNull();
+        expect(view.getByText("more about Beta")).toBeTruthy();
+
+        fireEvent.click(view.getByText("Beta"));
+        expect(view.queryByText("more about Beta")).toBeNull();
+    });
+
+    it("in the list it opens inside the row, and its own clicks keep it open", async () => {
+        const view = open("list");
+        await waitFor(() => expect(view.getByText("Gamma")).toBeTruthy());
+
+        fireEvent.click(view.getByText("Gamma"));
+        const more = view.getByText("more about Gamma");
+        expect(more.closest("li")?.textContent).toContain("Gamma");
+
+        fireEvent.click(more);
+        expect(view.getByText("more about Gamma")).toBeTruthy();
+    });
+});

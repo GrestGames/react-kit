@@ -1,4 +1,4 @@
-import {CSSProperties, ReactNode, useEffect, useRef, useState} from "react";
+import {CSSProperties, Fragment, ReactNode, useEffect, useRef, useState} from "react";
 import "../css/grid.css"
 import {Tracker, TrackerOperation} from "../../EntityTracker";
 import {ApiErrors} from "../../ApiError";
@@ -47,6 +47,9 @@ export interface Props<T extends { id: string | number }, Q> {
     onRowClick?: (row: T) => void;
     /** Renders each list-layout row itself instead of placing fields by their `list` hint. */
     listRow?: (row: T, index: number) => ReactNode;
+    /** A row's click opens this under it (one at a time), across the table or in the list row; a second click closes
+     *  it. `onRowClick` still fires. */
+    expand?: (row: T) => ReactNode;
 
     /** Alternative blocks/card view renderer. When provided and viewMode is "blocks", renders this instead of the table. */
     blocksView?: (rows: T[]) => ReactNode;
@@ -111,6 +114,7 @@ export function Grid<T extends { id: string | number }, Q>({
                                                                            layout,
                                                                            onRowClick,
                                                                            listRow,
+                                                                           expand,
                                                                            blocksView,
                                                                            viewMode,
                                                                            reloadKey,
@@ -122,6 +126,14 @@ export function Grid<T extends { id: string | number }, Q>({
     const [measureRef, narrow] = useNarrowerThan<HTMLDivElement>(LIST_BELOW_PX);
     const listMode = layout === "list" || (layout !== "table" && narrow === true);
     const [filtersOpen, setFiltersOpen] = useState<boolean>();
+    const [expanded, setExpanded] = useState<T["id"]>();
+    const rowClick = expand
+        ? (row: T) => {
+            setExpanded(id => id === row.id ? undefined : row.id);
+            onRowClick?.(row);
+        }
+        : onRowClick;
+    const expansion = expand && ((row: T) => row.id === expanded ? expand(row) : undefined);
 
     const sameIdRowSpan = (field: keyof T, row: T, no: number, data: T[]) => {
         let i = 1;
@@ -398,7 +410,7 @@ export function Grid<T extends { id: string | number }, Q>({
             <div className="area gridListArea">
                 {reloading && <div className="gridReloadBar"/>}
                 {displayData && displayData.length > 0 && <div className={reloading ? "gridReloading" : undefined}>
-                    <GridListRows fields={fields} rows={displayData} onRowClick={onRowClick} listRow={listRow}
+                    <GridListRows fields={fields} rows={displayData} onRowClick={rowClick} listRow={listRow} expansion={expansion}
                                   cell={(f, row, i) => getValue(f, i, row, displayData)}/>
                 </div>}
                 {hasMore && <button type="button" onClick={loadMore} ref={containerRef} className="gridListLoadMore">Load more</button>}
@@ -440,7 +452,8 @@ export function Grid<T extends { id: string | number }, Q>({
                     </tr>
                     {displayData?.map((row: any, i) => {
                         let colSpanSkip = 0;
-                        return <tr key={i} {...onRowClick && {className: "gridRowClickable", tabIndex: 0, ...rowHandlers(onRowClick, row)}}>{tableFields.map((f, s) => {
+                        const more = expansion?.(row);
+                        return <Fragment key={i}><tr {...rowClick && {className: "gridRowClickable", tabIndex: 0, ...rowHandlers(rowClick, row)}}>{tableFields.map((f, s) => {
                             if (rowSpanCounts[s] > 1) {
                                 rowSpanCounts[s]--;
                                 return undefined;
@@ -471,6 +484,8 @@ export function Grid<T extends { id: string | number }, Q>({
                                 {f.truncate ? <ToolTip message={value} anchor="target" overflowOnly display="block" className="gridTruncate" style={{maxWidth: f.truncate}}>{value}</ToolTip> : value}
                             </td>
                         })}</tr>
+                        {more !== undefined && <tr className="gridExpandedRow"><td colSpan={tableFields.length}>{more}</td></tr>}
+                        </Fragment>
                     })}
                     {hasMore && <tr>
                         <td colSpan={tableFields.length + 1} onClick={loadMore} ref={containerRef} className="lastRow">Load more</td>
