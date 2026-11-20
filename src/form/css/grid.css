@@ -228,3 +228,8 @@ table.grid tr.gridRowClickable:focus-visible {
     outline: 2px solid var(--rk-border-focus);
     outline-offset: -2px;
 }
+
+table.grid tr.gridExpandedRow > td {
+    white-space: normal;
+    background: var(--rk-bg-subtle);
+}
