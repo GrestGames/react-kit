@@ -56,7 +56,9 @@ export function YearMonthSelect<T extends string>(props: AnyInputElement<T> & { 
 class DateParser {
     public static toInput(value: unknown): Date | undefined {
         if (typeof value === "string" && value !== DateUtils.ZERO_DATE) {
-            const date = new Date(value);
+            // `new Date("YYYY-MM-DD")` is UTC midnight, the previous day west of UTC: build the local day instead.
+            const day = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(value);
+            const date = day ? new Date(Number(day[1]), Number(day[2]) - 1, Number(day[3] ?? 1)) : new Date(value);
             if (!isNaN(date.getTime())) {
                 return date;
             }
