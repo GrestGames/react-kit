@@ -59,12 +59,13 @@ export function GridListToolbar<T>({fields, orderBy, onSort, filters}: {
     </ButtonAppearanceContext.Provider>;
 }
 
-export function GridListRows<T extends { id: string | number }>({fields, rows, cell, onRowClick, listRow}: {
+export function GridListRows<T extends { id: string | number }>({fields, rows, cell, onRowClick, listRow, expansion}: {
     fields: GridField<T>[]
     rows: T[]
     cell: (f: GridField<T>, row: T, i: number) => ReactNode
     onRowClick?: (row: T) => void
     listRow?: (row: T, i: number) => ReactNode
+    expansion?: (row: T) => ReactNode
 }) {
     const id = useId();
     const bySlot = (slot: Slot) => fields.filter(f => listSlot(f) === slot);
@@ -77,9 +78,13 @@ export function GridListRows<T extends { id: string | number }>({fields, rows, c
         {rows.map((row, i) => {
             const clickable = onRowClick ? " gridListClickable" : "";
             const onClick = onRowClick && rowHandlers(onRowClick, row).onClick;
+            const more = expansion?.(row);
+            // Its own clicks (selecting text, its links) don't close it.
+            const expanded = more !== undefined && <div className="gridListExpanded" onClick={e => e.stopPropagation()}>{more}</div>;
             if (listRow) return <li key={row.id ?? i} className={"gridListRow" + clickable} onClick={onClick}>
                 {hit(row, `${id}-${i}-c`)}
                 <div id={`${id}-${i}-c`}>{listRow(row, i)}</div>
+                {expanded}
             </li>;
             const values = (slot: keyof typeof slots) => slots[slot].map(f => ({f, v: cell(f, row, i)})).filter(({v}) => !isEmpty(v));
             const titles = values("title"), subtitles = values("subtitle"), details = values("detail"), trailing = values("trailing"), actions = values("actions");
@@ -97,6 +102,7 @@ export function GridListRows<T extends { id: string | number }>({fields, rows, c
                 </Fragment>)}</div>}
                 {actions.length > 0 ? <div className="gridListActions">{actions.map(({v}, s) => <Fragment key={s}>{v}</Fragment>)}</div>
                     : onRowClick && <span className="gridListChevron" aria-hidden="true">›</span>}
+                {expanded}
             </li>;
         })}
     </ul>;

@@ -304,3 +304,9 @@
     color: var(--rk-text-muted);
     border-top: 1px solid var(--rk-border-light);
 }
+
+.gridListExpanded {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+    cursor: auto;
+}
