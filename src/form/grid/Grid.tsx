@@ -221,7 +221,9 @@ export function Grid<T extends { id: string | number }, Q>({
         if (!filter) {
             return undefined;
         }
-        const rowsToLoad = filter.limit![1] - filter.limit![0] - (data?.length || 0)
+        // A short page (a server-side filter) leaves the window ahead of the rows; asking for the whole gap would
+        // outgrow the server's page cap.
+        const rowsToLoad = Math.min(filter.limit![1] - filter.limit![0] - (data?.length || 0), rowsPerCall!)
         if (rowsToLoad > 0) {
             updateData(async (data) => {
                 const offset = data?.length || 0;

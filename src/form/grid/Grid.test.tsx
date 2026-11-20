@@ -263,6 +263,22 @@ describe("Grid cursor paging", () => {
         expect(g.lastQuery().limit[0]).toBe(0);
     });
 
+    it("short pages never grow a call past rowsPerCall", async () => {
+        const g = setupPaged(pagedLoad([
+            {rows: [rows[0]], nextCursor: "1"},
+            {rows: [rows[1]], nextCursor: "2"},
+            {rows: [], nextCursor: "3"},
+            {rows: [rows[2]]},
+        ]));
+        await waitFor(() => expect(g.names()).toEqual(["Alpha"]));
+
+        for (let i = 0; i < 3; i++) await act(async () => { g.loadMore() });
+
+        await waitFor(() => expect(g.names()).toEqual(["Alpha", "Beta", "Gamma"]));
+        expect(g.load.mock.calls.map(([q]: any[]) => q.limit[1])).toEqual([2, 2, 2, 2]);
+        expect(g.hasLoadMore()).toBe(false);
+    });
+
     it("a loader that returns no cursor still pages by offset", async () => {
         const load = vi.fn(async (input: any) => ({rows: rows.slice(input.limit[0], input.limit[0] + input.limit[1])}));
         const g = setupPaged(load);
