@@ -68,6 +68,7 @@ export * from "./mini/PopupPanel";
 export {Modal} from "./mini/Modal";
 export {overlayZ, type OverlayBand} from "./mini/OverlayStack";
 export {Panel} from "./mini/Panel";
+export {SidePane, type SidePaneProps} from "./mini/SidePane";
 export {usePillPopup, ANIM_DURATION} from "./mini/usePillPopup";
 export {useAnchoredPopup, wrapWithPopup, type AnchoredPopupConfig, type WrapWithPopupConfig} from "./mini/useAnchoredPopup";
 export * from "./mini/Popover";

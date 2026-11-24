@@ -31,7 +31,7 @@ live gallery of all of it (`cd example && npm run dev`).
   `@floating-ui/react`.
 - **Feedback** — `TipBox` (+ `SuccessBox`/`WarningBox`/`ErrorBox`/`NeutralTipBox`), `Alert`,
   `Toast`, `ProgressBar`, `LoadingPopup`, `BatchProgressPopup`.
-- **Layout & nav** — `Cards`/`Card`, `Tabs`, `TopMenu`, `MainArea`, `Separator`, `MiniTip`.
+- **Layout & nav** — `Cards`/`Card`, `Tabs`, `TopMenu`, `MainArea`, `SidePane` (resizable side panel), `Separator`, `MiniTip`.
 - **Data display** — `Grid` (server-driven sort / page / query), `GridCards`,
   `FileGrid`/`FileGridMini`, `LazyDataSet`, `FileViewer`/`FileIframe`. Formatted text: `Currency`,
   `Percent`, `Sq`, `FileSize`, `RelativeDate`, `DatePast`.
