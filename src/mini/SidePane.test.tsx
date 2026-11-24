@@ -25,6 +25,7 @@ describe("SidePane", () => {
         expect(dragTo({minWidth: 240}, 150)).toHaveBeenLastCalledWith(240);
         expect(dragTo({maxWidth: 500}, 900)).toHaveBeenLastCalledWith(500);
         expect(dragTo({minContentWidth: 320}, 1000)).toHaveBeenLastCalledWith(680);
+        expect(dragTo({minWidth: 240, minContentWidth: 900}, 600)).toHaveBeenLastCalledWith(240);
     });
 
     it("shields the page during the drag and removes the shield on release", () => {
@@ -33,5 +34,15 @@ describe("SidePane", () => {
         expect(document.querySelector(".rkSidePaneShield")).not.toBeNull();
         fireEvent.mouseUp(window);
         expect(document.querySelector(".rkSidePaneShield")).toBeNull();
+    });
+
+    it("ends a drag still running when the pane unmounts", () => {
+        const onWidthChange = vi.fn();
+        const {unmount} = render(<div><SidePane width={200} onWidthChange={onWidthChange}>pane</SidePane></div>);
+        fireEvent.mouseDown(screen.getByRole("separator"));
+        unmount();
+        expect(document.querySelector(".rkSidePaneShield")).toBeNull();
+        fireEvent.mouseMove(window, {clientX: 400});
+        expect(onWidthChange).not.toHaveBeenCalled();
     });
 });

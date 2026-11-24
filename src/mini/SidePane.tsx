@@ -1,4 +1,4 @@
-import {MouseEvent, ReactNode, useRef} from "react";
+import {MouseEvent, ReactNode, useEffect, useRef} from "react";
 import "./SidePane.css";
 
 export interface SidePaneProps {
@@ -18,26 +18,30 @@ export interface SidePaneProps {
 // full-viewport shield stops iframes/editors from swallowing the drag.
 export function SidePane({width, onWidthChange, side = "left", minWidth = 160, maxWidth, minContentWidth, className, children}: SidePaneProps) {
     const rootRef = useRef<HTMLDivElement | null>(null);
+    const endDrag = useRef<(() => void) | undefined>(undefined);
+    useEffect(() => () => endDrag.current?.(), []);
 
     const startResize = (e: MouseEvent) => {
         e.preventDefault();
         const parent = rootRef.current?.parentElement;
         if (!parent) return;
-        const rect = parent.getBoundingClientRect();
         const shield = document.createElement("div");
         shield.className = "rkSidePaneShield";
         document.body.appendChild(shield);
         const onMove = (me: globalThis.MouseEvent) => {
-            let next = Math.max(minWidth, side === "left" ? me.clientX - rect.left : rect.right - me.clientX);
+            const rect = parent.getBoundingClientRect();
+            let next = side === "left" ? me.clientX - rect.left : rect.right - me.clientX;
             if (maxWidth != null) next = Math.min(maxWidth, next);
             if (minContentWidth != null) next = Math.min(rect.width - minContentWidth, next);
-            onWidthChange(next);
+            onWidthChange(Math.max(minWidth, next));
         };
         const onUp = () => {
             shield.remove();
             window.removeEventListener("mousemove", onMove);
             window.removeEventListener("mouseup", onUp);
+            endDrag.current = undefined;
         };
+        endDrag.current = onUp;
         window.addEventListener("mousemove", onMove);
         window.addEventListener("mouseup", onUp);
     };
