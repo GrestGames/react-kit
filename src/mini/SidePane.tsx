@@ -2,8 +2,7 @@ import {MouseEvent, ReactNode, useRef} from "react";
 import "./SidePane.css";
 
 export interface SidePaneProps {
-    /** A string (e.g. `"100%"`) lets the pane own the whole row; the drag handle reports px via `onWidthChange`. */
-    width: number | string
+    width: number
     onWidthChange: (width: number) => void
     /** Which edge of the parent row the pane sits on; the handle is on the opposite edge. Default "left". */
     side?: "left" | "right"
@@ -24,11 +23,11 @@ export function SidePane({width, onWidthChange, side = "left", minWidth = 160, m
         e.preventDefault();
         const parent = rootRef.current?.parentElement;
         if (!parent) return;
+        const rect = parent.getBoundingClientRect();
         const shield = document.createElement("div");
         shield.className = "rkSidePaneShield";
         document.body.appendChild(shield);
         const onMove = (me: globalThis.MouseEvent) => {
-            const rect = parent.getBoundingClientRect();
             let next = Math.max(minWidth, side === "left" ? me.clientX - rect.left : rect.right - me.clientX);
             if (maxWidth != null) next = Math.min(maxWidth, next);
             if (minContentWidth != null) next = Math.min(rect.width - minContentWidth, next);
@@ -43,7 +42,7 @@ export function SidePane({width, onWidthChange, side = "left", minWidth = 160, m
         window.addEventListener("mouseup", onUp);
     };
 
-    return <div ref={rootRef} className={`rkSidePane rkSidePane-${side}` + (className ? " " + className : "")} style={{width, minWidth: width}}>
+    return <div ref={rootRef} className={`rkSidePane rkSidePane-${side}` + (className ? " " + className : "")} style={{width}}>
         {children}
         <div className="rkSidePaneHandle" role="separator" aria-orientation="vertical" title="Drag to resize" onMouseDown={startResize}/>
     </div>;
