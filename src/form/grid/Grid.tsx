@@ -154,30 +154,24 @@ export function Grid<T extends { id: string | number }, Q>({
 
     /** `byCursor` latches once a loader has returned a token, since from then on only the
      *  token can say whether more rows exist — a cursor loader's last page can be full.
-     *  `ver` discards an older in-flight load's result — useOnlyLatestResult drops its rows too. */
-    const pagingRef = useRef<{ byCursor: boolean, hasMore: boolean, next?: string, ver: number }>({byCursor: false, hasMore: false, ver: 0});
+     *  `ver` discards an older in-flight load's result — useOnlyLatestResult drops its rows too.
+     *  `loading` is set before the re-render that hides Load more, so an observer firing in between is ignored. */
+    const pagingRef = useRef<{ byCursor: boolean, hasMore: boolean, loading: boolean, next?: string, ver: number }>({
+        byCursor: false,
+        hasMore: false,
+        loading: false,
+        ver: 0,
+    });
 
     const lastRowsRef = useRef<T[] | undefined>(undefined);
     if (data !== undefined) {
         lastRowsRef.current = data;
     }
 
-    const updateData = (rows: undefined | ((data: T[] | undefined) => T[] | Promise<T[]>)): void => {
-        if (rows === undefined) {
-            setData(undefined);
-        } else {
-            setData(async (dataOld) => {
-                const rrows: T[] = await rows(dataOld);
-                onData?.(rrows);
-                return rrows;
-            });
-        }
-    }
-
     /** Keeps the page size, so loaded-more rows stay loaded unless `resetPage`
      *  asks for the first page only. */
     const reload = (resetPage?: boolean) => {
-        updateData(undefined);
+        setData(undefined);
         setFilter((f) => f ? {...f, limit: resetPage ? [0, rowsPerCall] as [number, number] : f.limit} : f);
     }
 
@@ -203,7 +197,7 @@ export function Grid<T extends { id: string | number }, Q>({
 
     const [F] = useAsyncForm({
         onSubmit: async (formObj) => {
-            updateData(undefined);
+            setData(undefined);
             setFilter((filter) => {
                 const cleaned = {...formObj};
                 for (const key in cleaned) {
@@ -233,34 +227,47 @@ export function Grid<T extends { id: string | number }, Q>({
         if (!filter) {
             return undefined;
         }
-        // A short page (a server-side filter) leaves the window ahead of the rows; asking for the whole gap would
-        // outgrow the server's page cap.
-        const rowsToLoad = Math.min(filter.limit![1] - filter.limit![0] - (data?.length || 0), rowsPerCall!)
-        if (rowsToLoad > 0) {
-            updateData(async (data) => {
-                const offset = data?.length || 0;
-                const ver = ++pagingRef.current.ver;
-                let newRows: T[] = [];
-                try {
-                    const res = await load({...filter, limit: [offset, rowsToLoad], cursor: offset > 0 ? pagingRef.current.next : undefined} as FilterState<Q>);
-                    newRows = res.rows;
-                    if (ver === pagingRef.current.ver) {
-                        const paging = pagingRef.current;
-                        paging.next = res.nextCursor;
-                        paging.byCursor = paging.byCursor || res.nextCursor !== undefined;
-                        paging.hasMore = paging.byCursor ? res.nextCursor !== undefined : newRows.length === rowsToLoad;
-                    }
-                } catch (e) {
-                    if (ApiErrors.is(e) && e.type === VALIDATION_ERROR.TYPE) {
-                        F.getForm().setValidationErrors(
-                            ApiErrors.issuesToFormErrors(ApiErrors.getValidationErrors(e as typeof VALIDATION_ERROR.infer))
-                        );
-                    }
-                    throw e;
-                }
-                return [...(data || []), ...newRows];
-            })
+        const wanted = filter.limit![1] - filter.limit![0];
+        if (wanted <= (data?.length ?? 0)) {
+            return undefined;
         }
+        // Builds on this render's rows: every filter change that restarts the list clears them in the same tick.
+        const paging = pagingRef.current;
+        const ver = ++paging.ver;
+        paging.loading = true;
+        setData((async () => {
+            const rows = [...(data ?? [])];
+            try {
+                // One call per page, so no call outgrows the server's page cap. A reload restores the rows shown
+                // before it page by page; a short page (a server-side filter) ends the run.
+                while (true) {
+                    const count = Math.min(wanted - rows.length, rowsPerCall!);
+                    const res = await load({...filter, limit: [rows.length, count], cursor: rows.length > 0 ? paging.next : undefined} as FilterState<Q>);
+                    rows.push(...res.rows);
+                    if (ver !== paging.ver) {
+                        return rows;
+                    }
+                    paging.next = res.nextCursor;
+                    paging.byCursor = paging.byCursor || res.nextCursor !== undefined;
+                    paging.hasMore = paging.byCursor ? res.nextCursor !== undefined : res.rows.length === count;
+                    if (!paging.hasMore || res.rows.length < count || rows.length >= wanted) {
+                        onData?.(rows);
+                        return rows;
+                    }
+                }
+            } catch (e) {
+                if (ApiErrors.is(e) && e.type === VALIDATION_ERROR.TYPE) {
+                    F.getForm().setValidationErrors(
+                        ApiErrors.issuesToFormErrors(ApiErrors.getValidationErrors(e as typeof VALIDATION_ERROR.infer))
+                    );
+                }
+                throw e;
+            } finally {
+                if (ver === paging.ver) {
+                    paging.loading = false;
+                }
+            }
+        })());
     }, [filter]);
 
     useEffect(() => {
@@ -271,9 +278,9 @@ export function Grid<T extends { id: string | number }, Q>({
     const onTracked = (id: T["id"] | undefined, operation: TrackerOperation) => {
         // RELOAD and CREATE name no row this grid can patch — a reload ping says the set
         // changed, and a new row's position is the server's call. Nor can anything be patched
-        // while a load is in flight: there are no rows yet, and that read may have been issued
-        // before the mutation landed, so re-read rather than drop the op.
-        if (operation === TrackerOperation.RELOAD || operation === TrackerOperation.CREATE || data === undefined) {
+        // while a load is in flight: its rows replace the patched ones when it lands, and its read
+        // may have been issued before the mutation landed, so re-read rather than drop the op.
+        if (operation === TrackerOperation.RELOAD || operation === TrackerOperation.CREATE || data === undefined || pagingRef.current.loading) {
             reload();
             return;
         }
@@ -321,10 +328,16 @@ export function Grid<T extends { id: string | number }, Q>({
         };
     }, [data, filter, listMode]);
 
+    // Grows from the rows loaded, not the window, so a short page never leaves the window ahead of them.
     const loadMore = () => {
+        if (!filter || pagingRef.current.loading || !pagingRef.current.hasMore) {
+            return;
+        }
+        pagingRef.current.loading = true;
+        const loaded = data?.length ?? 0;
         setFilter((filter) => {
             if (!filter) return filter;
-            const newFilters = {...filter, limit: [filter.limit![0], filter.limit![1] + rowsPerCall]} as FilterState<Q>;
+            const newFilters = {...filter, limit: [filter.limit![0], filter.limit![0] + loaded + rowsPerCall]} as FilterState<Q>;
             updateUrl(filtersUrlKeyName, newFilters)
             return newFilters
         });
@@ -339,7 +352,7 @@ export function Grid<T extends { id: string | number }, Q>({
     }
 
     const applySort = (field: string, dir: "asc" | "desc") => {
-        updateData(undefined);
+        setData(undefined);
         setFilter((filter) => {
             const newFilters = {...filter, limit: [0, rowsPerCall], orderBy: {field, dir}} as FilterState<Q>;
             updateUrl(filtersUrlKeyName, newFilters)

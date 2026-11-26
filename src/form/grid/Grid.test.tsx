@@ -249,18 +249,65 @@ describe("Grid cursor paging", () => {
         }));
     });
 
-    it("tracker.refresh() reloads from the first page without a cursor", async () => {
+    it("tracker.refresh() restarts without a cursor and restores the loaded rows a page per call", async () => {
         const tracker = new Tracker<string>();
         const g = setupPaged(twoThenOne(), {tracker});
         await waitFor(() => expect(g.names()).toEqual(["Alpha", "Beta"]));
         await act(async () => { g.loadMore() });
         await waitFor(() => expect(g.names()).toEqual(["Alpha", "Beta", "Gamma"]));
+        const callsBefore = g.load.mock.calls.length;
 
         await act(async () => { tracker.refresh() });
 
+        await waitFor(() => expect(g.load).toHaveBeenCalledTimes(callsBefore + 2));
+        await waitFor(() => expect(g.names()).toEqual(["Alpha", "Beta", "Gamma"]));
+        expect(g.load.mock.calls.slice(callsBefore).map(([q]: any[]) => [q.limit, q.cursor])).toEqual([[[0, 2], undefined], [[2, 2], "1"]]);
+    });
+
+    it("load more during a reload is ignored", async () => {
+        let hold: Promise<void> | undefined;
+        let release: () => void = () => {};
+        const pages = twoThenOne();
+        const load = vi.fn(async (input: any) => {
+            if (hold) await hold;
+            return pages(input);
+        });
+        const tracker = new Tracker<string>();
+        const g = setupPaged(load, {tracker});
         await waitFor(() => expect(g.names()).toEqual(["Alpha", "Beta"]));
-        expect(g.lastQuery().cursor).toBeUndefined();
-        expect(g.lastQuery().limit[0]).toBe(0);
+        hold = new Promise<void>(r => { release = r });
+
+        await act(async () => { tracker.refresh() });
+        expect(load).toHaveBeenCalledTimes(2);
+        await act(async () => { g.loadMore() });
+        expect(load).toHaveBeenCalledTimes(2);
+
+        hold = undefined;
+        await act(async () => { release() });
+        await waitFor(() => expect(g.names()).toEqual(["Alpha", "Beta"]));
+        expect(load).toHaveBeenCalledTimes(2);
+    });
+
+    it("a tracker op during load more re-reads the list instead of patching rows the load replaces", async () => {
+        let release: () => void = () => {};
+        let table = [...rows, {id: "img-d", name: "Delta"}];
+        const load = vi.fn(async (input: any) => {
+            if (input.cursor !== undefined && table.length === 4) await new Promise<void>(r => { release = r });
+            const offset = Number(input.cursor ?? 0);
+            const end = offset + input.limit[1];
+            return {rows: table.slice(offset, end), nextCursor: end < table.length ? String(end) : undefined};
+        });
+        const tracker = new Tracker<string>();
+        const g = setupPaged(load, {tracker});
+        await waitFor(() => expect(g.names()).toEqual(["Alpha", "Beta"]));
+        await act(async () => { g.loadMore() });
+
+        table = table.slice(1);
+        await act(async () => { tracker.delete("img-a") });
+        await act(async () => { release() });
+
+        await waitFor(() => expect(g.names()).toEqual(["Beta", "Gamma", "Delta"]));
+        expect(g.load.mock.calls.slice(2).map(([q]: any[]) => q.cursor)).toEqual([undefined, "2"]);
     });
 
     it("short pages never grow a call past rowsPerCall", async () => {
