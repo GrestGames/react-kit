@@ -117,6 +117,7 @@ export function RkDialogLayer() {
     const btnVars = intent ? {
         "--btn-bg": `var(--rk-${intent}-fill)`,
         "--btn-bg-hover": `var(--rk-${intent}-fill-hover)`,
+        "--btn-line": `var(--rk-${intent}-line)`,
     } as CSSProperties : undefined;
     const letter = current.iconLetter ?? (intent ? iconForIntent(intent) : undefined);
 

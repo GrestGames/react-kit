@@ -53,8 +53,8 @@
 
 .rkBtn.rkBtn-outline {
     background: transparent;
-    color: var(--btn-bg, var(--rk-accent));
-    border-color: var(--btn-bg, var(--rk-accent));
+    color: var(--btn-line, var(--rk-accent));
+    border-color: var(--btn-line, var(--rk-accent));
     box-shadow: none;
 }
 
