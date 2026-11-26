@@ -95,15 +95,15 @@
     --rk-warning-soft-text: #9a6414;
 
     --rk-danger: #d63031;
-    --rk-danger-fill: #f25656;
-    --rk-danger-fill-hover: #fd6565;
+    --rk-danger-fill: #c62828;
+    --rk-danger-fill-hover: #d63031;
     --rk-danger-soft: color-mix(in srgb, var(--rk-danger) 12%, var(--rk-bg-surface));
     --rk-danger-soft-border: color-mix(in srgb, var(--rk-danger) 45%, var(--rk-bg-surface));
     --rk-danger-soft-text: var(--rk-danger);
 
     --rk-critical: #e65100;
-    --rk-critical-fill: #f4661a;
-    --rk-critical-fill-hover: #ff7733;
+    --rk-critical-fill: #c2410c;
+    --rk-critical-fill-hover: #cc4a0e;
     --rk-critical-soft: color-mix(in srgb, var(--rk-critical) 12%, var(--rk-bg-surface));
     --rk-critical-soft-border: color-mix(in srgb, var(--rk-critical) 45%, var(--rk-bg-surface));
     --rk-critical-soft-text: var(--rk-critical);
