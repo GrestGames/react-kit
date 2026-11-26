@@ -121,6 +121,7 @@ function AnyButton({
         "--btn-bg": `var(--rk-${effectiveIntent}-fill)`,
         "--btn-bg-hover": `var(--rk-${effectiveIntent}-fill-hover)`,
         "--btn-fg": `var(--rk-${effectiveIntent}-fill-text)`,
+        "--btn-line": `var(--rk-${effectiveIntent}-line)`,
     } as CSSProperties : {};
 
     const contextAppearance = useContext(ButtonAppearanceContext);

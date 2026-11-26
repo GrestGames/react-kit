@@ -109,8 +109,7 @@
     --rk-critical-soft-text: var(--rk-critical);
 
     /* Readable text on each bold fill. Fills are shared hex across palettes, so these are too —
-       except default, which tracks --rk-text-on-accent (white in light, near-black in dark),
-       and danger/critical, which .rk-dark overrides. */
+       except default, which tracks --rk-text-on-accent (white in light, near-black in dark). */
     --rk-default-fill-text: var(--rk-text-on-accent);
     --rk-neutral-fill-text: #ffffff;
     --rk-info-fill-text: #ffffff;
@@ -119,6 +118,16 @@
     --rk-warning-fill-text: #16161e;
     --rk-danger-fill-text: #ffffff;
     --rk-critical-fill-text: #ffffff;
+
+    /* Outline text and border on a surface: kept apart from fills, which are tuned for the text on them. */
+    --rk-default-line: var(--rk-accent);
+    --rk-neutral-line: #6b7280;
+    --rk-info-line: #3b8ee0;
+    --rk-cool-line: #7a6fbe;
+    --rk-success-line: #2ecc71;
+    --rk-warning-line: #f2ca4c;
+    --rk-danger-line: #f25656;
+    --rk-critical-line: #f4661a;
 
     /* ── Button ── */
     --rk-hover-overlay: rgba(0, 0, 0, 0.05);
@@ -200,9 +209,7 @@
 
     /* Status intents — only base hues shift in dark. The color-mix softs follow automatically (they
        reference the base + --rk-bg-surface); fills are shared hex across both palettes, so neither is
-       repeated here. warning-soft is re-derived because its light value is hand-tuned (light-only problem).
-       Exception: danger/critical fills are dark in light for white text, but an outline Button draws its text
-       in the fill colour, which on a dark surface needs the bright fill, so dark text goes on it instead. */
+       repeated here. warning-soft is re-derived because its light value is hand-tuned (light-only problem). */
     --rk-success: #9ece6a;
 
     --rk-warning: #e0af68;
@@ -211,13 +218,7 @@
     --rk-warning-soft-text: var(--rk-warning);
 
     --rk-danger: #f38ba8;
-    --rk-danger-fill: #f25656;
-    --rk-danger-fill-hover: #fd6565;
-    --rk-danger-fill-text: #16161e;
     --rk-critical: #f97316;
-    --rk-critical-fill: #f4661a;
-    --rk-critical-fill-hover: #ff7733;
-    --rk-critical-fill-text: #16161e;
     --rk-info: #7aa2f7;
     --rk-neutral: #7f849c;
 
