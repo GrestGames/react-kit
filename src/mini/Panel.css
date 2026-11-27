@@ -28,13 +28,15 @@
 }
 
 .panelInner {
+    --rk-panel-inner-padding: 10px;
+    --rk-panel-inner-max-height: calc(100vh - 140px);
     overflow-x: hidden;
     overflow-y: auto;
     /* Content keeps its width whether or not the scrollbar shows. */
     scrollbar-gutter: stable;
-    padding: 10px;
+    padding: var(--rk-panel-inner-padding);
     box-sizing: border-box;
-    max-height: calc(100vh - 140px)
+    max-height: var(--rk-panel-inner-max-height);
 }
 
 .panel .panelTop {

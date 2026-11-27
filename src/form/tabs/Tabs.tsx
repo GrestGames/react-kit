@@ -1,4 +1,4 @@
-import {Fragment, KeyboardEvent, ReactNode, useEffect, useId, useRef, useState} from "react";
+import {Fragment, KeyboardEvent, ReactNode, useEffect, useId, useLayoutEffect, useRef, useState} from "react";
 import {useRouter, useRouteKey} from "../../router";
 import {useIsMobile} from "../../responsive/useResponsive";
 import {IconButton} from "../buttons/IconButton";
@@ -39,6 +39,7 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
     const baseId = useId();
     const isMobile = useIsMobile();
     const areaRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
     // The section opened from the mobile list and the history depth it was pushed at:
     // Back pops that entry (if still on top) and refocuses the section's row.
     const openedFrom = useRef<{key: string, depth: number} | undefined>(undefined);
@@ -115,6 +116,10 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
     }
 
     const current = tabsMap.has(selectedTab) ? selectedTab : defaultTab
+    useLayoutEffect(() => {
+        if (side && !drill && contentRef.current) contentRef.current.scrollTop = 0;
+    }, [current, side, drill]);
+
     const visible = tabs.filter(t => t && t.isVisible)
     const needle = side && visible.length > SEARCH_FROM ? filter.trim().toLowerCase() : ""
     const shown = needle ? visible.filter(t => t.title.toLowerCase().includes(needle) || t.group?.toLowerCase().includes(needle)) : visible
@@ -150,7 +155,7 @@ export function Tabs({urlKey, tabs, defaultTab = "", layout = "top"}: Props) {
     }
     const currentTab = tabsMap.get(current)
     const listProps = drill ? {} : {role: "tablist", "aria-orientation": "vertical" as const, onKeyDown}
-    const body = <div id={`${baseId}-panel`} role={drilled ? "region" : "tabpanel"} aria-labelledby={drilled ? `${baseId}-title` : tabId(current)}
+    const body = <div ref={contentRef} id={`${baseId}-panel`} role={drilled ? "region" : "tabpanel"} aria-labelledby={drilled ? `${baseId}-title` : tabId(current)}
                       className={(ready ? "tabsContentLoaded" : "tabsContentInit") + " tabsContent"}>
         {side && <div className="tabsTitleRow">
             {drilled && <IconButton icon="‹" title="Back" size={22} className="tabsBack" onClick={back}/>}

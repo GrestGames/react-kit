@@ -196,6 +196,32 @@
     padding-left: 16px;
 }
 
+@media (width > 768px) {
+    .panelInner:has(> .tabsArea.tabsSide) {
+        display: flex;
+        flex-direction: column;
+        min-height: min(
+            calc(var(--rk-tabs-side-min-height, 440px) + 2 * var(--rk-panel-inner-padding)),
+            var(--rk-panel-inner-max-height)
+        );
+    }
+
+    .panelInner:has(> .tabsArea.tabsSide) > :not(.tabsArea.tabsSide) {
+        flex-shrink: 0;
+    }
+
+    .panelInner > .tabsArea.tabsSide {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    .panelInner > .tabsArea.tabsSide > :is(.tabsMenu, .tabsContent) {
+        overflow: auto;
+        overscroll-behavior-y: contain;
+        scrollbar-gutter: stable;
+    }
+}
+
 .tabsArea.tabsSide > .tabsContent > .tabsTitleRow {
     display: flex;
     align-items: center;
