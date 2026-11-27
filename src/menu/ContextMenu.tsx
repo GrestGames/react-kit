@@ -1,5 +1,5 @@
 import {ReactNode, useLayoutEffect, useRef, useState, useSyncExternalStore, type MouseEvent as ReactMouseEvent, type TouchEvent as ReactTouchEvent} from "react";
-import {autoUpdate, flip, FloatingPortal, offset, shift, useDismiss, useFloating, useInteractions} from "@floating-ui/react";
+import {autoUpdate, flip, FloatingPortal, offset, shift, size, useDismiss, useFloating, useInteractions} from "@floating-ui/react";
 import {ActionMenuItem, MenuItems} from "./MenuItems";
 import "../form/ActionMenu.css";
 
@@ -15,7 +15,15 @@ function ContextMenuSurface({x, y, items, onClose}: {x: number; y: number; items
         onOpenChange: o => { if (!o) onClose(); },
         strategy: "fixed",
         placement: "bottom-start",
-        middleware: [offset(2), flip({padding: 8}), shift({padding: 8})],
+        middleware: [
+            offset(2),
+            flip({padding: 8}),
+            shift({padding: 8}),
+            size({padding: 8, apply({availableHeight, elements}) {
+                elements.floating.style.maxHeight = `${Math.max(0, availableHeight)}px`;
+                elements.floating.style.overflowY = "auto";
+            }}),
+        ],
         whileElementsMounted: autoUpdate,
     });
     const dismiss = useDismiss(context, {outsidePress: true, escapeKey: true, ancestorScroll: true});
