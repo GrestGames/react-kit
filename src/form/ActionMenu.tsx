@@ -46,7 +46,7 @@ export function ActionMenu({items, placement = "bottom-end", trigger = "⋯", tr
             ...(over ? [] : [flip({padding: 8})]),
             shift({padding: 8}),
             size({padding: 8, apply({availableHeight, elements}) {
-                elements.floating.style.maxHeight = `${availableHeight}px`;
+                elements.floating.style.maxHeight = `${Math.max(0, availableHeight)}px`;
                 elements.floating.style.overflowY = "auto";
             }}),
         ],
